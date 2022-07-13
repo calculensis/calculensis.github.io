@@ -34,5 +34,6 @@ STATIC_PATHS = [
     ]
 EXTRA_PATH_METADATA = {
     'extras/favicon.ico': {'path': 'favicon.ico'},
+    'extras/about.txt': {'path': 'about.txt'},
     '../CNAME': {'path': 'CNAME'},
     }
