@@ -38,6 +38,6 @@ EXTRA_PATH_METADATA = {
     '../CNAME': {'path': 'CNAME'},
     }
 USE_SHORTCUT_ICONS = True
-SITELOGO = 'extras/favicon.ico'
-FAVICON = 'extras/favicon.ico'
+SITELOGO = 'extras/favicon-32x32.png'
+FAVICON = 'extras/favicon-32x32.png'
 SITELOGO_SIZE = 15
