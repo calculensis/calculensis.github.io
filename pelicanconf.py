@@ -32,12 +32,7 @@ DEFAULT_PAGINATION = 10
 STATIC_PATHS = [
     'extras','images','../CNAME',
     ]
-
 EXTRA_PATH_METADATA = {
     'extras/favicon.ico': {'path': 'favicon.ico'},
     '../CNAME': {'path': 'CNAME'},
     }
-USE_SHORTCUT_ICONS = True
-SITELOGO = 'extras/favicon-32x32.png'
-FAVICON = 'extras/favicon-32x32.png'
-SITELOGO_SIZE = 15
