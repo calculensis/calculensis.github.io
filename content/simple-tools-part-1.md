@@ -12,7 +12,7 @@ It seems like there are two extreme intuitions that are commonly held about how 
 
 Both of these ideas reject using simple pencil-and-paper models, to their detriment! I'll explain why for each in turn.
 
-Regarding the first idea - that we do just fine by ourselves. There are many factors that mitigate against this notion, but in the interest of space I'll focus on just one: the recency effect. This effect is our tendency to give whatever we were thinking about most recently a greater weight than other factors that we want to influence our decision. So, for example, to decide where we want to go for vacation, suppose we care about affordability and location. If the last thing we were considering is location, then affordability likely won't get as much weight as it deserves when we are making our final decision. 
+Regarding the first idea - that we do just fine by ourselves - there are many factors that mitigate against this notion, but in the interest of space I'll focus on just one: the recency effect. This effect is our tendency to give whatever we were thinking about most recently a greater weight than other factors that we want to influence our decision. So, for example, to decide where we want to go for vacation, suppose we care about affordability and location. If the last thing we were considering is location, then affordability likely won't get as much weight as it deserves when we are making our final decision. 
 
 Again, if we are taking a multi-lens approach - that is, looking at the decision from many different perspectives - then we run the risk of giving the last lens we looked through more power than it deserves. 
 
