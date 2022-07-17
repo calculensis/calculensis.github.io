@@ -18,7 +18,7 @@ Again, if we are taking a multi-lens approach - that is, looking at the decision
 
 We can overcome these problems by using simple pencil-and-paper math models, which will maintain the proper weights because those weights will be contained in the relevant equations for each model we consider.
 
-Another important consideration is that decisions often seem to involve a lot of variables, and to get anywhere it helps to try and boil these dimensions down to just a few things that matter the most; making a model forces us to go through that process. It's true that AI can also help is simplify things this way...
+Another important consideration is that decisions often seem to involve a lot of variables, and to get anywhere it helps to try and boil these dimensions down to just a few things that matter the most; making a model forces us to go through that process. It's true that AI can also help us simplify things this way...
 
 ...which brings us to the second of the extreme intuitions: That the only thing that will do better than we do is something computationally sophisticated like machine learning (a type of AI). For many decisions we don't have time to collect months worth of data (or spend time trying to find and clean data that may already be out there somewhere) and run analytics on it. In fact, for many decisions we don't even start out knowing what data would be relevant or what questions we would want to ask of that data!
 
