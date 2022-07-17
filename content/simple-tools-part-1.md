@@ -1,5 +1,5 @@
 Title: simple tools, part 1
-Date: 2022-07-16
+Date: 2022-07-17
 Category: basics
 Tags: basics, simple tools
 Slug: simple tools
@@ -16,7 +16,7 @@ Regarding the first idea - that we do just fine by ourselves. There are many fac
 
 Again, if we are taking a multi-lens approach - that is, looking at the decision from many different perspectives - then we run the risk of giving the last lens we looked through more power than it deserves. 
 
-We can overcome these problems by using simple pencil-and-paper math models, which will maintain the proper weights because they will be contained in the relevant equations for each model we consider.
+We can overcome these problems by using simple pencil-and-paper math models, which will maintain the proper weights because those weights will be contained in the relevant equations for each model we consider.
 
 Another important consideration is that decisions often seem to involve a lot of variables, and to get anywhere it helps to try and boil these dimensions down to just a few things that matter the most; making a model forces us to go through that process. It's true that AI can also help is simplify things this way...
 
