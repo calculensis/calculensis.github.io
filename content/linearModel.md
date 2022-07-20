@@ -1,4 +1,4 @@
-Title: the linear model
+Title: simple tools, part 2: the linear model
 Date: 2022-07-17
 Category: basics
 Tags: 
