@@ -4,27 +4,27 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="Pelican" />
-        <title>the linear model</title>
-        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/main.css" />
-        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
-        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+        <title>simple tools, part 2: the linear model</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+        <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
         <meta name="description" content="I describe the linear model for decision making" />
 </head>
 
 <body id="index" class="home">
         <header id="banner" class="body">
-                <h1><a href="https://calculensis.github.io/">the decision blog</a></h1>
+                <h1><a href="/">the decision blog</a></h1>
                 <nav><ul>
-                    <li><a href="https://calculensis.github.io/category/about.html">about</a></li>
-                    <li class="active"><a href="https://calculensis.github.io/category/basics.html">basics</a></li>
+                    <li><a href="/category/about.html">about</a></li>
+                    <li class="active"><a href="/category/basics.html">basics</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
 <section id="content" class="body">
   <article>
     <header>
       <h1 class="entry-title">
-        <a href="https://calculensis.github.io/basics.html" rel="bookmark"
-           title="Permalink to the linear model">the linear model</a></h1>
+        <a href="/basics.html" rel="bookmark"
+           title="Permalink to simple tools, part 2: the linear model">simple tools, part 2: the linear model</a></h1>
     </header>
 
     <div class="entry-content">
@@ -34,9 +34,9 @@
         </abbr>
 
         <address class="vcard author">
-                By                         <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
+                By                         <a class="url fn" href="/author/kayla-lewis.html">Kayla Lewis</a>
         </address>
-<p>In <a href="https://calculensis.github.io/category/basics.html">basics</a>.</p>
+<p>In <a href="/category/basics.html">basics</a>.</p>
 
 </footer><!-- /.post-info -->      <p><img align=right src="images/arrow.jpg" width="150" height="150" /></p>
 <p>For our first simple decision making tool, let's look at the 2 to 3 factor linear model. Suppose you're trying to decide which of two houses to buy, <span class="math">\(H_1\)</span> or <span class="math">\(H_2\)</span>, and you're really on the fence about it! </p>
@@ -44,7 +44,10 @@
 <p>The next step is to decide how important these attributes are relative to one another and assign them weights; let's call them <span class="math">\(w_A\)</span>, <span class="math">\(w_C\)</span>, and <span class="math">\(w_Q\)</span>. The weights will be numbers between 0 and 1 such that when you add them together you get 1. For example, if each of the above attributes is equally important to you, then they all get weight 1/3. Or if, say, affordable monthly payment is twice as important as level of quietness, and quietness is just as important as the charm factor, you would have <span class="math">\(w_A=2/4\)</span>, <span class="math">\(w_C=1/4\)</span>, and <span class="math">\(w_Q=1/4\)</span>. You may have to play around to find the right values, but you can always just guess, see if the weights sum to 1, and adjust as needed. For the rest of our house example, let's use the weights <span class="math">\(w_A=2/4\)</span>, <span class="math">\(w_C=1/4\)</span>, and <span class="math">\(w_Q=1/4\)</span>.</p>
 <p>Now you would rate homes <span class="math">\(H_1\)</span> and <span class="math">\(H_2\)</span> based on the attributes, where each attribute gets a score from 0 (worst) to 10 (best). For example, maybe <span class="math">\(H_1\)</span> is a super affordable house in a moderately quiet neighborhood; in that case, you might might score it as A = 9 and Q = 7. Maybe it's not so high on charm, so C = 3. The linear model we've been constructing would then have us calculate a total score <span class="math">\(S(H_1)\)</span> for house 1 using the formula</p>
 <div class="math">$$
-S(H_1) = w_A A + w_C C + w_Q Q = \frac{2}{4}(9)+\frac{1}{4}(3)+\frac{1}{4}(7)=7.
+S(H_1) = w_A A + w_C C + w_Q Q = 
+$$</div>
+<div class="math">$$
+\frac{2}{4}(9)+\frac{1}{4}(3)+\frac{1}{4}(7)=7.
 $$</div>
 <p>Suppose the second potential home is charming indeed (C=9) but not so affordable (A=3), and that it's in a medium-noise environment (Q=5). Then we get</p>
 <div class="math">$$
@@ -131,8 +134,8 @@ $$</div>
                 <div class="social">
                         <h2>social</h2>
                         <ul>
-                            <li><a href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
-                            <li><a href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate">rss feed</a></li>
+                            <li><a href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+                            <li><a href="/feeds/all.rss.xml" type="application/rss+xml" rel="alternate">rss feed</a></li>
 
                             <li><a href="https://twitter.com/Estimatrix">@Estimatrix</a></li>
                         </ul>
@@ -147,14 +150,5 @@ $$</div>
                 <p>The theme is by <a href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
         </footer><!-- /#contentinfo -->
 
-    <script type="text/javascript">
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-234119846-1', 'auto');
-    ga('send', 'pageview');
-    </script>
 </body>
 </html>

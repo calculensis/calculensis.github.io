@@ -1,4 +1,4 @@
-Title: the linear model
+Title: simple tools, part 2: the linear model
 Date: 2022-07-17
 Category: basics
 Tags: 
@@ -17,7 +17,10 @@ The next step is to decide how important these attributes are relative to one an
 Now you would rate homes $H_1$ and $H_2$ based on the attributes, where each attribute gets a score from 0 (worst) to 10 (best). For example, maybe $H_1$ is a super affordable house in a moderately quiet neighborhood; in that case, you might might score it as A = 9 and Q = 7. Maybe it's not so high on charm, so C = 3. The linear model we've been constructing would then have us calculate a total score $S(H_1)$ for house 1 using the formula
 
 $$
-S(H_1) = w_A A + w_C C + w_Q Q = \frac{2}{4}(9)+\frac{1}{4}(3)+\frac{1}{4}(7)=7.
+S(H_1) = w_A A + w_C C + w_Q Q = 
+$$
+$$
+\frac{2}{4}(9)+\frac{1}{4}(3)+\frac{1}{4}(7)=7.
 $$ 
 
 Suppose the second potential home is charming indeed (C=9) but not so affordable (A=3), and that it's in a medium-noise environment (Q=5). Then we get
