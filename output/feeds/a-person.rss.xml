@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0"><channel><title>the decision blog - A. Person</title><link>/</link><description></description><lastBuildDate>Sun, 03 Dec 2017 00:00:00 -0500</lastBuildDate><item><title>test generic config tag</title><link>/test-generic-config-tag.html</link><description>&lt;p&gt;This post is written by 
+{% generic config author %}
+if all goes well the blog post author (from settings, not from the post) shows up one line above&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">A. Person</dc:creator><pubDate>Sun, 03 Dec 2017 00:00:00 -0500</pubDate><guid isPermaLink="false">tag:None,2017-12-03:/test-generic-config-tag.html</guid><category>content</category></item></channel></rss>

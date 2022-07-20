@@ -1,9 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>the decision blog</title><link>https://calculensis.github.io/</link><description></description><lastBuildDate>Sun, 17 Jul 2022 00:00:00 -0400</lastBuildDate><item><title>About</title><link>https://calculensis.github.io/about.html</link><description>&lt;p&gt;&lt;img align=right src="images/me-summer-2022.jpg" width="150" height="150" /&gt;&lt;/p&gt;
+<rss version="2.0"><channel><title>the decision blog</title><link>/</link><description></description><lastBuildDate>Sun, 17 Jul 2022 00:00:00 -0400</lastBuildDate><item><title>About</title><link>/about.html</link><description>&lt;p&gt;&lt;img align=right src="images/me-summer-2022.jpg" width="150" height="150" /&gt;&lt;/p&gt;
 &lt;p&gt;Hello, I'm Kayla Lewis, a professor in the New York City area who loves using and thinking about decision intelligence, that is, those parts of data science, the behavioral sciences, and managerial science that are most relevant to decision making.&lt;/p&gt;
 &lt;p&gt;Herein I write especially about how we can use simple math models, systems thinking, and machine learning to improve the quality of our decisions.&lt;/p&gt;
 &lt;p&gt;Got comments or questions? Contact me here:&lt;/p&gt;
-&lt;p&gt;&lt;a href="mailto:kaylalewis@thedecisionblog.com"&gt;kaylalewis@thedecisionblog.com&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kayla Lewis</dc:creator><pubDate>Sun, 17 Jul 2022 00:00:00 -0400</pubDate><guid isPermaLink="false">tag:calculensis.github.io,2022-07-17:/about.html</guid><category>about</category></item><item><title>simple tools, part 1</title><link>https://calculensis.github.io/simple%20tools.html</link><description>&lt;p&gt;&lt;img align=right src="images/linear.jpg" width="200" height="160" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="mailto:kaylalewis@thedecisionblog.com"&gt;kaylalewis@thedecisionblog.com&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kayla Lewis</dc:creator><pubDate>Sun, 17 Jul 2022 00:00:00 -0400</pubDate><guid isPermaLink="false">tag:None,2022-07-17:/about.html</guid><category>about</category></item><item><title>the linear model</title><link>/basics.html</link><description>&lt;p&gt;&lt;img align=right src="images/arrow.jpg" width="150" height="150" /&gt;&lt;/p&gt;
+&lt;p&gt;For our first simple decision making tool, let's look at the 2 to 3 factor linear model. Suppose you're trying to decide which of two houses to buy, &lt;span class="math"&gt;\(H_1\)&lt;/span&gt; or &lt;span class="math"&gt;\(H_2\)&lt;/span&gt;, and you're really on the fence about it! &lt;/p&gt;
+&lt;p&gt;The linear model approach asks you first to consider what are the 2 or 3 most important attributes for you that a potential home could have. For example, let's say they are affordability of monthly payment (A), that feeling of charm when you first walk in (C), and typical level of quietness (Q). Granted, this last attribute might be hard to get at, but knowing that it's one of the most important qualities for you would be important, and it could get you thinking of ways you might determine it, perhaps by interviewing some of your new would-be neighbors.&lt;/p&gt;
+&lt;p&gt;The next step is to decide how important these attributes are relative to one another and assign them weights; let's call them &lt;span class="math"&gt;\(w_A\)&lt;/span&gt;, &lt;span class="math"&gt;\(w_C\)&lt;/span&gt;, and &lt;span class="math"&gt;\(w_Q\)&lt;/span&gt;. The weights will be numbers between 0 and 1 such that when you add them together you get 1. For example, if each of the above attributes is equally important to you, then they all get weight 1/3. Or if, say, affordable monthly payment is twice as important as level of quietness, and quietness is just as important as the charm factor, you would have &lt;span class="math"&gt;\(w_A=2/4\)&lt;/span&gt;, &lt;span class="math"&gt;\(w_C=1/4\)&lt;/span&gt;, and &lt;span class="math"&gt;\(w_Q=1/4\)&lt;/span&gt;. You may have to play around to find the right values, but you can always just guess, see if the weights sum to 1, and adjust as needed. For the rest of our house example, let's use the weights &lt;span class="math"&gt;\(w_A=2/4\)&lt;/span&gt;, &lt;span class="math"&gt;\(w_C=1/4\)&lt;/span&gt;, and &lt;span class="math"&gt;\(w_Q=1/4\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Now you would rate homes &lt;span class="math"&gt;\(H_1\)&lt;/span&gt; and &lt;span class="math"&gt;\(H_2\)&lt;/span&gt; based on the attributes, where each attribute gets a score from 0 (worst) to 10 (best). For example, maybe &lt;span class="math"&gt;\(H_1\)&lt;/span&gt; is a super affordable house in a moderately quiet neighborhood; in that case, you might might score it as A = 9 and Q = 7. Maybe it's not so high on charm, so C = 3. The linear model we've been constructing would then have us calculate a total score &lt;span class="math"&gt;\(S(H_1)\)&lt;/span&gt; for house 1 using the formula&lt;/p&gt;
+&lt;div class="math"&gt;$$
+S(H_1) = w_A A + w_C C + w_Q Q = \frac{2}{4}(9)+\frac{1}{4}(3)+\frac{1}{4}(7)=7.
+$$&lt;/div&gt;
+&lt;p&gt;Suppose the second potential home is charming indeed (C=9) but not so affordable (A=3), and that it's in a medium-noise environment (Q=5). Then we get&lt;/p&gt;
+&lt;div class="math"&gt;$$
+S(H_2) = \frac{2}{4}(3)+\frac{1}{4}(9)+\frac{1}{4}(5)=5,
+$$&lt;/div&gt;
+&lt;p&gt;and the model says to buy the first home, &lt;span class="math"&gt;\(H_1\)&lt;/span&gt;, because it scores higher.&lt;/p&gt;
+&lt;p&gt;What if you find yourself not liking that result? Then you can try to figure out why your feelings and the model disagree. Maybe those weights weren't quite right? Maybe the attributes you chose weren't the most important ones to you after all? And if, no matter what you do, you keep finding yourself unhappy when &lt;span class="math"&gt;\(H_1\)&lt;/span&gt; wins, then the model helped you discover how you feel, and you still learned something significant. (Remember, you were on the fence at first!) &lt;/p&gt;
+&lt;p&gt;The next model I present will complement this one.&lt;/p&gt;
+&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width &lt; 768) ? "left" : align;
+        indent = (screen.width &lt; 768) ? "0em" : indent;
+        linebreak = (screen.width &lt; 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kayla Lewis</dc:creator><pubDate>Sun, 17 Jul 2022 00:00:00 -0400</pubDate><guid isPermaLink="false">tag:None,2022-07-17:/basics.html</guid><category>basics</category></item><item><title>simple tools, part 1</title><link>/simple%20tools.html</link><description>&lt;p&gt;&lt;img align=right src="images/linear.jpg" width="200" height="160" /&gt;&lt;/p&gt;
 &lt;p&gt;It seems like there are two extreme intuitions that are commonly held about how best to go about decision making: The first is to say "The hell with models - I can do just fine by myself!" and the second is "Sure I can use some help, and the more sophisticated the better! And by sophisticated, I mean AI." &lt;/p&gt;
 &lt;p&gt;Both of these ideas reject using simple pencil-and-paper models, to their detriment! I'll explain why for each in turn.&lt;/p&gt;
 &lt;p&gt;Regarding the first idea - that we do just fine by ourselves - there are many factors mitigating against this notion, but in the interest of space I'll focus on just one: the recency effect. This effect is our tendency to give whatever we were thinking about most recently a greater weight than other factors that we want to influence our decision. So, for example, to decide where we want to go for vacation, suppose we care about affordability and location. If the last thing we were considering is location, then affordability likely won't get as much weight as it deserves when we are making our final decision. &lt;/p&gt;
@@ -12,7 +88,7 @@
 &lt;p&gt;Another important consideration is that decisions often seem to involve a lot of variables, and to get anywhere it helps to try and boil these dimensions down to just a few things that matter the most; making a model forces us to go through that process. It's true that AI can also help us simplify things this way...&lt;/p&gt;
 &lt;p&gt;...which brings us to the second of the extreme intuitions: That the only thing that will do better than we do is something computationally sophisticated like machine learning (a type of AI). For many decisions we don't have time to collect months worth of data (or spend time trying to find and clean data that may already be out there somewhere) and run analytics on it. In fact, for many decisions we don't even start out knowing what data would be relevant or what questions we would want to ask of that data!&lt;/p&gt;
 &lt;p&gt;A middle approach is to do something that improves on our native mental abilities but that doesn't involve computation - in other words, pencil-and-paper modeling.&lt;/p&gt;
-&lt;p&gt;In the next few posts I'll share some of these models with you!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kayla Lewis</dc:creator><pubDate>Sun, 17 Jul 2022 00:00:00 -0400</pubDate><guid isPermaLink="false">tag:calculensis.github.io,2022-07-17:/simple tools.html</guid><category>basics</category><category>basics</category><category>simple tools</category></item><item><title>decisions and the search-inference framework</title><link>https://calculensis.github.io/decisions%20and%20the%20search-inference%20framework.html</link><description>&lt;p&gt;&lt;img align=right src="images/choosing.jpg" width="200" height="200" /&gt;&lt;/p&gt;
+&lt;p&gt;In the next few posts I'll share some of these models with you!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kayla Lewis</dc:creator><pubDate>Sun, 17 Jul 2022 00:00:00 -0400</pubDate><guid isPermaLink="false">tag:None,2022-07-17:/simple tools.html</guid><category>basics</category><category>basics</category><category>simple tools</category></item><item><title>decisions and the search-inference framework</title><link>/decisions%20and%20the%20search-inference%20framework.html</link><description>&lt;p&gt;&lt;img align=right src="images/choosing.jpg" width="200" height="200" /&gt;&lt;/p&gt;
 &lt;p&gt;Hello everyone, welcome to my first blog entry!&lt;/p&gt;
 &lt;p&gt;This blog will be about all things related to effective decision making. &lt;/p&gt;
 &lt;p&gt;I'm going to start with simpler approaches or models that don't take very much time and build up to the more sophisticated ones.&lt;/p&gt;
@@ -24,4 +100,4 @@
 &lt;p&gt;The most common mistakes in thinking can be traced to failing at step (1) or (2). For step (1), the common failure is not generating a rich enough space of possibilities; for step (2), it's not weighing the evidence for each possibility fairly. I'll talk about this second way of failing in later posts.&lt;/p&gt;
 &lt;p&gt;Viewing a decision through multiple lenses or models is a way of lowering the probability that we fail at step (1): Each model gives us a different way of viewing the decision we want to make.&lt;/p&gt;
 &lt;p&gt;Very often, different models will tell us to take different courses of action. It might seem like this is a problem, but in reality it's a strength. Instead of hoping that all models will give the same answer, what we'll do is try to understand &lt;strong&gt;&lt;em&gt;why&lt;/em&gt;&lt;/strong&gt; the different approaches give the answers that they do; in so doing, it will usually become clearer which choice we ultimately want to make.&lt;/p&gt;
-&lt;p&gt;You can think of asking models what they "think" just as you would ask your friends what they think. Your friends might give conflicting answers, and that's a good thing! You are definitely expanding the space of possibilities to consider when that happens.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kayla Lewis</dc:creator><pubDate>Mon, 11 Jul 2022 00:00:00 -0400</pubDate><guid isPermaLink="false">tag:calculensis.github.io,2022-07-11:/decisions and the search-inference framework.html</guid><category>basics</category><category>basics</category><category>search-inference</category></item></channel></rss>
+&lt;p&gt;You can think of asking models what they "think" just as you would ask your friends what they think. Your friends might give conflicting answers, and that's a good thing! You are definitely expanding the space of possibilities to consider when that happens.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kayla Lewis</dc:creator><pubDate>Mon, 11 Jul 2022 00:00:00 -0400</pubDate><guid isPermaLink="false">tag:None,2022-07-11:/decisions and the search-inference framework.html</guid><category>basics</category><category>basics</category><category>search-inference</category></item></channel></rss>

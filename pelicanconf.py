@@ -35,3 +35,5 @@ STATIC_PATHS = [
 EXTRA_PATH_METADATA = {
     '../CNAME': {'path': 'CNAME'},
     }
+PLUGIN_PATHS=['./plugins']
+PLUGINS = ['render_math']
