@@ -9,10 +9,10 @@
 &lt;p&gt;The next step is to decide how important these attributes are relative to one another and assign them weights; let's call them &lt;span class="math"&gt;\(w_A\)&lt;/span&gt;, &lt;span class="math"&gt;\(w_C\)&lt;/span&gt;, and &lt;span class="math"&gt;\(w_Q\)&lt;/span&gt;. The weights will be numbers between 0 and 1 such that when you add them together you get 1. For example, if each of the above attributes is equally important to you, then they all get weight 1/3. Or if, say, affordable monthly payment is twice as important as level of quietness, and quietness is just as important as the charm factor, you would have &lt;span class="math"&gt;\(w_A=2/4\)&lt;/span&gt;, &lt;span class="math"&gt;\(w_C=1/4\)&lt;/span&gt;, and &lt;span class="math"&gt;\(w_Q=1/4\)&lt;/span&gt;. You may have to play around to find the right values, but you can always just guess, see if the weights sum to 1, and adjust as needed. For the rest of our house example, let's use the weights &lt;span class="math"&gt;\(w_A=2/4\)&lt;/span&gt;, &lt;span class="math"&gt;\(w_C=1/4\)&lt;/span&gt;, and &lt;span class="math"&gt;\(w_Q=1/4\)&lt;/span&gt;.&lt;/p&gt;
 &lt;p&gt;Now you would rate homes &lt;span class="math"&gt;\(H_1\)&lt;/span&gt; and &lt;span class="math"&gt;\(H_2\)&lt;/span&gt; based on the attributes, where each attribute gets a score from 0 (worst) to 10 (best). For example, maybe &lt;span class="math"&gt;\(H_1\)&lt;/span&gt; is a super affordable house in a moderately quiet neighborhood; in that case, you might might score it as A = 9 and Q = 7. Maybe it's not so high on charm, so C = 3. The linear model we've been constructing would then have us calculate a total score &lt;span class="math"&gt;\(S(H_1)\)&lt;/span&gt; for house 1 using the formula&lt;/p&gt;
 &lt;div class="math"&gt;$$
-S(H_1) = w_A A + w_C C + w_Q Q = 
+S(H_1) = w_A A + w_C C + w_Q Q 
 $$&lt;/div&gt;
 &lt;div class="math"&gt;$$
-\frac{2}{4}(9)+\frac{1}{4}(3)+\frac{1}{4}(7)=7.
+=\frac{2}{4}(9)+\frac{1}{4}(3)+\frac{1}{4}(7)=7.
 $$&lt;/div&gt;
 &lt;p&gt;Suppose the second potential home is charming indeed (C=9) but not so affordable (A=3), and that it's in a medium-noise environment (Q=5). Then we get&lt;/p&gt;
 &lt;div class="math"&gt;$$

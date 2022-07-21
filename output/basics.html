@@ -44,10 +44,10 @@
 <p>The next step is to decide how important these attributes are relative to one another and assign them weights; let's call them <span class="math">\(w_A\)</span>, <span class="math">\(w_C\)</span>, and <span class="math">\(w_Q\)</span>. The weights will be numbers between 0 and 1 such that when you add them together you get 1. For example, if each of the above attributes is equally important to you, then they all get weight 1/3. Or if, say, affordable monthly payment is twice as important as level of quietness, and quietness is just as important as the charm factor, you would have <span class="math">\(w_A=2/4\)</span>, <span class="math">\(w_C=1/4\)</span>, and <span class="math">\(w_Q=1/4\)</span>. You may have to play around to find the right values, but you can always just guess, see if the weights sum to 1, and adjust as needed. For the rest of our house example, let's use the weights <span class="math">\(w_A=2/4\)</span>, <span class="math">\(w_C=1/4\)</span>, and <span class="math">\(w_Q=1/4\)</span>.</p>
 <p>Now you would rate homes <span class="math">\(H_1\)</span> and <span class="math">\(H_2\)</span> based on the attributes, where each attribute gets a score from 0 (worst) to 10 (best). For example, maybe <span class="math">\(H_1\)</span> is a super affordable house in a moderately quiet neighborhood; in that case, you might might score it as A = 9 and Q = 7. Maybe it's not so high on charm, so C = 3. The linear model we've been constructing would then have us calculate a total score <span class="math">\(S(H_1)\)</span> for house 1 using the formula</p>
 <div class="math">$$
-S(H_1) = w_A A + w_C C + w_Q Q = 
+S(H_1) = w_A A + w_C C + w_Q Q 
 $$</div>
 <div class="math">$$
-\frac{2}{4}(9)+\frac{1}{4}(3)+\frac{1}{4}(7)=7.
+=\frac{2}{4}(9)+\frac{1}{4}(3)+\frac{1}{4}(7)=7.
 $$</div>
 <p>Suppose the second potential home is charming indeed (C=9) but not so affordable (A=3), and that it's in a medium-noise environment (Q=5). Then we get</p>
 <div class="math">$$

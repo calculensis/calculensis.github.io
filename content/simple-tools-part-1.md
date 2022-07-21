@@ -27,4 +27,3 @@ A middle approach is to do something that improves on our native mental abilitie
 In the next few posts I'll share some of these models with you!
 
 
-
