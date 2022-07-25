@@ -6,7 +6,7 @@ Slug: simple tools
 Authors: Kayla Lewis
 Summary: Part of a series on simple tools
 
-<img align=right src="images/linear.jpg" width="200" height="160" />
+<img align=right src="images/linear.jpg" width="200"/>
 
 It seems like there are two extreme intuitions that are commonly held about how best to go about decision making: The first is to say "The hell with models - I can do just fine by myself!" and the second is "Sure I can use some help, and the more sophisticated the better! And by sophisticated, I mean AI." 
 

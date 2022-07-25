@@ -6,7 +6,7 @@ Slug: basics
 Authors: Kayla Lewis
 Summary: I describe the linear model for decision making
 
-<img align=right src="images/arrow.jpg" width="150" height="150" />
+<img align=right src="images/arrow.jpg" width="150"/>
 
 For our first simple decision making tool, let's look at the 2 to 3 factor linear model. Suppose you're trying to decide which of two houses to buy, $H_1$ or $H_2$, and you're really on the fence about it! 
 

@@ -6,7 +6,7 @@ Slug: decisions and the search-inference framework
 Authors: Kayla Lewis
 Summary: Why multi-model decision making is so important
 
-<img align=right src="images/choosing.jpg" width="200" height="200" />
+<img align=right src="images/choosing.jpg" width="200"/>
 
 Hello everyone, welcome to my first blog entry!
 
