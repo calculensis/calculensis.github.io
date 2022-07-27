@@ -21,7 +21,38 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="/basics.html">simple tools, part 2: the linear model</a></h1>
+                    <h1 class="entry-title"><a href="/pro-con list.html">simple tools, part 3: the weighted pro-con list</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2022-07-27T00:00:00-04:00">
+                Published: Wed 27 July 2022
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/kayla-lewis.html">Kayla Lewis</a>
+        </address>
+<p>In <a href="/category/basics.html">basics</a>.</p>
+<p>tags: <a href="/tag/pro-con-list.html">pro-con list</a> </p>
+</footer><!-- /.post-info --><p><img align=right src="images/journal-coffee.jpg" width="150"/></p>
+<p>The linear model directs us to condense our decision down to the few most important things, but that can be difficult or not feasible; what then? One answer to that question is the weighted pro-con list. </p>
+<p>It goes like this: For each possibility that you're considering, write down a list of good things that would happen (pros) and bad things (cons) underneath it. Now you've got an ordinary pro-con list.</p>
+<p>The next step is, for each item you wrote as a pro, rate the goodness of that item on a scale from 0 (not good at all) to 10 (maximally good). Similarly, rate the cons, except this time use negative numbers, so something moderately bad would get, e.g., a -5. </p>
+<p><img align=right src="images/weighted-pro-con.png" width="300"/></p>
+<p>Once all the pro-con items for an action under consideration have scores, you add them all up, both negative and positive; do that separately for each choice you're considering. An example is shown for the decision of "whether to leave my current job." The choice that ends up with the highest score is the one to choose, according to this model; in the example shown, the model says that you should leave your current job.</p>
+<p>Just like with the linear model, you may find yourself unhappy with the final result; again, you will have learned something about how you feel. This would also be an excellent opportunity to understand your feelings better by figuring out why the pro-con model ended up giving the "wrong" result. Maybe the weights aren't quite right. Maybe you missed an important pro or con.</p>
+<p>So far we've been treating the consequences of our decisions as certain. For example, the pro-con list for the example pictured above assumes that "I would love what I do" would definitely happen if you took the new job. But what if we want to incorporate uncertainty into our thinking? Stay tuned!</p>                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/linear model.html" rel="bookmark"
+                           title="Permalink to simple tools, part 2: the linear model">simple tools, part 2: the linear model</a></h1>
+                </header>
+
+                <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2022-07-20T00:00:00-04:00">
                 Published: Wed 20 July 2022
@@ -32,91 +63,10 @@
         </address>
 <p>In <a href="/category/basics.html">basics</a>.</p>
 
-</footer><!-- /.post-info --><p><img align=right src="images/arrow.jpg" width="150"/></p>
-<p>For our first simple decision making tool, let's look at the 2 to 3 factor linear model. Suppose you're trying to decide which of two houses to buy, <span class="math">\(H_1\)</span> or <span class="math">\(H_2\)</span>, and you're really on the fence about it! </p>
-<p>The linear model approach asks you first to consider what are the 2 or 3 most important attributes for you that a potential home could have. For example, let's say they are affordability of monthly payment (A), that feeling of charm when you first walk in (C), and typical level of quietness (Q). Granted, this last attribute might be hard to get at, but knowing that it's one of the most important qualities for you would be important, and it could get you thinking of ways you might determine it, perhaps by interviewing some of your new would-be neighbors.</p>
-<p>The next step is to decide how important these attributes are relative to one another and assign them weights; let's call them <span class="math">\(w_A\)</span>, <span class="math">\(w_C\)</span>, and <span class="math">\(w_Q\)</span>. The weights will be numbers between 0 and 1 such that when you add them together you get 1. For example, if each of the above attributes is equally important to you, then they all get weight 1/3. Or if, say, affordable monthly payment is twice as important as level of quietness, and quietness is just as important as the charm factor, you would have <span class="math">\(w_A=2/4\)</span>, <span class="math">\(w_C=1/4\)</span>, and <span class="math">\(w_Q=1/4\)</span>. You may have to play around to find the right values, but you can always just guess, see if the weights sum to 1, and adjust as needed. For the rest of our house example, let's use the weights <span class="math">\(w_A=2/4\)</span>, <span class="math">\(w_C=1/4\)</span>, and <span class="math">\(w_Q=1/4\)</span>.</p>
-<p>Now you would rate homes <span class="math">\(H_1\)</span> and <span class="math">\(H_2\)</span> based on the attributes, where each attribute gets a score from 0 (worst) to 10 (best). For example, maybe <span class="math">\(H_1\)</span> is a super affordable house in a moderately quiet neighborhood; in that case, you might might score it as A = 9 and Q = 7. Maybe it's not so high on charm, so C = 3. The linear model we've been constructing would then have us calculate a total score <span class="math">\(S(H_1)\)</span> for house 1 using the formula</p>
-<div class="math">$$
-S(H_1) = w_A A + w_C C + w_Q Q 
-$$</div>
-<div class="math">$$
-=\frac{2}{4}(9)+\frac{1}{4}(3)+\frac{1}{4}(7)=7.
-$$</div>
-<p>Suppose the second potential home is charming indeed (C=9) but not so affordable (A=3), and that it's in a medium-noise environment (Q=5). Then we get</p>
-<div class="math">$$
-S(H_2) = \frac{2}{4}(3)+\frac{1}{4}(9)+\frac{1}{4}(5)=5,
-$$</div>
-<p>and the model says to buy the first home, <span class="math">\(H_1\)</span>, because it scores higher.</p>
-<p>What if you find yourself not liking that result? Then you can try to figure out why your feelings and the model disagree. Maybe those weights weren't quite right? Maybe the attributes you chose weren't the most important ones to you after all? And if, no matter what you do, you keep finding yourself unhappy when <span class="math">\(H_1\)</span> wins, then the model helped you discover how you feel, and you still learned something significant. (Remember, you were on the fence at first!) </p>
-<p>The next model I present will complement this one.</p>
-<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
-    var align = "center",
-        indent = "0em",
-        linebreak = "false";
-
-    if (false) {
-        align = (screen.width < 768) ? "left" : align;
-        indent = (screen.width < 768) ? "0em" : indent;
-        linebreak = (screen.width < 768) ? 'true' : linebreak;
-    }
-
-    var mathjaxscript = document.createElement('script');
-    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
-    mathjaxscript.type = 'text/javascript';
-    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
-
-    var configscript = document.createElement('script');
-    configscript.type = 'text/x-mathjax-config';
-    configscript[(window.opera ? "innerHTML" : "text")] =
-        "MathJax.Hub.Config({" +
-        "    config: ['MMLorHTML.js']," +
-        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
-        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
-        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
-        "    displayAlign: '"+ align +"'," +
-        "    displayIndent: '"+ indent +"'," +
-        "    showMathMenu: true," +
-        "    messageStyle: 'normal'," +
-        "    tex2jax: { " +
-        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
-        "        displayMath: [ ['$$','$$'] ]," +
-        "        processEscapes: true," +
-        "        preview: 'TeX'," +
-        "    }, " +
-        "    'HTML-CSS': { " +
-        "        availableFonts: ['STIX', 'TeX']," +
-        "        preferredFont: 'STIX'," +
-        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
-        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
-        "    }, " +
-        "}); " +
-        "if ('default' !== 'default') {" +
-            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
-                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
-                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
-                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
-                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
-                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
-            "});" +
-            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
-                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
-                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
-                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
-                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
-                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
-            "});" +
-        "}";
-
-    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
-    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
-}
-</script>                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                    <ol id="posts-list" class="hfeed">
+</footer><!-- /.post-info -->                <p>I describe the linear model for decision making</p>
+                <a class="readmore" href="/linear model.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
