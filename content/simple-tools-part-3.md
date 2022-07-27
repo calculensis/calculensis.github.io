@@ -14,7 +14,7 @@ It goes like this: For each possibility that you're considering, write down a li
 
 The next step is, for each item you wrote as a pro, rate the goodness of that item on a scale from 0 (not good at all) to 10 (maximally good). Similarly, rate the cons, except this time use negative numbers, so something moderately bad would get, e.g., a -5. 
 
-<img align=right src="images/weighted-pro-con.png" width="300"/>
+<img src="images/weighted-pro-con.png" width="300"/>
 
 Once all the pro-con items for an action under consideration have scores, you add them all up, both negative and positive; do that separately for each choice you're considering. An example is shown for the decision of "whether to leave my current job." The choice that ends up with the highest score is the one to choose, according to this model; in the example shown, the model says that you should leave your current job.
 
