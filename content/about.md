@@ -6,7 +6,7 @@ Slug: about
 Authors: Kayla Lewis
 Summary: About this blog
 
-<img align=right src="images/me-summer-2022.jpg" width=200/>
+<img align=right src="images/me-summer-2022.jpg" width=150/>
 
 Hello, I'm Kayla Lewis, a professor in the New York City area who loves using and thinking about applied rationality, critical systems thinking (an approach that embraces many kinds of systemic perspectives), and artificial intelligence.
 
