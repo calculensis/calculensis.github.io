@@ -6,7 +6,7 @@ Slug: probability and degrees of belief
 Authors: Kayla Lewis
 Summary: I describe how to map beliefs to probabilities
 
-<img align=right src="images/dice.jpg" width="300"/>
+<img align=right src="images/dice.jpg" width="150"/>
 
 For many of the tools that follow, we'll need to be able to map degrees of confidence to probabilities; by the end of this post, you'll know how to do that!
 
@@ -20,7 +20,7 @@ What we need is a way to map our new degree of confidence to a probability; we c
 
 Now suppose that the coin is weighted so that it lands heads 60% of the time. In this case a reasonable answer to the question of which side in will land on is "I suspect it will land heads, because it's a little more likely to do that." By now, you see where this line of reasoning is going: Probabilities between 0.5 and 1 represent increasing degrees of confidence that a thing will happen, and between 0.5 and 0 represent degrees of confidence that it won't. 
 
-Now let's return to our problem: What is our probability of success now that we've taken precautions? Our starting value of 0.1 is a lot closer to zero than it is to 0.5, so it corresponds to being highly confident that the business will fail. How much should we increase that number for our particular case? It's a difficult question, about which much ink or, erm, pixels can be spilled. Let's say you only suspect failure. If 0.6 is suspecting success, then 0.4 should be suspecting failure, so our updated degree of confidence is 0.4.
+Now let's return to our problem: What is our probability of success now that we've taken precautions? Our starting value of 0.1 is a lot closer to zero than it is to 0.5, so it corresponds to being highly confident that the business will fail (i.e., highly confident that it won't succeed). How much should we increase that number for our particular case? It's a difficult question, about which much ink or, erm, pixels can be spilled. Let's say you only suspect failure. If 0.6 is suspecting success, then 0.4 should be suspecting failure, so our updated degree of confidence is 0.4.
 
 That's how it works! Here is a scale with suggested degrees of belief attached:
 

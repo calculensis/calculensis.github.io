@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"><title>the decision blog - about</title><link href="https://calculensis.github.io/" rel="alternate"></link><link href="https://calculensis.github.io/feeds/about.atom.xml" rel="self"></link><id>https://calculensis.github.io/</id><updated>2022-07-17T00:00:00-04:00</updated><entry><title>About</title><link href="https://calculensis.github.io/about.html" rel="alternate"></link><published>2022-07-17T00:00:00-04:00</published><updated>2022-07-17T00:00:00-04:00</updated><author><name>Kayla Lewis</name></author><id>tag:calculensis.github.io,2022-07-17:/about.html</id><summary type="html">&lt;p&gt;About this blog&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/me-summer-2022.jpg" width=150/&gt;&lt;/p&gt;
 &lt;p&gt;Hello, I'm Kayla Lewis, a professor in the New York City area who loves using and thinking about applied rationality, critical systems thinking (an approach that embraces many kinds of systemic perspectives), and artificial intelligence.&lt;/p&gt;
-&lt;p&gt;Herein I write especially about how we can use these tools and approaches to improve the quality of our decisions.&lt;/p&gt;
+&lt;p&gt;Herein I write about how we can use these tools and approaches to improve the quality of our decisions.&lt;/p&gt;
 &lt;p&gt;Got comments or questions? Contact me here:&lt;/p&gt;
 &lt;p&gt;&lt;a href="mailto:kaylalewis@thedecisionblog.com"&gt;kaylalewis@thedecisionblog.com&lt;/a&gt;&lt;/p&gt;</content><category term="about"></category></entry></feed>
