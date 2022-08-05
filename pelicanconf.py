@@ -23,7 +23,9 @@ LINKS = (('Pelican', 'https://getpelican.com/'),
          ('Jinja2', 'https://palletsprojects.com/p/jinja/'),)
 
 # Social widget
-SOCIAL = (('@Estimatrix', 'https://twitter.com/Estimatrix'),)
+SOCIAL = (('follow me @Estimatrix', 'https://twitter.com/Estimatrix'),
+          ('or on Facebook','https://www.facebook.com/caela.calculensis/'),
+          ('or at LinkedIn','https://www.linkedin.com/in/kayla-lewis-79ba9ba1/'),)
 
 DEFAULT_PAGINATION = 10
 
