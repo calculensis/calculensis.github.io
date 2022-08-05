@@ -4,10 +4,11 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content="Pelican" />
-        <title>the decision blog - basics</title>
+        <title>simple tools, part 4: probability and degrees of belief</title>
         <link rel="stylesheet" href="https://calculensis.github.io/theme/css/main.css" />
         <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
         <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+        <meta name="description" content="I describe how to map beliefs to probabilities" />
 </head>
 
 <body id="index" class="home">
@@ -18,10 +19,15 @@
                     <li class="active"><a href="https://calculensis.github.io/category/basics.html">basics</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="https://calculensis.github.io/probability and degrees of belief.html" rel="bookmark"
+           title="Permalink to simple tools, part 4: probability and degrees of belief">simple tools, part 4: probability and degrees of belief</a></h1>
+    </header>
 
-            <aside id="featured" class="body">
-                <article>
-                    <h1 class="entry-title"><a href="https://calculensis.github.io/probability and degrees of belief.html">simple tools, part 4: probability and degrees of belief</a></h1>
+    <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2022-08-05T00:00:00-04:00">
                 Published: Fri 05 August 2022
@@ -32,7 +38,7 @@
         </address>
 <p>In <a href="https://calculensis.github.io/category/basics.html">basics</a>.</p>
 
-</footer><!-- /.post-info --><p><img align=right src="images/dice.jpg" width="300"/></p>
+</footer><!-- /.post-info -->      <p><img align=right src="images/dice.jpg" width="300"/></p>
 <p>For many of the tools that follow, we'll need to be able to map degrees of confidence to probabilities; by the end of this post, you'll know how to do that!</p>
 <p>Suppose we're trying to decide whether to found a startup, and that the probability of success of a randomly chosen startup is 10%, a number that gets used a lot for this purpose. To make the math work out right for the models I'll be introducing later, we'll divide by 100 and represent probabilities as numbers between 0 and 1 instead of between 0 and 100.</p>
 <p>If our startup were like a randomly chosen one, then, we would estimate our probability of success at 0.1. This probability, which we get before taking into account the details of our own particular circumstances, is called the base rate or prior probability; it comes from Bayesian probability theory (on which more later).</p>
@@ -41,102 +47,11 @@
 <p>Now suppose that the coin is weighted so that it lands heads 60% of the time. In this case a reasonable answer to the question of which side in will land on is "I suspect it will land heads, because it's a little more likely to do that." By now, you see where this line of reasoning is going: Probabilities between 0.5 and 1 represent increasing degrees of confidence that a thing will happen, and between 0.5 and 0 represent degrees of confidence that it won't. </p>
 <p>Now let's return to our problem: What is our probability of success now that we've taken precautions? Our starting value of 0.1 is a lot closer to zero than it is to 0.5, so it corresponds to being highly confident that the business will fail. How much should we increase that number for our particular case? It's a difficult question, about which much ink or, erm, pixels can be spilled. Let's say you only suspect failure. If 0.6 is suspecting success, then 0.4 should be suspecting failure, so our updated degree of confidence is 0.4.</p>
 <p>That's how it works! Here is a scale with suggested degrees of belief attached:</p>
-<p><img src="images/probability-scale.png" width="400"/></p>                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                    <ol id="posts-list" class="hfeed">
+<p><img src="images/probability-scale.png" width="400"/></p>
+    </div><!-- /.entry-content -->
 
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="https://calculensis.github.io/pro-con list.html" rel="bookmark"
-                           title="Permalink to simple tools, part 3: the weighted pro-con list">simple tools, part 3: the weighted pro-con list</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2022-07-27T00:00:00-04:00">
-                Published: Wed 27 July 2022
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
-        </address>
-<p>In <a href="https://calculensis.github.io/category/basics.html">basics</a>.</p>
-<p>tags: <a href="https://calculensis.github.io/tag/pro-con-list.html">pro-con list</a> </p>
-</footer><!-- /.post-info -->                <p>I describe the weighted pro-con list</p>
-                <a class="readmore" href="https://calculensis.github.io/pro-con list.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="https://calculensis.github.io/linear model.html" rel="bookmark"
-                           title="Permalink to simple tools, part 2: the linear model">simple tools, part 2: the linear model</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2022-07-20T00:00:00-04:00">
-                Published: Wed 20 July 2022
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
-        </address>
-<p>In <a href="https://calculensis.github.io/category/basics.html">basics</a>.</p>
-
-</footer><!-- /.post-info -->                <p>I describe the linear model for decision making</p>
-                <a class="readmore" href="https://calculensis.github.io/linear model.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="https://calculensis.github.io/simple tools.html" rel="bookmark"
-                           title="Permalink to simple tools, part 1">simple tools, part 1</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2022-07-17T00:00:00-04:00">
-                Published: Sun 17 July 2022
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
-        </address>
-<p>In <a href="https://calculensis.github.io/category/basics.html">basics</a>.</p>
-<p>tags: <a href="https://calculensis.github.io/tag/basics.html">basics</a> <a href="https://calculensis.github.io/tag/simple-tools.html">simple tools</a> </p>
-</footer><!-- /.post-info -->                <p>Part of a series on simple tools</p>
-                <a class="readmore" href="https://calculensis.github.io/simple tools.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="https://calculensis.github.io/decisions and the search-inference framework.html" rel="bookmark"
-                           title="Permalink to decisions and the search-inference framework">decisions and the search-inference framework</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2022-07-11T00:00:00-04:00">
-                Published: Mon 11 July 2022
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
-        </address>
-<p>In <a href="https://calculensis.github.io/category/basics.html">basics</a>.</p>
-<p>tags: <a href="https://calculensis.github.io/tag/basics.html">basics</a> <a href="https://calculensis.github.io/tag/search-inference.html">search-inference</a> </p>
-</footer><!-- /.post-info -->                <p>Why multi-model decision making is so important</p>
-                <a class="readmore" href="https://calculensis.github.io/decisions and the search-inference framework.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-                </ol><!-- /#posts-list -->
-                </section><!-- /#content -->
+  </article>
+</section>
         <section id="extras" class="body">
                 <div class="blogroll">
                         <h2>links</h2>
