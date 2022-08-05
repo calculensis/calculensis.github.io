@@ -6,7 +6,7 @@ Slug: probability and degrees of belief
 Authors: Kayla Lewis
 Summary: I describe how to map beliefs to probabilities
 
-<img align=right src="images/dice.jpg" width="300"/>
+<img align=right src="images/dice.jpg" width="150"/>
 
 For many of the tools that follow, we'll need to be able to map degrees of confidence to probabilities; by the end of this post, you'll know how to do that!
 
