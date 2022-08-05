@@ -2,7 +2,7 @@ Title: simple tools, part 2: the linear model
 Date: 2022-07-20
 Category: basics
 Tags: 
-Slug: basics
+Slug: linear model
 Authors: Kayla Lewis
 Summary: I describe the linear model for decision making
 

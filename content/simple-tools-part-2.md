@@ -34,3 +34,5 @@ and the model says to buy the first home, $H_1$, because it scores higher.
 What if you find yourself not liking that result? Then you can try to figure out why your feelings and the model disagree. Maybe those weights weren't quite right? Maybe the attributes you chose weren't the most important ones to you after all? And if, no matter what you do, you keep finding yourself unhappy when $H_1$ wins, then the model helped you discover how you feel, and you still learned something significant. (Remember, you were on the fence at first!) 
 
 The next model I present will complement this one.
+
+[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

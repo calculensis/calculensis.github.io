@@ -26,4 +26,4 @@ A middle approach is to do something that improves on our native mental abilitie
 
 In the next few posts I'll share some of these models with you!
 
-
+[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

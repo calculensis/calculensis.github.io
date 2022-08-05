@@ -26,4 +26,6 @@ That's how it works! Here is a scale with suggested degrees of belief attached:
 
 <img src="images/probability-scale.png" width="400"/>
 
+[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)
+
 

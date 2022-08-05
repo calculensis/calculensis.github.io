@@ -6,7 +6,7 @@ Slug: simple tools
 Authors: Kayla Lewis
 Summary: Part of a series on simple tools
 
-<img align=right src="images/linear.jpg" width="200" height="160" />
+<img align=right src="images/linear.jpg" width="200"/>
 
 It seems like there are two extreme intuitions that are commonly held about how best to go about decision making: The first is to say "The hell with models - I can do just fine by myself!" and the second is "Sure I can use some help, and the more sophisticated the better! And by sophisticated, I mean AI." 
 
@@ -25,8 +25,5 @@ Another important consideration is that decisions often seem to involve a lot of
 A middle approach is to do something that improves on our native mental abilities but that doesn't involve computation - in other words, pencil-and-paper modeling.
 
 In the next few posts I'll share some of these models with you!
-
-[Previous article](https://www.thedecisionblog.com/decisions%20and%20the%20search-inference%20framework.html)
-[Next article](https://www.thedecisionblog.com/simple%20tools.html)
 
 
