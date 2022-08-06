@@ -10,13 +10,13 @@ Summary: I describe how to use decision trees
 
 Now that we know, from [the previous post](https://www.thedecisionblog.com/probability%20and%20degrees%20of%20belief.html), how to translate back and forth between our degrees of confidence and subjective probabilities, we can learn a new tool that, unlike the [linear model](https://www.thedecisionblog.com/linear%20model.html) or the [weighted pro-con list](https://www.thedecisionblog.com/pro-con%20list.html), takes into account the uncertainty of the outcomes of our actions.
 
-Before continuing, it's important to say that we'll often be considering simple versions of our models, because it's easier to explain how to use them if I keep it simple. But once you know how to use them, you can add sophistication in all sorts of ways. For example, the three factor linear model can have more than three factors; the tree we're about to describe can get very complicated indeed if that's what it takes to faithfully describe the situation that you're in!
+Before continuing, it's important to say that we'll often be considering simple versions of our models, because it's easier to explain how to use them if we keep it simple. But once you know how to use them, you can add sophistication in all sorts of ways. For example, the three factor linear model can have more than three factors; the tree we're about to describe can get very complicated indeed if that's what it takes to faithfully describe the situation that you're in!
 
 Now, then, say we're trying to consider whether to read that new book everyone is talking about. After all, reading it has an opportunity cost: Time you spend reading it is time that you could have spent doing something else, something perhaps more valuable to you. 
 
 The decision tree for whether to read the book is shown below; here is how it's constructed: The square on the left hand side is called a "choice point"; the branches leading from it (sometimes called "levers") are the different things you could choose to do. In this example there are two branches, "read it" and "don't read it", but in general there could be any number of branches depending on how many options you're considering.
 
-<img src="images/read-or-not.png" width="250"/>
+<img src="images/read-or-not.png" width="300"/>
 
 The circles represent points past which things are not under your control anymore: If you read the book, then you will either have learned something valuable or not (according to this model, though see below), each with a certain probability. Suppose you suspect that the book contains something valuable that you don't already know, maybe because a friend recommended it to you. 
 
