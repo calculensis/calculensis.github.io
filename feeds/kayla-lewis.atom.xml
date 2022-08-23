@@ -16,7 +16,6 @@
 &lt;p&gt;Here are the plans I offer&lt;sup id="fnref:1"&gt;&lt;a class="footnote-ref" href="#fn:1"&gt;1&lt;/a&gt;&lt;/sup&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Individual plan&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;You retain me as a personal advisor and we continue to meet virtually 1-4 times a month for an hour each visit. During these sessions I will act as a guide through your decision making process. My rate is $250 per hour.&lt;/p&gt;
-&lt;p&gt;Where applicable and, if desired, we will introduce machine learning at key points in the plan that unfolds and determine what data would be needed to inform those steps. Depending on whether the data in question already exists or whether it would need to be collected, I would run these analyses for you by some later agreed upon date; the cost will depend on the details, but you can expect something in the range of &lt;span class="math"&gt;\(500-\)&lt;/span&gt;1000 for each analysis the first time and about half as much to rerun the analyses subsequently if needed.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Organizational plan&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;To the extent that you feel comfortable with it, in addition to collecting relevant information from yourself during the initial consultation, I will contact up to 15 other important stakeholders and collect detailed information from them concerning the problematic situation. &lt;/p&gt;
 &lt;p&gt;After considering carefully these details, I will touch base with you again; we will construct an intervention strategy together. I will direct this intervention remotely with you and the other stakeholders. These sessions will typically last 2-3 hours each and occur over 2-3 days, depending on what approaches are needed.&lt;/p&gt;
@@ -33,69 +32,7 @@
 &lt;p&gt;If you lack funds and if your cause is worthy, I may take it on pro bono, time permitting.&amp;#160;&lt;a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;/div&gt;
-&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
-    var align = "center",
-        indent = "0em",
-        linebreak = "false";
-
-    if (false) {
-        align = (screen.width &lt; 768) ? "left" : align;
-        indent = (screen.width &lt; 768) ? "0em" : indent;
-        linebreak = (screen.width &lt; 768) ? 'true' : linebreak;
-    }
-
-    var mathjaxscript = document.createElement('script');
-    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
-    mathjaxscript.type = 'text/javascript';
-    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
-
-    var configscript = document.createElement('script');
-    configscript.type = 'text/x-mathjax-config';
-    configscript[(window.opera ? "innerHTML" : "text")] =
-        "MathJax.Hub.Config({" +
-        "    config: ['MMLorHTML.js']," +
-        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
-        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
-        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
-        "    displayAlign: '"+ align +"'," +
-        "    displayIndent: '"+ indent +"'," +
-        "    showMathMenu: true," +
-        "    messageStyle: 'normal'," +
-        "    tex2jax: { " +
-        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
-        "        displayMath: [ ['$$','$$'] ]," +
-        "        processEscapes: true," +
-        "        preview: 'TeX'," +
-        "    }, " +
-        "    'HTML-CSS': { " +
-        "        availableFonts: ['STIX', 'TeX']," +
-        "        preferredFont: 'STIX'," +
-        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
-        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
-        "    }, " +
-        "}); " +
-        "if ('default' !== 'default') {" +
-            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
-                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
-                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
-                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
-                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
-                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
-            "});" +
-            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
-                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
-                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
-                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
-                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
-                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
-            "});" +
-        "}";
-
-    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
-    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
-}
-&lt;/script&gt;</content><category term="hire me"></category><category term="hire"></category></entry><entry><title>the viable system model</title><link href="https://www.thedecisionblog.com/the%20viable%20system%20model.html" rel="alternate"></link><published>2022-08-22T00:00:00-04:00</published><updated>2022-08-22T00:00:00-04:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2022-08-22:/the viable system model.html</id><summary type="html">&lt;p&gt;the viable system model has much to offer in situations of organizational complexity&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/jellyfish.jpg" width="180"/&gt;&lt;/p&gt;
+&lt;/div&gt;</content><category term="hire me"></category><category term="hire"></category></entry><entry><title>the viable system model</title><link href="https://www.thedecisionblog.com/the%20viable%20system%20model.html" rel="alternate"></link><published>2022-08-22T00:00:00-04:00</published><updated>2022-08-22T00:00:00-04:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2022-08-22:/the viable system model.html</id><summary type="html">&lt;p&gt;the viable system model has much to offer in situations of organizational complexity&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/jellyfish.jpg" width="180"/&gt;&lt;/p&gt;
 &lt;p&gt;Following the &lt;a href="https://www.thedecisionblog.com/seven%20paradigms%20of%20systems%20thinking.html"&gt;organismal perspective&lt;/a&gt;, think for a moment about what kinds of modules you would need, from a neurological perspective, in order to create a living, purposeful, organism that could survive in a turbulent environment&lt;sup id="fnref:1"&gt;&lt;a class="footnote-ref" href="#fn:1"&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
 &lt;p&gt;(1) There would need to be a set of interfaces through which the organism could sense and interact with its environment on a basic level.&lt;/p&gt;
 &lt;p&gt;(2) These interfaces would need to be coordinated with one another.&lt;/p&gt;
