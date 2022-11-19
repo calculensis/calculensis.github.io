@@ -48,6 +48,7 @@
 <p>For that we can ask SQL to output a new column called "Sales Category", which will say "Low Seller" if less than 2 (of whatever units are being used) were sold "Medium Seller" if between 2 and 4 were sold, and "High Seller" if more than 4 were sold.</p>
 <p>That's going to require a case command and is complicated enough to write an sql script in a separate file. So we can fire up vim (or emacs) and type this in (saved afterward as salesQuery.sql):</p>
 <p><img src="images/gameSalesScript.png" width="300"/></p>
+<p>The "where" clause near the bottom says to only display rows containing high seller data, and the "order by" clause says to order the output from lowest to highest sales.</p>
 <p>To run this script in sql, we can do a "cat" from the bash shell and pipe the output into sqlite3 like so:</p>
 <p><img src="images/gamesSalesScriptOutput.png" width="300"/></p>
 <p>We can see from the output that games from the categories of Action, Action-Adventure, and Shooters sold the best. So if we want to know what kinds of games we could count on most to bring reliable cash flow, this simple analysis suggests that it would be these, at least in North America.</p>
