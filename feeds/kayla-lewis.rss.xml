@@ -4,7 +4,7 @@
 &lt;p&gt;&lt;img src="images/loadingGameSales.png" width="300"/&gt;&lt;/p&gt;
 &lt;p&gt;The ".mode csv" command tells SQL that we want to read a csv file; ".headers on" says that, when the table info is displayed, we want to see the column labels; the last command imports the file as a table called gameSales.Then to get a first look at the data we can do this:&lt;/p&gt;
 &lt;p&gt;&lt;img src="images/firstLookGameSales.png" width="300"/&gt;&lt;/p&gt;
-&lt;p&gt;The "select *" part tells SQL to extract data from all of the columns, but the "limit 5" part tells sql to show only the first 5 rows. We can see that there's data on the game title, year, genre, and publisher as well as how much was sold in different parts of the world.&lt;/p&gt;
+&lt;p&gt;The "select *" part tells SQL to extract data from all of the columns, but the "limit 5" part tells SQL to show only the first 5 rows. We can see that there's data on the game title, year, genre, and publisher as well as how much was sold in different parts of the world.&lt;/p&gt;
 &lt;p&gt;If we only wanted to see, e.g., the Game, Genre, and "North America" columns, we would have typed "select Game, Genre, "North America" from gameSales", etc. Now suppose we want to see which games sold best in North America.&lt;/p&gt;
 &lt;p&gt;For that we can ask SQL to output a new column called "Sales Category", which will say "Low Seller" if less than 2 (of whatever units are being used) were sold "Medium Seller" if between 2 and 4 were sold, and "High Seller" if more than 4 were sold.&lt;/p&gt;
 &lt;p&gt;That's going to require a case command and is complicated enough to write an sql script in a separate file. So we can fire up vim (or emacs) and type this in (saved afterward as salesQuery.sql):&lt;/p&gt;
