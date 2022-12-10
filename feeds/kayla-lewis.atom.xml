@@ -9,7 +9,7 @@ $$&lt;/div&gt;
 and the probability that the review is negative (-) is given by
 &lt;/p&gt;
 &lt;div class="math"&gt;$$
-   P(P|-) = \frac{P(R|-)P(-)}{P(R)}.
+   P(-|P) = \frac{P(R|-)P(-)}{P(R)}.
 $$&lt;/div&gt;
 &lt;p&gt;
 One way of avoiding having to calculate &lt;span class="math"&gt;\(P(R)\)&lt;/span&gt; is to consider the ratio 
@@ -25,8 +25,8 @@ If we make the reasonable assumption that &lt;span class="math"&gt;\(P(-)=P(+)\)
 $$&lt;/div&gt;
 &lt;p&gt;
 and the problem has been reduced to deciding which label, positive or negative, makes the data (i.e., the reviews) more likely. &lt;/p&gt;
-&lt;p&gt;One simple yet useful way to encode a review in a way that we can probabilistically model it is to think of it as a "bag of words" where each word either appears in a given review or doesn't; generating a reiew then amounts to drawing words at random from the bag of words; such a process is captured well by a multinomial distribution: We assume that there are two multinomial distributions, one that gives rise to positive reviews and another that gives rise to negative ones; these reviews will have different parameters. The naive part of naive Bayes' comes in making simplistic assumptions about these parameters. The strength of the approach is that it's fast and that it often works well if the data for each label are well-separated in feature space, which they tend to be if the dimensionality of this space is large.&lt;/p&gt;
-&lt;p&gt;Below, we analyze a large number of labeled amazon reviews and then see if we can predict correctly the labels for a testing set. We clean the data, fit a naive Bayes multinomial model to it, and then have a look at the accuracy score and confusion matrix for the test data. (We've already run the analysis once, so some of the necessary files already exist; hence the messages.)&lt;/p&gt;
+&lt;p&gt;One simple yet useful way to encode a review in a way that we can probabilistically model it is to think of it as a "bag of words" where each word either appears in a given review or doesn't; generating a review then amounts to drawing words at random from the bag of words; such a process is captured well by a multinomial distribution: We assume that there are two multinomial distributions, one that gives rise to positive reviews and another that gives rise to negative ones; these reviews will have different parameters. The naive part of naive Bayes comes in making simplistic assumptions about these parameters. The strength of the approach is that it's fast and that it often works well if the data for each label are well-separated in feature space, which they tend to be if the dimensionality of the space is large. (And it is for the bag of words review representation.)&lt;/p&gt;
+&lt;p&gt;Below, we analyze a large number of labeled amazon reviews and then see if we can predict correctly the labels for a testing set. We clean the data, fit a naive multinomial Bayes model to it, and then have a look at the accuracy score and confusion matrix for the test data. (We've run the analysis before, so some of the necessary files already exist; hence the messages.)&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="n"&gt;clean_data&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
