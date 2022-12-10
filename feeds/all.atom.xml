@@ -1,5 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>the decision blog</title><link href="https://www.thedecisionblog.com/" rel="alternate"></link><link href="https://www.thedecisionblog.com/feeds/all.atom.xml" rel="self"></link><id>https://www.thedecisionblog.com/</id><updated>2022-12-04T00:00:00-05:00</updated><entry><title>topic analysis and decision making</title><link href="https://www.thedecisionblog.com/topic%20analysis%20and%20decision%20making.html" rel="alternate"></link><published>2022-12-04T00:00:00-05:00</published><updated>2022-12-04T00:00:00-05:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2022-12-04:/topic analysis and decision making.html</id><summary type="html">&lt;p&gt;an example applying topic analysis to decision making&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/topic-areas-as-bags.jpg" width="180"/&gt;&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>the decision blog</title><link href="https://www.thedecisionblog.com/" rel="alternate"></link><link href="https://www.thedecisionblog.com/feeds/all.atom.xml" rel="self"></link><id>https://www.thedecisionblog.com/</id><updated>2022-12-09T00:00:00-05:00</updated><entry><title>sentiment analysis using naive Bayes</title><link href="https://www.thedecisionblog.com/sentiment%20analysis%20using%20naive%20Bayes.html" rel="alternate"></link><published>2022-12-09T00:00:00-05:00</published><updated>2022-12-09T00:00:00-05:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2022-12-09:/sentiment analysis using naive Bayes.html</id><summary type="html">&lt;p&gt;we can use a simple baseline model for predicting review sentiment that does surprisingly well&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/review.jpg" width=200/&gt;&lt;/p&gt;
+&lt;p&gt;Suppose we want to predict whether the sentiment of an unlabeled customer review is positive or negative, based on some reviews that have already been labeled as positive or negative. One computationally fast way of doing this is to use naive Bayes classification. From Bayes' theorem the probability that a review is positive (+) based on a review (R) is
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+   P(+|R) = \frac{P(R|+)P(+)}{P(R)}
+$$&lt;/div&gt;
+&lt;p&gt;
+and the probability that the review is negative (-) is given by
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+   P(P|-) = \frac{P(R|-)P(-)}{P(R)}.
+$$&lt;/div&gt;
+&lt;p&gt;
+One way of avoiding having to calculate &lt;span class="math"&gt;\(P(R)\)&lt;/span&gt; is to consider the ratio 
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+   \frac{P(+|R)}{P(-|R)}=\frac{P(R|+)P(+)}{P(R|-)P(-)}.
+$$&lt;/div&gt;
+&lt;p&gt;
+If we make the reasonable assumption that &lt;span class="math"&gt;\(P(-)=P(+)\)&lt;/span&gt; prior to having any evidence one way or the other, we have
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+   \frac{P(+|R)}{P(-|R)}=\frac{P(R|+)}{P(R|-)},
+$$&lt;/div&gt;
+&lt;p&gt;
+and the problem has been reduced to deciding which label, positive or negative, makes the data (i.e., the reviews) more likely. &lt;/p&gt;
+&lt;p&gt;One simple yet useful way to encode a review in a way that we can probabilistically model it is to think of it as a "bag of words" where each word either appears in a given review or doesn't; generating a reiew then amounts to drawing words at random from the bag of words; such a process is captured well by a multinomial distribution: We assume that there are two multinomial distributions, one that gives rise to positive reviews and another that gives rise to negative ones; these reviews will have different parameters. The naive part of naive Bayes' comes in making simplistic assumptions about these parameters. The strength of the approach is that it's fast and that it often works well if the data for each label are well-separated in feature space, which they tend to be if the dimensionality of this space is large.&lt;/p&gt;
+&lt;p&gt;Below, we analyze a large number of labeled amazon reviews and then see if we can predict correctly the labels for a testing set. We clean the data, fit a naive Bayes multinomial model to it, and then have a look at the accuracy score and confusion matrix for the test data.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="n"&gt;clean_data&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;train.ft.txt.bz2 already exists
+
+
+bunzip2: Output file train.ft.txt already exists.
+bunzip2: Output file test.ft.txt already exists.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="n"&gt;nb_amazon&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;home&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;kayla&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;anaconda3&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;lib&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;python3&lt;/span&gt;.&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;site&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;packages&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;sklearn&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;utils&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;validation&lt;/span&gt;.&lt;span class="nv"&gt;py&lt;/span&gt;:&lt;span class="mi"&gt;993&lt;/span&gt;: &lt;span class="nv"&gt;DataConversionWarning&lt;/span&gt;: &lt;span class="nv"&gt;A&lt;/span&gt; &lt;span class="nv"&gt;column&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;vector&lt;/span&gt; &lt;span class="nv"&gt;y&lt;/span&gt; &lt;span class="nv"&gt;was&lt;/span&gt; &lt;span class="nv"&gt;passed&lt;/span&gt; &lt;span class="nv"&gt;when&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="nv"&gt;d&lt;/span&gt; &lt;span class="nv"&gt;array&lt;/span&gt; &lt;span class="nv"&gt;was&lt;/span&gt; &lt;span class="nv"&gt;expected&lt;/span&gt;. &lt;span class="nv"&gt;Please&lt;/span&gt; &lt;span class="nv"&gt;change&lt;/span&gt; &lt;span class="nv"&gt;the&lt;/span&gt; &lt;span class="nv"&gt;shape&lt;/span&gt; &lt;span class="nv"&gt;of&lt;/span&gt; &lt;span class="nv"&gt;y&lt;/span&gt; &lt;span class="nv"&gt;to&lt;/span&gt; &lt;span class="ss"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;n_samples&lt;/span&gt;, &lt;span class="ss"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nv"&gt;example&lt;/span&gt; &lt;span class="nv"&gt;using&lt;/span&gt; &lt;span class="nv"&gt;ravel&lt;/span&gt;&lt;span class="ss"&gt;()&lt;/span&gt;.
+  &lt;span class="nv"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nv"&gt;column_or_1d&lt;/span&gt;&lt;span class="ss"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;y&lt;/span&gt;, &lt;span class="nv"&gt;warn&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;True&lt;/span&gt;&lt;span class="ss"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="n"&gt;check_results&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;accuracy score:  0.8417149791020628
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img alt="png" src="./images/output_3_1.png"&gt;&lt;/p&gt;
+&lt;p&gt;We see that with a simple model we are able to predict the out-of-sample data with 84% accuracy; the confusion matrix tells us that the mode confuses good (positive) and bad (negative) reviews with one another with about equal frequency. We can use the performance of naive Bayes classifiers as a baseline against which to compare more sophisticated models if we desire higher accuracy.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width &lt; 768) ? "left" : align;
+        indent = (screen.width &lt; 768) ? "0em" : indent;
+        linebreak = (screen.width &lt; 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</content><category term="machine learning"></category><category term="naive Bayes"></category></entry><entry><title>topic analysis and decision making</title><link href="https://www.thedecisionblog.com/topic%20analysis%20and%20decision%20making.html" rel="alternate"></link><published>2022-12-04T00:00:00-05:00</published><updated>2022-12-04T00:00:00-05:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2022-12-04:/topic analysis and decision making.html</id><summary type="html">&lt;p&gt;an example applying topic analysis to decision making&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/topic-areas-as-bags.jpg" width="180"/&gt;&lt;/p&gt;
 &lt;p&gt;Topic analysis or Latent Dirichlet Allocation (LDA) breaks a collection of documents (such as tweets) up into topic areas and calculates probabilities for words to appear both overall and within specific areas. It can thus give a picture of what sorts of things are being written about as well as which words tend to be used together to talk about each thing; this knowledge can be useful for decision making.&lt;/p&gt;
 &lt;p&gt;For example, suppose I would like to maintain a certain balance between areas that I tweet about. LDA might reveal that I hardly ever talk about something I thought I tweeted about often, and as a result I might decide to tweet about that topic more often. It could also reveal patterns in the ways I'm using words to discuss those topics. For example, maybe I use language that's too informal to talk about things on which I'd like to confer a bit more gravitas.&lt;/p&gt;
 &lt;p&gt;The analysis shown below is based off 3,000 of my tweets; they have been broken up into 10 topic areas. I've selected the one that most closely cooresponds to "things having to do with Effective Altruism (EA)". We see words like "causes" and "huel" (a meal-replacement drink) showing up, but not words from another of my topic areas, "systems thinking." And realizing this, I might decide to try mixing these areas more when I talk about them if, e.g., I think that systems thinking might benefit EA causes.&lt;/p&gt;
