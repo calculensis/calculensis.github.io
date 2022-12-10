@@ -51,7 +51,7 @@ bunzip2: Output file test.ft.txt already exists.
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img alt="png" src="./images/output_3_1.png"&gt;&lt;/p&gt;
-&lt;p&gt;We see that with a simple model we are able to predict the out-of-sample data with 84% accuracy; the confusion matrix tells us that the mode confuses good (positive) and bad (negative) reviews with one another with about equal frequency. We can use the performance of naive Bayes classifiers as a baseline against which to compare more sophisticated models if we desire higher accuracy.&lt;/p&gt;
+&lt;p&gt;We see that with a simple model we are able to predict the out-of-sample data with 84% accuracy; the confusion matrix tells us that the model confuses good (positive) and bad (negative) reviews with one another with about equal frequency. We can use the performance of naive Bayes classifiers as a baseline against which to compare more sophisticated models if we desire higher accuracy.&lt;/p&gt;
 &lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var align = "center",
         indent = "0em",
