@@ -38,7 +38,7 @@
         </header>
 
         <article>
-            <p><img align=right src="images/tornado.jpg" width="200"/></p>
+            <p><img align=right src="images/tornado.jpg" width="150"/></p>
 <p>For this example we look at a set of tornado data from 1950 to 2015, which includes information such as the starting latitude and longitude of spawned tornadoes, injuries, fatalities, property loss, width of the tornado track, length of the track, and magnitude. It seems reasonable to suspect that the magnitude of a tornado would scale with the length and width of the track; in this post we'll use linear regression to investigate this possiblity.</p>
 <p>We start by importing all the necessary libraries and loading the data:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">subprocess</span>
@@ -140,21 +140,53 @@ wid^3      0.241748  0.045091
 </code></pre></div>
 
 <p><img alt="png" src="./images/tornado_lassoCV.png"></p>
-<p>If we repeat the above procedure but using Lasso regression with cross-validation to select the best model, we obtain very similar results, but with
-r2_score:  0.3430101179121594</p>
-<p>In [9]: run tornado_reg.py
-Tornadoes_SPC_1950to2015.csv already exists
-             effect     error
-len        0.633202  0.020664
-wid        0.563539  0.019273
-len^2     -0.628188  0.059054
-len wid   -0.065079  0.024242
-wid^2     -0.528130  0.044173
-len^3      0.290228  0.054535
-len^2 wid  0.052257  0.018931
-len wid^2  0.012198  0.015750
-wid^3      0.229152  0.035042</p>
-<p>r2_score:  0.33594591180944877</p>
+<p>If we repeat the above procedure but using Lasso regression with cross-validation to select the best model, we obtain very similar results, but with <span class="math">\(r^2\approx 0.34\)</span> and the following coefficients:</p>
+<table>
+<thead>
+<tr>
+<th>effect</th>
+<th>error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>len</td>
+<td>0.633202</td>
+</tr>
+<tr>
+<td>wid</td>
+<td>0.563539</td>
+</tr>
+<tr>
+<td>len^2</td>
+<td>-0.628188</td>
+</tr>
+<tr>
+<td>len wid</td>
+<td>-0.065079</td>
+</tr>
+<tr>
+<td>wid^2</td>
+<td>-0.528130</td>
+</tr>
+<tr>
+<td>len^3</td>
+<td>0.290228</td>
+</tr>
+<tr>
+<td>len^2 wid</td>
+<td>0.052257</td>
+</tr>
+<tr>
+<td>len wid^2</td>
+<td>0.012198</td>
+</tr>
+<tr>
+<td>wid^3</td>
+<td>0.229152</td>
+</tr>
+</tbody>
+</table>
 <p>So we aren't seeing any improvement in this case using the more sophisticated method; it's normal for this to sometimes occur.</p>
 <p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
 <script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {

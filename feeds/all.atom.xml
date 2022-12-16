@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>the decision blog</title><link href="https://www.thedecisionblog.com/" rel="alternate"></link><link href="https://www.thedecisionblog.com/feeds/all.atom.xml" rel="self"></link><id>https://www.thedecisionblog.com/</id><updated>2022-12-16T00:00:00-05:00</updated><entry><title>using lasso regression to study tornado magnitudes</title><link href="https://www.thedecisionblog.com/using%20lasso%20regression%20to%20study%20tornado%20magnitudes.html" rel="alternate"></link><published>2022-12-16T00:00:00-05:00</published><updated>2022-12-16T00:00:00-05:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2022-12-16:/using lasso regression to study tornado magnitudes.html</id><summary type="html">&lt;p&gt;we use lasso regression with cross validation to look at how tornado magnitude depends on the length and width of its track&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/tornado.jpg" width="200"/&gt;&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>the decision blog</title><link href="https://www.thedecisionblog.com/" rel="alternate"></link><link href="https://www.thedecisionblog.com/feeds/all.atom.xml" rel="self"></link><id>https://www.thedecisionblog.com/</id><updated>2022-12-16T00:00:00-05:00</updated><entry><title>using lasso regression to study tornado magnitudes</title><link href="https://www.thedecisionblog.com/using%20lasso%20regression%20to%20study%20tornado%20magnitudes.html" rel="alternate"></link><published>2022-12-16T00:00:00-05:00</published><updated>2022-12-16T00:00:00-05:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2022-12-16:/using lasso regression to study tornado magnitudes.html</id><summary type="html">&lt;p&gt;we use lasso regression with cross validation to look at how tornado magnitude depends on the length and width of its track&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/tornado.jpg" width="150"/&gt;&lt;/p&gt;
 &lt;p&gt;For this example we look at a set of tornado data from 1950 to 2015, which includes information such as the starting latitude and longitude of spawned tornadoes, injuries, fatalities, property loss, width of the tornado track, length of the track, and magnitude. It seems reasonable to suspect that the magnitude of a tornado would scale with the length and width of the track; in this post we'll use linear regression to investigate this possiblity.&lt;/p&gt;
 &lt;p&gt;We start by importing all the necessary libraries and loading the data:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;subprocess&lt;/span&gt;
@@ -101,21 +101,53 @@ wid^3      0.241748  0.045091
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img alt="png" src="./images/tornado_lassoCV.png"&gt;&lt;/p&gt;
-&lt;p&gt;If we repeat the above procedure but using Lasso regression with cross-validation to select the best model, we obtain very similar results, but with
-r2_score:  0.3430101179121594&lt;/p&gt;
-&lt;p&gt;In [9]: run tornado_reg.py
-Tornadoes_SPC_1950to2015.csv already exists
-             effect     error
-len        0.633202  0.020664
-wid        0.563539  0.019273
-len^2     -0.628188  0.059054
-len wid   -0.065079  0.024242
-wid^2     -0.528130  0.044173
-len^3      0.290228  0.054535
-len^2 wid  0.052257  0.018931
-len wid^2  0.012198  0.015750
-wid^3      0.229152  0.035042&lt;/p&gt;
-&lt;p&gt;r2_score:  0.33594591180944877&lt;/p&gt;
+&lt;p&gt;If we repeat the above procedure but using Lasso regression with cross-validation to select the best model, we obtain very similar results, but with &lt;span class="math"&gt;\(r^2\approx 0.34\)&lt;/span&gt; and the following coefficients:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;effect&lt;/th&gt;
+&lt;th&gt;error&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;len&lt;/td&gt;
+&lt;td&gt;0.633202&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;wid&lt;/td&gt;
+&lt;td&gt;0.563539&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;len^2&lt;/td&gt;
+&lt;td&gt;-0.628188&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;len wid&lt;/td&gt;
+&lt;td&gt;-0.065079&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;wid^2&lt;/td&gt;
+&lt;td&gt;-0.528130&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;len^3&lt;/td&gt;
+&lt;td&gt;0.290228&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;len^2 wid&lt;/td&gt;
+&lt;td&gt;0.052257&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;len wid^2&lt;/td&gt;
+&lt;td&gt;0.012198&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;wid^3&lt;/td&gt;
+&lt;td&gt;0.229152&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;p&gt;So we aren't seeing any improvement in this case using the more sophisticated method; it's normal for this to sometimes occur.&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;amp;t=YFPoxpEQ2Qp14U4FliD7fA"&gt;Discuss on Twitter&lt;/a&gt;&lt;/p&gt;
 &lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
