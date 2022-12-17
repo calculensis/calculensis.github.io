@@ -140,54 +140,7 @@ wid^3      0.241748  0.045091
 </code></pre></div>
 
 <p><img alt="png" src="./images/tornado_lassoCV.png"></p>
-<p>If we repeat the above procedure but using Lasso regression with cross-validation to select the best model, we obtain very similar results, but with <span class="math">\(r^2\approx 0.34\)</span> and the following coefficients:</p>
-<table>
-<thead>
-<tr>
-<th>effect</th>
-<th>error</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>len</td>
-<td>0.633202</td>
-</tr>
-<tr>
-<td>wid</td>
-<td>0.563539</td>
-</tr>
-<tr>
-<td>len^2</td>
-<td>-0.628188</td>
-</tr>
-<tr>
-<td>len wid</td>
-<td>-0.065079</td>
-</tr>
-<tr>
-<td>wid^2</td>
-<td>-0.528130</td>
-</tr>
-<tr>
-<td>len^3</td>
-<td>0.290228</td>
-</tr>
-<tr>
-<td>len^2 wid</td>
-<td>0.052257</td>
-</tr>
-<tr>
-<td>len wid^2</td>
-<td>0.012198</td>
-</tr>
-<tr>
-<td>wid^3</td>
-<td>0.229152</td>
-</tr>
-</tbody>
-</table>
-<p>So we aren't seeing any improvement in this case using the more sophisticated method; it's normal for this to sometimes occur.</p>
+<p>If we repeat the above procedure but using Lasso regression with cross-validation to select the best model, we obtain very similar results (for example there's no reduction in the number of coefficients), but with <span class="math">\(r^2\approx 0.34\)</span>. So, as happens sometimes, we aren't seeing any improvement using the more sophisticated method.</p>
 <p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
 <script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var align = "center",
