@@ -101,7 +101,7 @@ wid^3      0.241748  0.045091
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img alt="png" src="./images/tornado_lassoCV.png"&gt;&lt;/p&gt;
-&lt;p&gt;If we repeat the above procedure but using Lasso regression with cross-validation to select the best model, we obtain very similar results (for example there's no reduction in the number of coefficients), but with &lt;span class="math"&gt;\(r^2\approx 0.34\)&lt;/span&gt;. So, as happens sometimes, we aren't seeing any improvement using the more sophisticated method.&lt;/p&gt;
+&lt;p&gt;If we repeat the above procedure but using Lasso regression with cross-validation to select the best model, we obtain very similar results (for example there's no reduction in the number of coefficients), and again with &lt;span class="math"&gt;\(r^2\approx 0.34\)&lt;/span&gt;. So, as happens sometimes, we aren't seeing any improvement using the more sophisticated method.&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;amp;t=YFPoxpEQ2Qp14U4FliD7fA"&gt;Discuss on Twitter&lt;/a&gt;&lt;/p&gt;
 &lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var align = "center",
