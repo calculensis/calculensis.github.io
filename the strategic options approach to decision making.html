@@ -41,28 +41,19 @@
             <p><img align=right src="images/branching_paths.jpg" width="180"/></p>
 <p>Let's say that you have a bunch of interrelated decisions to make and that, after consideration, you're able to narrow down the choices you need to make into three areas (these areas are pretty me-centric, but the numbers/interrelationships are going to be mostly made up just as an example): whether to work remotely or in-person, whether to move to Europe or stay in the US, and whether to obtain a position as a decision scientist, a more generic data scientist, or as an AI alignment researcher. We can write some graphviz code to picture the situation as shown below, where a line connecting two choices will mean that those choices are incompatible for whatever reason (for example, suppose you're only willing to work in-person if it's in Europe):</p>
 <div class="highlight"><pre><span></span><code>graph G {
-
   rankdir = &quot;LR&quot;
   node [ style = filled, fillcolor = coral, shape = record, margin = 0, penwidth = 2, fontsize=50 ]
 
   a [label=&quot;area 1 | &lt;a1&gt; remote | &lt;a2&gt; in-person&quot;, fillcolor=cadetblue1 ]
-
   b [label=&quot;area 2 | &lt;b1&gt; decision sci | &lt;b2&gt; data sci | &lt;b3&gt; alignment&quot;, fillcolor=darkorange2 ]
-
   c [label=&quot;area 3 | &lt;c1&gt; europe | &lt;c2&gt; usa&quot;, fillcolor= limegreen ]
 
   edge [ penwidth = 5, color = black ]
-
   a:&lt;a1&gt; -- b:&lt;b3&gt;
-
   edge [ color = crimson ]
-
   a:&lt;a1&gt; -- b:&lt;b1&gt;
-
   edge [ color = blue  ]
-
   a:&lt;a2&gt; -- c:&lt;c2&gt;
-
 }
 </code></pre></div>
 

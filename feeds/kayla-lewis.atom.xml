@@ -379,28 +379,19 @@ Text(109.44999999999997, 0.5, &amp;#39;predicted label&amp;#39;)
 &lt;p&gt;We've gone up to 86% accuracy and now misclassify 400 poisonous mushrooms as edible. If we keep adding attributes then the accuracy increases, but of course that also means we have more work to do in describing the mushroom we've found.&lt;/p&gt;</content><category term="machine learning"></category><category term="vector support machines"></category></entry><entry><title>the strategic options approach to decision making</title><link href="https://www.thedecisionblog.com/the%20strategic%20options%20approach%20to%20decision%20making.html" rel="alternate"></link><published>2022-12-18T00:00:00-05:00</published><updated>2022-12-18T00:00:00-05:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2022-12-18:/the strategic options approach to decision making.html</id><summary type="html">&lt;p&gt;the strategic options approach can be used to map out combinations of viable decisions and evaluate them under conditions of uncertainty&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/branching_paths.jpg" width="180"/&gt;&lt;/p&gt;
 &lt;p&gt;Let's say that you have a bunch of interrelated decisions to make and that, after consideration, you're able to narrow down the choices you need to make into three areas (these areas are pretty me-centric, but the numbers/interrelationships are going to be mostly made up just as an example): whether to work remotely or in-person, whether to move to Europe or stay in the US, and whether to obtain a position as a decision scientist, a more generic data scientist, or as an AI alignment researcher. We can write some graphviz code to picture the situation as shown below, where a line connecting two choices will mean that those choices are incompatible for whatever reason (for example, suppose you're only willing to work in-person if it's in Europe):&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;graph G {
-
   rankdir = &amp;quot;LR&amp;quot;
   node [ style = filled, fillcolor = coral, shape = record, margin = 0, penwidth = 2, fontsize=50 ]
 
   a [label=&amp;quot;area 1 | &amp;lt;a1&amp;gt; remote | &amp;lt;a2&amp;gt; in-person&amp;quot;, fillcolor=cadetblue1 ]
-
   b [label=&amp;quot;area 2 | &amp;lt;b1&amp;gt; decision sci | &amp;lt;b2&amp;gt; data sci | &amp;lt;b3&amp;gt; alignment&amp;quot;, fillcolor=darkorange2 ]
-
   c [label=&amp;quot;area 3 | &amp;lt;c1&amp;gt; europe | &amp;lt;c2&amp;gt; usa&amp;quot;, fillcolor= limegreen ]
 
   edge [ penwidth = 5, color = black ]
-
   a:&amp;lt;a1&amp;gt; -- b:&amp;lt;b3&amp;gt;
-
   edge [ color = crimson ]
-
   a:&amp;lt;a1&amp;gt; -- b:&amp;lt;b1&amp;gt;
-
   edge [ color = blue  ]
-
   a:&amp;lt;a2&amp;gt; -- c:&amp;lt;c2&amp;gt;
-
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
