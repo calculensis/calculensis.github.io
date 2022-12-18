@@ -39,7 +39,7 @@
 
         <article>
             <p><img align=right src="images/mushrooms.jpg" width=200/></p>
-<p>Suppose we'd like to make a vector support classifier to help is decide whether a mushroom might be edible. Disclaimer: I personally don't eat mushrooms that I find in the forest and, if I did, I definitely wouldn't use a machine learning algorithm alone to help me decide which ones to eat!! Now that's out of the way, let's see how well we can do.</p>
+<p>Suppose we'd like to make a vector support classifier to help us decide whether a mushroom might be edible. Disclaimer: I personally don't eat mushrooms that I find in the forest and, if I did, I definitely wouldn't use a machine learning algorithm alone to decide which ones to eat!! Now that's out of the way, let's see how well we can do.</p>
 <p>After extracting the data, we have a look at it:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="n">mushrooms</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;mushrooms.csv&#39;</span><span class="p">)</span>
@@ -394,7 +394,7 @@ Text(109.44999999999997, 0.5, &#39;predicted label&#39;)
 </code></pre></div>
 
 <p><img alt="png" src="./images/mushroom_less_accurate.png"></p>
-<p>We are only able to achieve about 63% accuracy this way, with 730 poisonous mushrooms classified as edible! We can do better by including more mushroom attributes, for example cap-color and gill-color:</p>
+<p>We are only able to achieve about 63% accuracy this way, with 730 poisonous mushrooms classified as edible. We can do better by including more mushroom attributes, for example cap-color and gill-color:</p>
 <div class="highlight"><pre><span></span><code><span class="n">X</span> <span class="o">=</span> <span class="n">mushrooms</span><span class="p">[[</span><span class="s1">&#39;cap-shape&#39;</span><span class="p">,</span><span class="s1">&#39;cap-surface&#39;</span><span class="p">,</span><span class="s1">&#39;cap-color&#39;</span><span class="p">,</span><span class="s1">&#39;gill-color&#39;</span><span class="p">]]</span>
 <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> \
         <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">train_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
