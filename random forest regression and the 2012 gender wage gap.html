@@ -104,7 +104,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">r2_score</span><span class="o">:</span><span class="w">  </span><span class="mf">0.13717441782851203</span><span class="w"></span>
 </code></pre></div>
 
-<p>The model explains 14% of the variation in the test data. We've allowed only trees with a depth of three (on which more in a bit), but allowing increasing this depth to doesn't substantially increase the <span class="math">\(r^2\)</span> score.</p>
+<p>The model explains 14% of the variation in the test data. We've allowed only trees with a depth of three (on which more in a bit), but increasing this depth to doesn't substantially increase the <span class="math">\(r^2\)</span> score.</p>
 <p>The random forest estimator aggregates the predictions from many individual decision trees, but we can extract one of these trees from the model and graph it to better understand what's going on.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">graphviz</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>

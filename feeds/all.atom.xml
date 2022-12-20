@@ -65,7 +65,7 @@
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;r2_score&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="mf"&gt;0.13717441782851203&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;The model explains 14% of the variation in the test data. We've allowed only trees with a depth of three (on which more in a bit), but allowing increasing this depth to doesn't substantially increase the &lt;span class="math"&gt;\(r^2\)&lt;/span&gt; score.&lt;/p&gt;
+&lt;p&gt;The model explains 14% of the variation in the test data. We've allowed only trees with a depth of three (on which more in a bit), but increasing this depth to doesn't substantially increase the &lt;span class="math"&gt;\(r^2\)&lt;/span&gt; score.&lt;/p&gt;
 &lt;p&gt;The random forest estimator aggregates the predictions from many individual decision trees, but we can extract one of these trees from the model and graph it to better understand what's going on.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;graphviz&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;plt&lt;/span&gt;
