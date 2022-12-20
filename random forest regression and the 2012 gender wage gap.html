@@ -190,14 +190,14 @@
 <div class="highlight"><pre><span></span><code><span class="mf">10.000184078328257</span><span class="w"></span>
 </code></pre></div>
 
-<p>Regardless of other attributes, men earn about 10 dollars/hr more than women. As a percentange, women in 2012 were earning about 77% of what men earned:</p>
+<p>Regardless of other attributes, the model predicts that men can be expected to earn about 10 dollars/hr more than women. As a percentange, women would earn about 70% of what men did in 2012:</p>
 <div class="highlight"><pre><span></span><code><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_wom</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_men</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
 </code></pre></div>
 
-<div class="highlight"><pre><span></span><code><span class="mf">76.64376687102698</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="mf">69.5963960073078</span><span class="w"></span>
 </code></pre></div>
 
-<p>These numbers are for a randomly generated population of 1000 men and women. We can also see what the data says directly, for example, about the percentage that women earn compared to men:</p>
+<p>These numbers are predicted for a randomly generated population of 1000 men and women. We can also see what the data says directly, for example, about the percentage that women earn compared to men:</p>
 <div class="highlight"><pre><span></span><code><span class="n">wage_men</span> <span class="o">=</span> <span class="n">pay_gap</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="s1">&#39;hrwage&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">wage_wom</span> <span class="o">=</span> <span class="n">pay_gap</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="s1">&#39;hrwage&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">wage_wom</span><span class="o">/</span><span class="n">wage_men</span><span class="p">)</span>
