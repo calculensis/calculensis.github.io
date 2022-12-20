@@ -160,7 +160,7 @@
 </code></pre></div>
 
 <p><img alt="png" src="./images/wage_gap_tree_left.png"></p>
-<p>Someone with a college degree will on average make about \<span class="math">\(8/hr more than someone who doesn't, according to this tree. We also see that, among those without college degrees, men make about \\\)</span>5/hr more than women. Among those with college degrees, on the right-hand branch, those with more than 12.5 years of potential work experience tend to earn about \$6/hr more. Now let's look at the branches to the right of the root node.</p>
+<p>Someone with a college degree will on average make about <span class="math">\(\\<div class="math">$$8/hr more than someone who doesn't, according to this tree. We also see that, among those without college degrees, men make about $\\$$</div>5/hr more than women. Among those with college degrees, on the right-hand branch, those with more than 12.5 years of potential work experience tend to earn about $\\\)</span>$6/hr more. Now let's look at the branches to the right of the root node.</p>
 <div class="highlight"><pre><span></span><code><span class="n">crop_rectangle</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1110</span><span class="p">,</span><span class="mi">130</span><span class="p">,</span><span class="mi">2235</span><span class="p">,</span><span class="mi">495</span><span class="p">)</span>
 <span class="n">cropped_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">crop_rectangle</span><span class="p">)</span>
 
@@ -172,7 +172,7 @@
 </code></pre></div>
 
 <p><img alt="png" src="./images/wage_gap_tree_right.png"></p>
-<p>Among those with advanced degrees, men on average make about \<span class="math">\(11/hr more than women, and the rest of the data is broken up according to years of potential work experience. With more experience men increase their salaries by about \\\)</span>11/hr, while women can expect an increase of about \$5/hr. We note that this is just one tree in a random forest of 100 estimators, but the overall model shows a similar trend. For example, we can create a data set with 1000 random women and another with 1000 random men and see what the expected wage discrepancy is according to our model:</p>
+<p>Among those with advanced degrees, men on average make about <span class="math">\(\\<div class="math">$$11/hr more than women, and the rest of the data is broken up according to years of potential work experience. With more experience men increase their salaries by about $\\$$</div>11/hr, while women can expect an increase of about $\\\)</span>$5/hr. We note that this is just one tree in a random forest of 100 estimators, but the overall model shows a similar trend. For example, we can create a data set with 1000 random women and another with 1000 random men and see what the expected wage discrepancy is according to our model:</p>
 <div class="highlight"><pre><span></span><code><span class="n">zeros_ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 <span class="n">X_men</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">zeros_ones</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 <span class="n">X_men</span><span class="p">[</span><span class="s1">&#39;female&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -187,7 +187,7 @@
 <div class="highlight"><pre><span></span><code><span class="mf">5.700242374761994</span><span class="w"></span>
 </code></pre></div>
 
-<p>Regardless of other attributes, men earn about \$6/hr more than women. As a percentange, women in 2011 were earning about 77% of what men earned:</p>
+<p>Regardless of other attributes, men earn about <span class="math">\(\\\)</span>$6/hr more than women. As a percentange, women in 2011 were earning about 77% of what men earned:</p>
 <div class="highlight"><pre><span></span><code><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_wom</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_men</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
 </code></pre></div>
 
