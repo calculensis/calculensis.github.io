@@ -35,7 +35,7 @@
 4   60
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;The fields with unobvious meanings are: bpm = beats per minute; nrgy = energy level; dnce = danceability; dB = loudness; live = liveness (with a higher number meaning higher a likelihood of the recording being live); val = valence (with a higher number corresponding to a higher positive mood); dur = duration; acous = acousticness; spch = speechiness (higher means more spoken words); pop = popularity.&lt;/p&gt;
+&lt;p&gt;The fields with unobvious meanings are: bpm = beats per minute; nrgy = energy level; dnce = danceability; dB = loudness; live = liveness (with a higher number meaning a higher likelihood of the recording being live); val = valence (with a higher number corresponding to a more positive mood); dur = duration; acous = acousticness; spch = speechiness (higher means more spoken words); pop = popularity.&lt;/p&gt;
 &lt;p&gt;We extract the numerical fields and see how many principal components we need to explain various percentages of the data.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;plt&lt;/span&gt;
