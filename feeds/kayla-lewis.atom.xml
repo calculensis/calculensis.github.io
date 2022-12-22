@@ -44,7 +44,7 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img alt="png" src="./images/flat_noisy_line.png"&gt;&lt;/p&gt;
-&lt;p&gt;Values of the rotated coordinate x1_rot and x2_rot are (approximately) uncorrelated: increasing x2_rot doesn't tend to do anything particular as x1_rot increases. &lt;/p&gt;
+&lt;p&gt;Values of the rotated coordinate x1_rot and x2_rot are (approximately) uncorrelated: x2_rot doesn't tend to do anything particular as x1_rot increases. &lt;/p&gt;
 &lt;p&gt;One way of gauging how much one column, &lt;span class="math"&gt;\(c\)&lt;/span&gt;, of data is correlated with another, &lt;span class="math"&gt;\(d\)&lt;/span&gt;, is via the covariance matrix, defined as
 &lt;/p&gt;
 &lt;div class="math"&gt;$$
