@@ -87,10 +87,10 @@
 <p>One way of gauging how much one column, <span class="math">\(c\)</span>, of data is correlated with another, <span class="math">\(d\)</span>, is via the covariance matrix, defined as
 </p>
 <div class="math">$$
-\begin{bmatrix}
+\begin{matrix}
     \sum_i\frac{(c_i-\mu_c)^2}{n} &amp; \sum_{ij}\frac{(c_i-\mu_c)(d_j-\mu_d)}{n} \newline
     \sum_{ij}\frac{(c_i-\mu_c)(d_j-\mu_d)}{n} &amp; \sum_i\frac{(d_i-\mu_d)^2}{n}
-\end{bmatrix}
+\end{matrix}
 $$</div>
 <p>
 where <span class="math">\(c_i\)</span> is the <span class="math">\(i\)</span>th value in column <span class="math">\(c\)</span>, <span class="math">\(d_i\)</span> is the <span class="math">\(i\)</span>th value in column <span class="math">\(d\)</span>, and <span class="math">\(\mu\)</span> is the column average. (If we're interested in estimating population values as opposed to just calculating them for the sample at hand, we need to put <span class="math">\(n-1\)</span> instead of <span class="math">\(n\)</span> in the denominators, but that's tangent to our discussion here.)</p>

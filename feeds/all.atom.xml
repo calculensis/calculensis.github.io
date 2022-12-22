@@ -48,10 +48,10 @@
 &lt;p&gt;One way of gauging how much one column, &lt;span class="math"&gt;\(c\)&lt;/span&gt;, of data is correlated with another, &lt;span class="math"&gt;\(d\)&lt;/span&gt;, is via the covariance matrix, defined as
 &lt;/p&gt;
 &lt;div class="math"&gt;$$
-\begin{bmatrix}
+\begin{matrix}
     \sum_i\frac{(c_i-\mu_c)^2}{n} &amp;amp; \sum_{ij}\frac{(c_i-\mu_c)(d_j-\mu_d)}{n} \newline
     \sum_{ij}\frac{(c_i-\mu_c)(d_j-\mu_d)}{n} &amp;amp; \sum_i\frac{(d_i-\mu_d)^2}{n}
-\end{bmatrix}
+\end{matrix}
 $$&lt;/div&gt;
 &lt;p&gt;
 where &lt;span class="math"&gt;\(c_i\)&lt;/span&gt; is the &lt;span class="math"&gt;\(i\)&lt;/span&gt;th value in column &lt;span class="math"&gt;\(c\)&lt;/span&gt;, &lt;span class="math"&gt;\(d_i\)&lt;/span&gt; is the &lt;span class="math"&gt;\(i\)&lt;/span&gt;th value in column &lt;span class="math"&gt;\(d\)&lt;/span&gt;, and &lt;span class="math"&gt;\(\mu\)&lt;/span&gt; is the column average. (If we're interested in estimating population values as opposed to just calculating them for the sample at hand, we need to put &lt;span class="math"&gt;\(n-1\)&lt;/span&gt; instead of &lt;span class="math"&gt;\(n\)&lt;/span&gt; in the denominators, but that's tangent to our discussion here.)&lt;/p&gt;
