@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    deep learning with a tiny neural net
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://www.thedecisionblog.com/theme/css/cid.css">
+        <link href="https://www.thedecisionblog.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://www.thedecisionblog.com">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://www.thedecisionblog.com/">INDEX</a>
+        <a href="https://www.thedecisionblog.com/archives">ARCHIVES</a>
+        <a href="https://www.thedecisionblog.com/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>deep learning with a tiny neural net</h1>
+            <p class="date">Written on <time datetime="2022-10-01T00:00:00-04:00">Oct 01, 2022</time></p>
+        </header>
+
+        <article>
+            <p><img align=right src="images/deepmind_image.jpg" width="200"/></p>
+<p>To understand how neural nets work, it's best to start with a very small one. (I'm also going to assume some knowledge of multivariate calculus here, most importantly of partial derivatives and the meaning of the gradient vector.) So let's specify a simple prediction problem and attempt to solve it with a neural net having a small number of nodes and only one hidden layer. Suppose we want our neural net to predict each of the following outputs from the corresponding row of input. (This example comes from the book Grokking Deep Learning, by Andrew W Trask, which I highly recommend!) </p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+                   <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+                   <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+                   <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+</code></pre></div>
+
+<p>So, for example, from [1,0,1] we'd like our neural net to predict 1; from [0,0,1] we'd like it to predict 0, etc. The first layer of the neural net (which we'll label with a zero) will have three nodes, each of which will accept one of the three input values, say, in the first row of the inputs. The second layer (which we'll label as 1), will have four nodes, and the final layer (labeled as 2) will have a single neuron, because the net needs to predict a single number. Here's a image of the network that was made using graphviz:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="n">display</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="s2">&quot;neural_net.png&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="./images/neural_net.png"></p>
+<p>Each neuron in the middle will compute a weighted sum of the three inputs on the left; then the neuron on the right will compute a weighted sum of the four resulting numbers from the middle layer. Finally, we compute the squared difference between the prediction and the correct result. Each weighted sum is called an "activation", so we'll label them as a's. So, for example, the activation for node 0 (say, the top one) in the middle layer is</p>
+<div class="math">$$
+a_0^{(1)}=\sigma(w_{00}a_0^{(0)} + w_{01}a_1^{(0)} + w_{02}a_2^{(0)}),
+$$</div>
+<p>where the superscripts are the layer numbers, the subscripts are the neuron labels, <span class="math">\(w_{ji}\)</span> is the weight in neuron <span class="math">\(j\)</span> that gets attached to the value from neuron {i}, and <span class="math">\(\sigma\)</span> is a "squishification" function, such as relu or the logistic function, which map the whole real line into the interval (0,1). Hence, the activations for layer 1 (the middle one) can be written succintly as</p>
+<div class="math">$$
+a_j^{(1)} = \sigma(\sum_{i=0}^2 w_{ji} a_i^{(0)}).
+$$</div>
+<p>There's also normally a constant term in addition to the weighted sum, called a bias, but we're setting all those to zero for present purposes, to keep things simple.</p>
+<p>We will also leave out the squishification function for layer 2, so its activation is
+</p>
+<div class="math">$$
+a^{(2)}=\sum_{j=0}^3 w_j a^{(1)}_j.
+$$</div>
+<p>
+Finally, the error is just
+</p>
+<div class="math">$$
+\epsilon = (a^{(2)}-y)^2,
+$$</div>
+<p>
+where <span class="math">\(y\)</span> is the correct label for the corresponding row of input data.</p>
+<p>Initially, all the weights will be random and the neural net will produce completely wrong numbers, but we're going to adjust the weights using a procedure called gradient descent. We consider the error as a function of all the weights and calculate it's gradient vector. This vector (which will exist in a 5D space in this case because we have 5 weights) will point in the direction of greatest increase in <span class="math">\(\epsilon\)</span>; since we're trying to decrease <span class="math">\(\epsilon\)</span>, we'll take steps in the opposite direction, i.e., we'll adjust each weight in the direction opposite the corresponding component of the gradient vector.</p>
+<p>First, we'll write the algorithm using numerically evaluated derivatives, which would be much too slow for use on a large neural net, but which will allow us to make sure the analytical derivatives we calculate later are correct. Also, we'll use relu as our squishification function.</p>
+<div class="highlight"><pre><span></span><code><span class="n">hidden_layer</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">weights_0_1</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">hidden_layer</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="o">-</span><span class="mf">1.0</span>
+<span class="n">weights_1_2</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">hidden_layer</span><span class="p">))</span><span class="o">-</span><span class="mf">1.0</span>
+
+<span class="c1">#we&#39;ll modify the above weights later so we&#39;ll store the old values here too</span>
+<span class="n">weights_0_1_init</span> <span class="o">=</span> <span class="n">weights_0_1</span>
+<span class="n">weights_1_2_init</span> <span class="o">=</span> <span class="n">weights_1_2</span>
+
+<span class="c1"># this is our squishification function</span>
+<span class="k">def</span> <span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="n">x</span>
+
+<span class="c1"># activations for the middle layer</span>
+<span class="k">def</span> <span class="nf">activate_mid</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">layer</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">relu</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">layer</span><span class="p">))</span>
+
+<span class="c1"># activations for the 2nd layer</span>
+<span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">layer</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">layer</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">out</span><span class="p">):</span>
+    <span class="n">layer_1</span> <span class="o">=</span> <span class="n">activate_mid</span><span class="p">(</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">inp</span><span class="p">)</span>
+    <span class="n">layer_2</span> <span class="o">=</span> <span class="n">activate</span><span class="p">(</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">layer_1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">layer_2</span><span class="o">-</span><span class="n">out</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="c1"># routine for calculating the numerical derivatives</span>
+<span class="k">def</span> <span class="nf">error_derivs</span><span class="p">(</span><span class="n">layer_num</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">):</span>
+    <span class="n">delta_w</span> <span class="o">=</span> <span class="mf">0.0001</span>
+    <span class="n">layer_1</span> <span class="o">=</span> <span class="n">activate_mid</span><span class="p">(</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">inp</span><span class="p">)</span>
+    <span class="n">layer_2</span> <span class="o">=</span> <span class="n">activate</span><span class="p">(</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">layer_1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">derivs_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">hidden_layer</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">weights_0_1_left</span>  <span class="o">=</span> <span class="n">weights_0_1</span>
+        <span class="n">weights_0_1_right</span> <span class="o">=</span> <span class="n">weights_0_1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">weights_0_1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">weights_0_1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">weights_0_1_left</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">weights_0_1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">delta_w</span>
+                <span class="n">err_0</span> <span class="o">=</span> <span class="n">error</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span><span class="n">weights_0_1_left</span><span class="p">,</span> \
+                              <span class="n">weights_1_2</span><span class="p">,</span><span class="n">out</span><span class="p">)</span>
+                <span class="n">weights_0_1_left</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">weights_0_1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="n">delta_w</span>
+                <span class="n">weights_0_1_right</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">weights_0_1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="n">delta_w</span>
+                <span class="n">err_1</span> <span class="o">=</span> <span class="n">error</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span><span class="n">weights_0_1_right</span><span class="p">,</span> \
+                              <span class="n">weights_1_2</span><span class="p">,</span><span class="n">out</span><span class="p">)</span>
+                <span class="n">weights_0_1_right</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">weights_0_1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">delta_w</span>
+                <span class="n">derivs_1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">err_1</span><span class="o">-</span><span class="n">err_0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">delta_w</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">derivs_1</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">derivs_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">hidden_layer</span><span class="p">))</span>
+        <span class="n">weights_1_2_left</span>  <span class="o">=</span> <span class="n">weights_1_2</span>
+        <span class="n">weights_1_2_right</span> <span class="o">=</span> <span class="n">weights_1_2</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">weights_1_2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">weights_1_2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">weights_1_2_left</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">weights_1_2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">delta_w</span>
+                <span class="n">err_0</span> <span class="o">=</span> <span class="n">error</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span> \
+                              <span class="n">weights_1_2_left</span><span class="p">,</span><span class="n">out</span><span class="p">)</span>
+                <span class="n">weights_1_2_left</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">weights_1_2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="n">delta_w</span>
+                <span class="n">weights_1_2_right</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">weights_1_2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="n">delta_w</span>
+                <span class="n">err_1</span> <span class="o">=</span> <span class="n">error</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span> \
+                              <span class="n">weights_1_2_right</span><span class="p">,</span><span class="n">out</span><span class="p">)</span>
+                <span class="n">weights_1_2_right</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">weights_1_2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">delta_w</span>
+                <span class="n">derivs_2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">err_1</span><span class="o">-</span><span class="n">err_0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">delta_w</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">derivs_2</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="k">for</span> <span class="nb">iter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">inp</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">derivs_1</span> <span class="o">=</span> <span class="n">error_derivs</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span> \
+                                <span class="n">weights_1_2</span><span class="p">)</span>
+        <span class="n">derivs_2</span> <span class="o">=</span> <span class="n">error_derivs</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span> \
+                                <span class="n">weights_1_2</span><span class="p">)</span>
+
+        <span class="c1"># we adjust the weights in the direction opposite the gradient vector</span>
+        <span class="n">weights_0_1</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">derivs_1</span>
+        <span class="n">weights_1_2</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">derivs_2</span>
+
+        <span class="n">err</span> <span class="o">+=</span> <span class="n">error</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="n">layer_1</span> <span class="o">=</span> <span class="n">relu</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">inp</span><span class="p">))</span>
+        <span class="n">layer_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">layer_1</span><span class="p">)</span>
+
+    <span class="n">err</span> <span class="o">/=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">iter</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">9</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">0.014687928092963858</span><span class="w"></span>
+<span class="mf">0.0002586911405566519</span><span class="w"></span>
+<span class="mf">5.201032288065113e-06</span><span class="w"></span>
+<span class="mf">1.1521188868884113e-07</span><span class="w"></span>
+<span class="mf">2.509888068656647e-09</span><span class="w"></span>
+<span class="mf">7.063314626310347e-11</span><span class="w"></span>
+</code></pre></div>
+
+<p>The errors are converging nicely toward zero. Now when we feed, say, [1,0,1], into our neural net, we should get out something close to 1: </p>
+<div class="highlight"><pre><span></span><code><span class="n">inp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
+<span class="n">layer_1</span> <span class="o">=</span> <span class="n">activate_mid</span><span class="p">(</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">inp</span><span class="p">)</span>
+<span class="n">layer_2</span> <span class="o">=</span> <span class="n">activate</span><span class="p">(</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">layer_1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">layer_2</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>[[0.99997933]]
+</code></pre></div>
+
+<p>To calculate the derivatives analytically and avoid the slow loops, we take into account the functional dependencies between the error, activations, and weights while using the chain rule. The diagram below shows those interdependencies.</p>
+<div class="highlight"><pre><span></span><code><span class="n">display</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="s2">&quot;chain_rule.png&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="./images/chain_rule.png"></p>
+<p>We obtain the following derivatives
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial w_j}=\frac{\partial \epsilon}{\partial a^{(2)}}\frac{\partial a^{(2)}}{\partial w_j}=2(a^{(2)}-y)a^{(1)}_j,
+$$</div>
+<p>and</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial w_{ji}}=\frac{\partial \epsilon}{\partial a^{(2)}}\sum_{k=0}^3 \frac{\partial a^{(2)}}{\partial a_k^{(1)}}\frac{\partial a_k^{(1)}}{\partial w_{ji}}=2(a^{(2)}-y)\sigma'_j w_j a^{(0)}_i.
+$$</div>
+<p>
+We now run the same code but implementing these derivatives in the gradient descent.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># we&#39;ll need the derivative of relu for the analytic derivatives</span>
+<span class="k">def</span> <span class="nf">relu_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">0</span>
+
+<span class="k">def</span> <span class="nf">error_derivs</span><span class="p">(</span><span class="n">layer_num</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">):</span>
+    <span class="n">delta_w</span> <span class="o">=</span> <span class="mf">0.0001</span>
+    <span class="n">layer_1</span> <span class="o">=</span> <span class="n">activate_mid</span><span class="p">(</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">inp</span><span class="p">)</span>
+    <span class="n">layer_2</span> <span class="o">=</span> <span class="n">activate</span><span class="p">(</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">layer_1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">derivs_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">hidden_layer</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">prefactor</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="p">(</span><span class="n">layer_2</span><span class="o">-</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">derivs_1</span>  <span class="o">=</span> <span class="n">prefactor</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">relu_deriv</span><span class="p">(</span><span class="n">layer_1</span><span class="p">)</span><span class="o">*</span> \
+                                       <span class="n">weights_1_2</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">inp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">derivs_1</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">derivs_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">hidden_layer</span><span class="p">))</span>
+        <span class="n">derivs_2</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="p">(</span><span class="n">layer_2</span><span class="o">-</span><span class="n">out</span><span class="p">)</span><span class="o">*</span><span class="n">layer_1</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">derivs_2</span>
+
+<span class="c1"># we set the weights back to their initial values</span>
+<span class="n">weights_0_1</span> <span class="o">=</span> <span class="n">weights_0_1_init</span>
+<span class="n">weights_1_2</span> <span class="o">=</span> <span class="n">weights_1_2_init</span>
+
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="k">for</span> <span class="nb">iter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">inp</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">derivs_1</span> <span class="o">=</span> <span class="n">error_derivs</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span> \
+                                <span class="n">weights_1_2</span><span class="p">)</span>
+        <span class="n">derivs_2</span> <span class="o">=</span> <span class="n">error_derivs</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span> \
+                                <span class="n">weights_1_2</span><span class="p">)</span>
+
+        <span class="n">weights_0_1</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">derivs_1</span>
+        <span class="n">weights_1_2</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">derivs_2</span>
+        <span class="n">err</span> <span class="o">+=</span> <span class="n">error</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="n">layer_1</span> <span class="o">=</span> <span class="n">relu</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">inp</span><span class="p">))</span>
+        <span class="n">layer_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">layer_1</span><span class="p">)</span>
+
+    <span class="n">err</span> <span class="o">/=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">iter</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">9</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">5.992573980015191e-13</span><span class="w"></span>
+<span class="mf">5.191218969687312e-15</span><span class="w"></span>
+<span class="mf">4.4970151644239996e-17</span><span class="w"></span>
+<span class="mf">3.895643033350437e-19</span><span class="w"></span>
+<span class="mf">3.3746928762906878e-21</span><span class="w"></span>
+<span class="mf">2.923396564864991e-23</span><span class="w"></span>
+</code></pre></div>
+
+<p>As happened in this particular case, it's typical to see better convergence using analytic derivatives.</p>
+<p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://www.thedecisionblog.com/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+                <li><a href="https://www.thedecisionblog.com/about">about</a></li>
+                <li><a href="https://www.thedecisionblog.com/hire me">hire me</a></li>
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>
