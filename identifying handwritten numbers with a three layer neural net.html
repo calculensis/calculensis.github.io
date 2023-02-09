@@ -59,7 +59,7 @@
     <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="o">.</span><span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
 </code></pre></div>
 
-<p><img alt="png" src="number_images.png"></p>
+<p><img alt="png" src="./images/number_images.png"></p>
 <p>For each number, we'll convert its <span class="math">\(8\times8\)</span> matrix of pixel values into an array of length 64; then we'll feed those numbers into layer 0 of our neural net. The next, hidden layer, will contain 200 neurons, and the output layer will contain 10 neurons, the first corresponding to the number 0, the second to 1, and so on up to 9. The output numbers will be "one-hot" encoded so, for example, if the number we feed in is 4 the neural net will ideally output the array [0, 0, 0, 0, 1, 0, 0, 0, 0, 0]. We start by getting our data into the proper form as well as setting up the variables and functions that our neural net will need.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
@@ -187,7 +187,7 @@ percent correct: 91.55555555555556
 <div class="highlight"><pre><span></span><code>Text(109.44999999999997, 0.5, &#39;predicted label&#39;)
 </code></pre></div>
 
-<p><img alt="png" src="number_confusion.png"></p>
+<p><img alt="png" src="./images/number_confusion.png"></p>
 <p>We can see, e.g., that 3 times the correct answer is 1, while the model was unable to select any number. On the other hand, it correctly identified 3 as such 54 times. The derivation for the backpropagation equations of our neural net is instructive but a bit involved, so I'll provide it in the next post.</p>
 <p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
 <script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
