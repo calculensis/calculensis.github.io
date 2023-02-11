@@ -1,5 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>the decision blog - Kayla Lewis</title><link>https://www.thedecisionblog.com/</link><description></description><lastBuildDate>Wed, 08 Feb 2023 00:00:00 -0500</lastBuildDate><item><title>identifying handwritten numbers with a three layer neural net</title><link>https://www.thedecisionblog.com/identifying%20handwritten%20numbers%20with%20a%20three%20layer%20neural%20net.html</link><description>&lt;p&gt;&lt;img align=right src="images/numbers_track.jpg" width="150"/&gt;&lt;/p&gt;
+<rss version="2.0"><channel><title>the decision blog - Kayla Lewis</title><link>https://www.thedecisionblog.com/</link><description></description><lastBuildDate>Fri, 10 Feb 2023 00:00:00 -0500</lastBuildDate><item><title>deriving the backpropagation equations for a 3 layer neural net with arbitrary numbers of neurons</title><link>https://www.thedecisionblog.com/deriving%20the%20backpropagation%20equations%20for%20a%203%20layer%20neural%20net%20with%20arbitrary%20numbers%20of%20neurons.html</link><description>&lt;p&gt;&lt;img align=right src="images/equations.jpg" width="150"/&gt;&lt;/p&gt;
+&lt;p&gt;In this post we'll derive the backpropagation equations for a three layer neural net that has an arbitrary number of nodes in each layer; the results will be applicable, e.g., to the neural net we used earlier to classify handwritten numbers. For simplicity we'll set all the biases to zero and apply the relu function only to the hidden layer.&lt;/p&gt;
+&lt;p&gt;We'll represent the numerical values held in each layer by row vectors &lt;span class="math"&gt;\(l^{0}\)&lt;/span&gt;, &lt;span class="math"&gt;\(l^{1}\)&lt;/span&gt;, and &lt;span class="math"&gt;\(l^{2}\)&lt;/span&gt;, where superscript &lt;span class="math"&gt;\(0\)&lt;/span&gt; represents the input layer, &lt;span class="math"&gt;\(1\)&lt;/span&gt; represents the hidden layer, and &lt;span class="math"&gt;\(2\)&lt;/span&gt; represents the output layer.&lt;/p&gt;
+&lt;p&gt;Then the error, &lt;span class="math"&gt;\(\epsilon\)&lt;/span&gt;, is proportional to
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{1}{2}\sum_k \left( l^2_k - y_k \right)^2,
+$$&lt;/div&gt;
+&lt;p&gt;
+where &lt;span class="math"&gt;\(y_k\)&lt;/span&gt; is the true label corresponding to the &lt;span class="math"&gt;\(k^{th}\)&lt;/span&gt; neuron in the output layer; we have included the factor of &lt;span class="math"&gt;\(1/2\)&lt;/span&gt; so that the equations that follow will be a bit cleaner. (Besides, we are eventually going to re-scale by a hyper-parameter &lt;span class="math"&gt;\(\alpha\)&lt;/span&gt; between &lt;span class="math"&gt;\(0\)&lt;/span&gt; and &lt;span class="math"&gt;\(1\)&lt;/span&gt; anyway.) The value of the &lt;span class="math"&gt;\(l^{th}\)&lt;/span&gt; neuron in the first layer is given by
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+l^1_l = r_l\left[ \sum_m l_m^0 w_{ml}^{01}  \right], 
+$$&lt;/div&gt;
+&lt;p&gt;
+where &lt;span class="math"&gt;\(r_l\)&lt;/span&gt; is the relu function evaluated at the &lt;span class="math"&gt;\(l^{th}\)&lt;/span&gt; neuron, and &lt;span class="math"&gt;\(w^{01}_{ml}\)&lt;/span&gt; is the weight from the &lt;span class="math"&gt;\(m^{th}\)&lt;/span&gt; neuron of layer &lt;span class="math"&gt;\(0\)&lt;/span&gt; to the &lt;span class="math"&gt;\(l^{th}\)&lt;/span&gt; neuron of layer &lt;span class="math"&gt;\(1\)&lt;/span&gt;. The above equation corresponds to the matrix equation
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\textbf{l}^0\textbf{w}^{01}=\textbf{l}^1.
+$$&lt;/div&gt;
+&lt;p&gt;
+Similarly, except for without the relu function, the value of the &lt;span class="math"&gt;\(n^{th}\)&lt;/span&gt; neuron in the second layer is given by
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+l_n^2 = \sum_p l_p^1 w_{pn}^{12}.
+$$&lt;/div&gt;
+&lt;p&gt; 
+For the components of the gradient corresponding to &lt;span class="math"&gt;\(\textbf{w}^{12}\)&lt;/span&gt; we therefore have
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{ \partial \epsilon }{ \partial w^{12}_{qr} } = \frac{1}{2} \sum_k \frac{ \partial }{ \partial w^{12}_{qr} }\left(l_k^2-y_k \right)^2 = \sum_k \left(l_k^2-y_k\right)\frac{\partial l_k^2}{\partial w_{qr}^{12}}=
+$$&lt;/div&gt;
+&lt;div class="math"&gt;$$
+\sum_k \left(l_k^2-y_k\right)\frac{\partial}{\partial w_{qr}^{12}}\sum_p l_p^1 w_{pk}^{12}=\sum_{k,p}\left(l_k^2-y_k\right)l_p^1\frac{\partial w_{pk}^{12}}{\partial w_{qr}^{12}}=
+$$&lt;/div&gt;
+&lt;div class="math"&gt;$$
+\sum_{k,p}\left(l_k^2-y_k\right)l_p^1\delta_{pq}\delta_{kr}=\left(l_r^2-y_r\right)l_q^1.
+$$&lt;/div&gt;
+&lt;p&gt;
+Hence, we have
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{ \partial \epsilon }{ \partial w^{12}_{qr} }=\left(l_r^2-y_r\right)l_q^1.
+$$&lt;/div&gt;
+&lt;p&gt;
+For the components of the gradient corresponding to the weights in the hidden layer we have
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \epsilon}{\partial w_{qr}^{01}}=\sum_k \left(l_k^2-y_k \right)\frac{\partial l_k^2}{\partial w_{qr}^{01}}=\sum_{k,p}\left(l_k^2-y_k\right)\frac{\partial l_k^2}{\partial l_p^1}\frac{\partial l_p^1}{\partial w_{qr}^{01}}=
+$$&lt;/div&gt;
+&lt;div class="math"&gt;$$
+\sum_{k,p}\left(l_k^2-y_k\right)\frac{\partial l_k^2}{\partial l_p^1}r_p'\sum_m l_m^0 \frac{\partial w_{mp}^{01}}{\partial w_{qr}^{01}}=
+$$&lt;/div&gt;
+&lt;div class="math"&gt;$$
+\sum_{k,p,m}\left(l_k^2-y_k\right)\frac{\partial}{\partial l_p^1}\left[\sum_s l_s^1 w_{sk}^{12}\right]r_p' l_m^0 \delta_{mq}\delta_{pr}=
+$$&lt;/div&gt;
+&lt;div class="math"&gt;$$
+\sum_{k,p,m,s}\left(l_k^2-y_k\right)w_{sk}^{12}\delta_{ps}r_p'l_m^0 \delta_{mq}\delta_{pr}=\sum_k \left(l_k^2-y_k\right)w_{rk}^{12}r_r' l_q^0.
+$$&lt;/div&gt;
+&lt;p&gt;
+In summary, for the components of the gradient we have
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \epsilon}{\partial w_{qr}^{01}}=\sum_k \left(l_k^2-y_k\right)w_{rk}^{12}r_r' l_q^0.
+$$&lt;/div&gt;
+&lt;p&gt;
+and
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{ \partial \epsilon }{ \partial w^{12}_{qr} }=\left(l_r^2-y_r\right)l_q^1.
+$$&lt;/div&gt;
+&lt;p&gt;
+We can put these equations into a more transparent form by defining &lt;span class="math"&gt;\(\Delta\equiv\textbf{l}^2-\textbf{y}\)&lt;/span&gt;, &lt;span class="math"&gt;\(\textbf{D}\)&lt;/span&gt; as a diagonal matrix with the &lt;span class="math"&gt;\(r_j'\)&lt;/span&gt; values along the diagonal, and &lt;span class="math"&gt;\(\omega^{12}\equiv\textbf{w}^{12,T}\textbf{D}\)&lt;/span&gt;, where &lt;span class="math"&gt;\(T\)&lt;/span&gt; represents transposing. With these definitions we have
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \epsilon}{\partial w_{qr}^{12}}=\left[\textbf{l}^1\otimes\left(\textbf{l}^2-\textbf{y}\right)\right]_{qr},
+$$&lt;/div&gt;
+&lt;p&gt;
+and
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \epsilon}{\partial w_{qr}^{01}}=\left[ \textbf{l}^0 \otimes \left( \Delta \omega^{12}  \right) \right]_{qr}
+$$&lt;/div&gt;
+&lt;p&gt;
+where &lt;span class="math"&gt;\(\otimes\)&lt;/span&gt; is the outer product. Introducing a re-scaling hyperparameter &lt;span class="math"&gt;\(\alpha\)&lt;/span&gt;, the corrections to the weights (denoted by asterisks) are then
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+w_{qr}^{12*}=w_{qr}^{12}-\alpha \left[\textbf{l}^1\otimes\Delta\right]_{qr}
+$$&lt;/div&gt;
+&lt;p&gt;
+and
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+w_{qr}^{01*}=w_{qr}^{01}-\alpha \left[ \textbf{l}^0 \otimes \left( \Delta \omega^{12}  \right) \right]_{qr}.
+$$&lt;/div&gt;
+&lt;p&gt;
+&lt;a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;amp;t=YFPoxpEQ2Qp14U4FliD7fA"&gt;Discuss on Twitter&lt;/a&gt;&lt;/p&gt;
+&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width &lt; 768) ? "left" : align;
+        indent = (screen.width &lt; 768) ? "0em" : indent;
+        linebreak = (screen.width &lt; 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kayla Lewis</dc:creator><pubDate>Fri, 10 Feb 2023 00:00:00 -0500</pubDate><guid isPermaLink="false">tag:www.thedecisionblog.com,2023-02-10:/deriving the backpropagation equations for a 3 layer neural net with arbitrary numbers of neurons.html</guid><category>machine learning</category><category>backpropagation</category></item><item><title>identifying handwritten numbers with a three layer neural net</title><link>https://www.thedecisionblog.com/identifying%20handwritten%20numbers%20with%20a%20three%20layer%20neural%20net.html</link><description>&lt;p&gt;&lt;img align=right src="images/numbers_track.jpg" width="150"/&gt;&lt;/p&gt;
 &lt;p&gt;In this post, we'll create a three layer neural net for identifying handwritten numbers; to keep it from overfitting, we'll use a technique known as dropout. First, let's have a look at the data.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;plt&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;seaborn&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;sns&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;sns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;set&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
