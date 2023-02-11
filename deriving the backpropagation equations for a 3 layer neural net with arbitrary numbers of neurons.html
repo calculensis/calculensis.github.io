@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
     <head>
         <meta charset="utf-8">
-        <title>    deriving the backpropagation equations for a 3 layer neural net with arbitrary numbers of neurons
+        <title>    the backpropagation equations for a 3 layer neural net
 </title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,12 +33,12 @@
     <div class="post">
 
         <header>
-            <h1>deriving the backpropagation equations for a 3 layer neural net with arbitrary numbers of neurons</h1>
+            <h1>the backpropagation equations for a 3 layer neural net</h1>
             <p class="date">Written on <time datetime="2023-02-10T00:00:00-05:00">Feb 10, 2023</time></p>
         </header>
 
         <article>
-            <p><img align=right src="images/equations.jpg" width="150"/></p>
+            <p><img align=right src="images/equations.jpg" width="200"/></p>
 <p>In this post we'll derive the backpropagation equations for a three layer neural net that has an arbitrary number of nodes in each layer; the results will be applicable, e.g., to the neural net we used earlier to classify handwritten numbers. For simplicity we'll set all the biases to zero and apply the relu function only to the hidden layer.</p>
 <p>We'll represent the numerical values held in each layer by row vectors <span class="math">\(l^{0}\)</span>, <span class="math">\(l^{1}\)</span>, and <span class="math">\(l^{2}\)</span>, where superscript <span class="math">\(0\)</span> represents the input layer, <span class="math">\(1\)</span> represents the hidden layer, and <span class="math">\(2\)</span> represents the output layer.</p>
 <p>Then the error, <span class="math">\(\epsilon\)</span>, is proportional to
