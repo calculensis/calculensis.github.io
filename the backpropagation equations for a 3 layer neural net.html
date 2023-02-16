@@ -39,7 +39,7 @@
 
         <article>
             <p><img align=right src="images/equations.jpg" width="200"/></p>
-<p>In this post we'll derive the backpropagation equations for a three layer neural net that has an arbitrary number of nodes in each layer; the results will be applicable, e.g., to the neural net we used earlier to classify handwritten numbers. For simplicity we'll set all the biases to zero and apply the relu function only to the hidden layer.</p>
+<p>In this post we'll derive the backpropagation equations for a three layer neural net that has an arbitrary number of nodes in each layer; the results will be applicable, e.g., to the neural net we used earlier to classify handwritten numbers. For simplicity we'll set all the biases to zero. We'll also be applying tanh as the activation function for the hidden layer and softmax for the output layer.</p>
 <p>We'll represent the numerical values held in each layer by row vectors <span class="math">\(l^{0}\)</span>, <span class="math">\(l^{1}\)</span>, and <span class="math">\(l^{2}\)</span>, where superscript <span class="math">\(0\)</span> represents the input layer, <span class="math">\(1\)</span> represents the hidden layer, and <span class="math">\(2\)</span> represents the output layer.</p>
 <p>Then the error, <span class="math">\(\epsilon\)</span>, is proportional to
 </p>
@@ -50,37 +50,37 @@ $$</div>
 where <span class="math">\(y_k\)</span> is the true label corresponding to the <span class="math">\(k^{th}\)</span> neuron in the output layer; we have included the factor of <span class="math">\(1/2\)</span> so that the equations that follow will be a bit cleaner. (Besides, we are eventually going to re-scale by a hyper-parameter <span class="math">\(\alpha\)</span> between <span class="math">\(0\)</span> and <span class="math">\(1\)</span> anyway.) The value of the <span class="math">\(l^{th}\)</span> neuron in the first layer is given by
 </p>
 <div class="math">$$
-l^1_l = r_l\left[ \sum_m l_m^0 w_{ml}^{01}  \right], 
+l^1_l = t_l\left[ \sum_m l_m^0 w_{ml}^{01}  \right], 
 $$</div>
 <p>
-where <span class="math">\(r_l\)</span> is the relu function evaluated at the <span class="math">\(l^{th}\)</span> neuron, and <span class="math">\(w^{01}_{ml}\)</span> is the weight from the <span class="math">\(m^{th}\)</span> neuron of layer <span class="math">\(0\)</span> to the <span class="math">\(l^{th}\)</span> neuron of layer <span class="math">\(1\)</span>. The above equation corresponds to the matrix equation
+where <span class="math">\(t_l\)</span> is the tanh function evaluated at the <span class="math">\(l^{th}\)</span> neuron, and <span class="math">\(w^{01}_{ml}\)</span> is the weight from the <span class="math">\(m^{th}\)</span> neuron of layer <span class="math">\(0\)</span> to the <span class="math">\(l^{th}\)</span> neuron of layer <span class="math">\(1\)</span>. The above equation corresponds to the matrix equation
 </p>
 <div class="math">$$
-\textbf{l}^0\textbf{w}^{01}=\textbf{l}^1.
+\textbf{l}^1=\tanh(\textbf{l}^0\textbf{w}^{01}).
 $$</div>
 <p>
-Similarly, except for without the relu function, the value of the <span class="math">\(n^{th}\)</span> neuron in the second layer is given by
+Similarly, the value of the <span class="math">\(n^{th}\)</span> neuron in the second layer is given by
 </p>
 <div class="math">$$
-l_n^2 = \sum_p l_p^1 w_{pn}^{12}.
+l_n^2 = s_n\left[\sum_p l_p^1 w_{pn}^{12}\right],
 $$</div>
-<p> 
-For the components of the gradient corresponding to <span class="math">\(\textbf{w}^{12}\)</span> we therefore have
+<p>
+where <span class="math">\(s_n\)</span> is the softmax function evaluated at the <span class="math">\(n^{th}\)</span> neuron. For the components of the gradient corresponding to <span class="math">\(\textbf{w}^{12}\)</span> we therefore have
 </p>
 <div class="math">$$
 \frac{ \partial \epsilon }{ \partial w^{12}_{qr} } = \frac{1}{2} \sum_k \frac{ \partial }{ \partial w^{12}_{qr} }\left(l_k^2-y_k \right)^2 = \sum_k \left(l_k^2-y_k\right)\frac{\partial l_k^2}{\partial w_{qr}^{12}}=
 $$</div>
 <div class="math">$$
-\sum_k \left(l_k^2-y_k\right)\frac{\partial}{\partial w_{qr}^{12}}\sum_p l_p^1 w_{pk}^{12}=\sum_{k,p}\left(l_k^2-y_k\right)l_p^1\frac{\partial w_{pk}^{12}}{\partial w_{qr}^{12}}=
+\sum_k \left(l_k^2-y_k\right)\frac{\partial}{\partial w_{qr}^{12}}\left[s_k\left(\sum_p l_p^1 w_{pk}^{12}\right)\right]=\sum_{k,p}\left(l_k^2-y_k\right)s_k' l_p^1\frac{\partial w_{pk}^{12}}{\partial w_{qr}^{12}}=
 $$</div>
 <div class="math">$$
-\sum_{k,p}\left(l_k^2-y_k\right)l_p^1\delta_{pq}\delta_{kr}=\left(l_r^2-y_r\right)l_q^1.
+\sum_{k,p}\left(l_k^2-y_k\right) s_k' l_p^1\delta_{pq}\delta_{kr}=\left(l_r^2-y_r\right) s_r' l_q^1.
 $$</div>
 <p>
 Hence, we have
 </p>
 <div class="math">$$
-\frac{ \partial \epsilon }{ \partial w^{12}_{qr} }=\left(l_r^2-y_r\right)l_q^1.
+\frac{ \partial \epsilon }{ \partial w^{12}_{qr} }=\left(l_r^2-y_r\right) s_r' l_q^1.
 $$</div>
 <p>
 For the components of the gradient corresponding to the weights in the hidden layer we have
@@ -89,52 +89,51 @@ For the components of the gradient corresponding to the weights in the hidden la
 \frac{\partial \epsilon}{\partial w_{qr}^{01}}=\sum_k \left(l_k^2-y_k \right)\frac{\partial l_k^2}{\partial w_{qr}^{01}}=\sum_{k,p}\left(l_k^2-y_k\right)\frac{\partial l_k^2}{\partial l_p^1}\frac{\partial l_p^1}{\partial w_{qr}^{01}}=
 $$</div>
 <div class="math">$$
-\sum_{k,p}\left(l_k^2-y_k\right)\frac{\partial l_k^2}{\partial l_p^1}r_p'\sum_m l_m^0 \frac{\partial w_{mp}^{01}}{\partial w_{qr}^{01}}=
+\sum_{k,p}\left(l_k^2-y_k\right)\frac{\partial l_k^2}{\partial l_p^1}t_p'\sum_m l_m^0 \frac{\partial w_{mp}^{01}}{\partial w_{qr}^{01}}=
 $$</div>
 <div class="math">$$
-\sum_{k,p,m}\left(l_k^2-y_k\right)\frac{\partial}{\partial l_p^1}\left[\sum_s l_s^1 w_{sk}^{12}\right]r_p' l_m^0 \delta_{mq}\delta_{pr}=
+\sum_{k,p,m}\left(l_k^2-y_k\right)\frac{\partial}{\partial l_p^1}\left[s_k\left(\sum_s l_s^1 w_{sk}^{12}\right)\right]t_p' l_m^0 \delta_{mq}\delta_{pr}=
 $$</div>
 <div class="math">$$
-\sum_{k,p,m,s}\left(l_k^2-y_k\right)w_{sk}^{12}\delta_{ps}r_p'l_m^0 \delta_{mq}\delta_{pr}=\sum_k \left(l_k^2-y_k\right)w_{rk}^{12}r_r' l_q^0.
+\sum_{k,p,m,s}\left(l_k^2-y_k\right) s_k' w_{sk}^{12}\delta_{ps}t_p'l_m^0 \delta_{mq}\delta_{pr}=\sum_k \left(l_k^2-y_k\right) s_k' w_{rk}^{12}t_r' l_q^0.
 $$</div>
 <p>
 In summary, for the components of the gradient we have
 </p>
 <div class="math">$$
-\frac{\partial \epsilon}{\partial w_{qr}^{01}}=\sum_k \left(l_k^2-y_k\right)w_{rk}^{12}r_r' l_q^0.
+\frac{\partial \epsilon}{\partial w_{qr}^{01}}=\sum_k \left(l_k^2-y_k\right) s_k' w_{rk}^{12}t_r' l_q^0.
 $$</div>
 <p>
 and
 </p>
 <div class="math">$$
-\frac{ \partial \epsilon }{ \partial w^{12}_{qr} }=\left(l_r^2-y_r\right)l_q^1.
+\frac{ \partial \epsilon }{ \partial w^{12}_{qr} }=\left(l_r^2-y_r\right) s_r' l_q^1.
 $$</div>
 <p>
-We can put these equations into a more transparent form by defining <span class="math">\(\Delta\equiv\textbf{l}^2-\textbf{y}\)</span>, <span class="math">\(\textbf{D}\)</span> as a diagonal matrix with the <span class="math">\(r_j'\)</span> values along the diagonal, and <span class="math">\(\omega^{12}\equiv\textbf{w}^{12,T}\textbf{D}\)</span>, where <span class="math">\(T\)</span> represents transposing. With these definitions we have
+We can put these equations into a more transparent form by defining <span class="math">\(\textbf{D}_{t'}\)</span> as a diagonal matrix with the <span class="math">\(t_j'\)</span> values along the diagonal and a similar matrix <span class="math">\(\textbf{D}_{s'}\)</span> for the values <span class="math">\(s_j'\)</span>. With these definitions we have
 </p>
 <div class="math">$$
-\frac{\partial \epsilon}{\partial w_{qr}^{12}}=\left[\textbf{l}^1\otimes\left(\textbf{l}^2-\textbf{y}\right)\right]_{qr},
+\frac{\partial \epsilon}{\partial w_{qr}^{12}}=\left[\textbf{l}^1\otimes\left(\textbf{l}^2-\textbf{y}\right) \textbf{D}_{s'}  \right]_{qr},
 $$</div>
 <p>
 and
 </p>
 <div class="math">$$
-\frac{\partial \epsilon}{\partial w_{qr}^{01}}=\left[ \textbf{l}^0 \otimes \left( \Delta \omega^{12}  \right) \right]_{qr}
+\frac{\partial \epsilon}{\partial w_{qr}^{01}}=\{ \textbf{l}^0 \otimes \left[ \left( \textbf{l}^2-\textbf{y} \right) \textbf{D}_{s'} \textbf{w}^{12,T} \textbf{D}_{t'}  \right] \}_{qr}
 $$</div>
 <p>
 where <span class="math">\(\otimes\)</span> is the outer product. Introducing a re-scaling hyperparameter <span class="math">\(\alpha\)</span>, the corrections to the weights (denoted by asterisks) are then
 </p>
 <div class="math">$$
-w_{qr}^{12*}=w_{qr}^{12}-\alpha \left[\textbf{l}^1\otimes\Delta\right]_{qr}
+w_{qr}^{12*}=w_{qr}^{12}-\alpha \left[\textbf{l}^1\otimes\left(\textbf{l}^2-\textbf{y}\right) \textbf{D}_{s'}  \right]_{qr},
 $$</div>
 <p>
 and
 </p>
 <div class="math">$$
-w_{qr}^{01*}=w_{qr}^{01}-\alpha \left[ \textbf{l}^0 \otimes \left( \Delta \omega^{12}  \right) \right]_{qr}.
+w_{qr}^{01*}=w_{qr}^{01}-\alpha \{ \textbf{l}^0 \otimes \left[ \left( \textbf{l}^2-\textbf{y} \right) \textbf{D}_{s'} \textbf{w}^{12,T} \textbf{D}_{t'}  \right] \}_{qr}.
 $$</div>
-<p>
-<a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
+<p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
 <script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var align = "center",
         indent = "0em",
