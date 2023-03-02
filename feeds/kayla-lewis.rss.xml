@@ -1,5 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>the decision blog - Kayla Lewis</title><link>https://www.thedecisionblog.com/</link><description></description><lastBuildDate>Sat, 25 Feb 2023 00:00:00 -0500</lastBuildDate><item><title>a game for getting stuff done and learning a foreign language</title><link>https://www.thedecisionblog.com/a%20game%20for%20getting%20stuff%20done%20and%20learning%20a%20foreign%20language.html</link><description>&lt;p&gt;&lt;img align=right src="images/dungeon.jpg" width="200"/&gt;&lt;/p&gt;
+<rss version="2.0"><channel><title>the decision blog - Kayla Lewis</title><link>https://www.thedecisionblog.com/</link><description></description><lastBuildDate>Wed, 01 Mar 2023 00:00:00 -0500</lastBuildDate><item><title>the back-propagation equations for a convolutional network</title><link>https://www.thedecisionblog.com/the%20back-propagation%20equations%20for%20a%20convolutional%20network.html</link><description>&lt;p&gt;&lt;img align=right src="images/blurred_mirror.jpg" width="150"/&gt;&lt;/p&gt;
+&lt;p&gt;In this post, we'll derive the back-propagation equations for our convolutional net, which has the structure shown below.&lt;/p&gt;
+&lt;p&gt;&lt;img src="images/conv_nn_struct.jpg" width="300"/&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;matrix&lt;/th&gt;
+&lt;th&gt;size&lt;/th&gt;
+&lt;th&gt;meaning&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(\textbf{k}^i\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(1\times n^k\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;i&lt;span class="math"&gt;\(^{th}\)&lt;/span&gt; kernel&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(\textbf{F}\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(n^k \times n^0\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;image frame captures&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(\textbf{l}^{ci}\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(1\times n^0\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;i&lt;span class="math"&gt;\(^{th}\)&lt;/span&gt; pre-pooled layer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(\textbf{l}^0\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(1\times n^0\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;pooled convolution layer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;$\textbf{w}^{01}&lt;/td&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(n^0 \times n^1\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;weights from layer 0 to 1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(\textbf{l}^1\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(1\times n^1\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;hidden layer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;$\textbf{w}^{12}&lt;/td&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(n^1 \times n^2\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;weights from layer 1 to 2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(\textbf{l}^2\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(1\times n^2\)&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;output layer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;In terms of components, the convolutional layer is given by
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+l_i^{cj}=\sum_m k_m^j F_{mi},
+$$&lt;/div&gt;
+&lt;p&gt;
+and
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+l_k^0 = \tanh \left[ \max \left(l_k^{c0},l_k^{c1},...,l_k^{cN}\right) \right].
+$$&lt;/div&gt;
+&lt;p&gt;
+For layers 1 and 2 we have
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+l_q^1=\tanh \left[\sum_r l_r^0 w_{rq}^{01}\right].
+$$&lt;/div&gt;
+&lt;p&gt;
+and
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+l_n^2 = \sigma \left[\sum_l l_l^1 w_{ln}^{12} \right],
+$$&lt;/div&gt;
+&lt;p&gt;
+where &lt;span class="math"&gt;\(\sigma\)&lt;/span&gt; is the softmax function. The loss function is
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\epsilon = \frac{1}{2}\sum_p \left(l_p^2-y_p \right)^2,
+$$&lt;/div&gt;
+&lt;p&gt;
+and by applying the chain rule to these equations we will derive the back-propagation equations.&lt;/p&gt;
+&lt;p&gt;&lt;img src="images/variable_depend.jpg" width="200"/&gt;&lt;/p&gt;
+&lt;p&gt;Similarly to the 3 layer non-convolutional net, we have
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \epsilon}{\partial w_{qs}^{12}}=\left[\textbf{l}^1\otimes\left(\textbf{l}^2-\textbf{y}\right)\textbf{D}_{s'}\right]_{qs}
+$$&lt;/div&gt;
+&lt;p&gt;
+and
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \epsilon}{\partial w_{qs}^{01}}=\left[\textbf{l}^0 \otimes \left(\textbf{l}^2-\textbf{y}\right)\textbf{D}_{\sigma'}\textbf{w}^{12,T}\textbf{D}_{t'}^1\right]_{qs}.
+$$&lt;/div&gt;
+&lt;p&gt;
+but now in addition to these we have
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \epsilon}{\partial k_q^i}=\sum_{n,m,p}\frac{\partial \epsilon}{\partial l_m^2}\frac{\partial l_m^2}{\partial l_n^1}\frac{\partial l_n^1}{\partial l_p^0}\frac{\partial l_p^0}{\partial k_q^i}.
+$$&lt;/div&gt;
+&lt;p&gt;
+These derivatives are
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \epsilon}{\partial l_m^2}=\sum_p \left(l_p^2-y_p\right)\delta_{pm}=\left(l_m^2-y_m\right),
+$$&lt;/div&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \l_m^2}{\partial l_n^1}=\sigma_m'\sum_l w_{lm}^{12}\delta_{ln}=\sigma_m' w_{nm}^{12},
+$$&lt;/div&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial l_n^1}{\partial l_p^0}=t_n'\sum_r \delta_{pr}w_{rn}^{01}=t_n'w_{pn}^{01},
+$$&lt;/div&gt;
+&lt;p&gt;
+and
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial l_p^0}{\partial k_q^i}=\frac{\partial}{\partial k_q^i}\{t\left[\max(l_p^{c0},l_p^{c1},...,l_p^{cN})\right]\}=t_p^{0'}\frac{\partial l_p^{c,w(p)}}{\partial k_q^i},
+$$&lt;/div&gt;
+&lt;p&gt;
+where &lt;span class="math"&gt;\(w(p)\)&lt;/span&gt; is the index of the largest &lt;span class="math"&gt;\(l_p^{ci}\)&lt;/span&gt; ("w" is for "winner"). This last derivative is given by
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial l_p^{c,w(p)}}{\partial k_q^i}=\frac{\partial}{\partial k_q^i}\left[\sum_m k_m^{w(p)}F_{mp}\right]=\sum_m F_{mp}\delta^{i,w(p)}\delta_{mq}=F_{qp}\delta^{i,w(p)}.
+$$&lt;/div&gt;
+&lt;p&gt;
+Defining
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\mathcal{F}_{qp}^i\equiv F_{qp}\delta^{i,w(p)},
+$$&lt;/div&gt;
+&lt;p&gt;
+this result can be written more compactly as
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial l_p^{c,w(p)}}{\partial k_q^i}=\mathcal{F}_{qp}^i,
+$$&lt;/div&gt;
+&lt;p&gt;
+so that
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial l_p^0}{\partial k_q^i}=t_p^{0'}\mathcal{F}_{qp}^i.
+$$&lt;/div&gt;
+&lt;p&gt;
+Hence, for the components of the gradient corresponding to the kernels, we obtain
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \epsilon}{\partial k_{q}^i}=\sum_{n,m,p}\left(l_m^2-y_m\right)\sigma_m' w_{mn}^{12,T}t_n^{1'} w_{np}^{01,T}t_p^{0'}\mathcal{F}_{pq}^{i,T},
+$$&lt;/div&gt;
+&lt;p&gt;
+which can be written as
+&lt;/p&gt;
+&lt;div class="math"&gt;$$
+\frac{\partial \epsilon}{\partial k_{q}^i}=\left[\left(\textbf{l}^2-\textbf{y}\right)\textbf{D}_{\sigma'}\textbf{w}^{12,T}\textbf{D}_{t'}^1\textbf{w}^{01,T}\textbf{D}_{t'}^0 \mathcal{F}^{i,T} \right]_q.
+$$&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;amp;t=YFPoxpEQ2Qp14U4FliD7fA"&gt;Discuss on Twitter&lt;/a&gt;&lt;/p&gt;
+&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width &lt; 768) ? "left" : align;
+        indent = (screen.width &lt; 768) ? "0em" : indent;
+        linebreak = (screen.width &lt; 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kayla Lewis</dc:creator><pubDate>Wed, 01 Mar 2023 00:00:00 -0500</pubDate><guid isPermaLink="false">tag:www.thedecisionblog.com,2023-03-01:/the back-propagation equations for a convolutional network.html</guid><category>back-propagation, convolutional network</category><category>machine learning</category></item><item><title>a game for getting stuff done and learning a foreign language</title><link>https://www.thedecisionblog.com/a%20game%20for%20getting%20stuff%20done%20and%20learning%20a%20foreign%20language.html</link><description>&lt;p&gt;&lt;img align=right src="images/dungeon.jpg" width="200"/&gt;&lt;/p&gt;
 &lt;p&gt;Like writing? Like learning foreign languages? Like role playing games? Here is a to-do list game I made up that has all three:&lt;/p&gt;
 &lt;p&gt;(a) Pick a word from the target language. It can be one that you’d like to learn, or a random one from the dictionary, or just a word that you like. &lt;/p&gt;
 &lt;p&gt;(b) The letters in the word determine certain features of your surroundings (I based the following identifications off letter frequencies in Latin; feel free to change them for your target language):&lt;/p&gt;
