@@ -32,7 +32,7 @@
 &lt;td&gt;pooled convolution layer&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;$\textbf{w}^{01}&lt;/td&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(\textbf{w}^{01}\)&lt;/span&gt;&lt;/td&gt;
 &lt;td&gt;&lt;span class="math"&gt;\(n^0 \times n^1\)&lt;/span&gt;&lt;/td&gt;
 &lt;td&gt;weights from layer 0 to 1&lt;/td&gt;
 &lt;/tr&gt;
@@ -42,7 +42,7 @@
 &lt;td&gt;hidden layer&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;$\textbf{w}^{12}&lt;/td&gt;
+&lt;td&gt;&lt;span class="math"&gt;\(\textbf{w}^{12}\)&lt;/span&gt;&lt;/td&gt;
 &lt;td&gt;&lt;span class="math"&gt;\(n^1 \times n^2\)&lt;/span&gt;&lt;/td&gt;
 &lt;td&gt;weights from layer 1 to 2&lt;/td&gt;
 &lt;/tr&gt;
