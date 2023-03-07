@@ -50,11 +50,17 @@ $$&lt;/div&gt;
 &lt;p&gt;&lt;img src="./images/right_side_nums.jpg" width="180"/&gt;&lt;/p&gt;
 &lt;p&gt;The number on the upper branch coming from the far right rectangle is obtained by adding up the numbers on top of the rectangles that it ultimately connects to in the middle. That is,&lt;/p&gt;
 &lt;div class="math"&gt;$$
-P(O) = P(O\And P) + P(O\And K) = 0.09 + 0.09 = 0.18.
+P(O) = P(O\And P) + P(O\And K) = 
+$$&lt;/div&gt;
+&lt;div class="math"&gt;$$
+0.09 + 0.09 = 0.18.
 $$&lt;/div&gt;
 &lt;p&gt;Similarly,&lt;/p&gt;
 &lt;div class="math"&gt;$$
-P(~O) = P(~O \And P) + P(~O \And K) = 0.81 + 0.01 = 0.82.
+P(~O) = P(~O \And P) + P(~O \And K) 
+$$&lt;/div&gt;
+&lt;div class="math"&gt;$$
+= 0.81 + 0.01 = 0.82.
 $$&lt;/div&gt;
 &lt;p&gt;Notice these two branches, since they both lead off the same rectangle, sum to 1: 0.18 + 0.82 = 1.&lt;/p&gt;
 &lt;p&gt;Now what about the number in yellow, &lt;span class="math"&gt;\(P(P|O)\)&lt;/span&gt;? We get that one be noting that the number on the top of the middle rectangle has to be &lt;span class="math"&gt;\(P(O)P(P|O)\)&lt;/span&gt;, just like on the left side it was &lt;span class="math"&gt;\(P(P)P(O|P)\)&lt;/span&gt;. So if we call that yellow number &lt;span class="math"&gt;\(x\)&lt;/span&gt;, we have &lt;span class="math"&gt;\(P(O)x = P(O\And P)\)&lt;/span&gt; or &lt;span class="math"&gt;\(0.18x = 0.09\)&lt;/span&gt;. Solving this equation for x gives &lt;span class="math"&gt;\(x = 0.09/0.18 = 0.5\)&lt;/span&gt;. The other numbers on those branches are obtained the same way. For example, if we use a &lt;span class="math"&gt;\(y\)&lt;/span&gt; to represent the value on the bottom, labeled &lt;span class="math"&gt;\(P(K|~O)\)&lt;/span&gt;, we need to have &lt;span class="math"&gt;\(P(~O)y = P(~O\And K)\)&lt;/span&gt; or &lt;span class="math"&gt;\(0.82y = 0.01\)&lt;/span&gt;, so that &lt;span class="math"&gt;\(y = 0.01/0.82 = 0.01\)&lt;/span&gt;. &lt;/p&gt;

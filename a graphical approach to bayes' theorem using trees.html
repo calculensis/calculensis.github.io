@@ -89,11 +89,17 @@ $$</div>
 <p><img src="./images/right_side_nums.jpg" width="180"/></p>
 <p>The number on the upper branch coming from the far right rectangle is obtained by adding up the numbers on top of the rectangles that it ultimately connects to in the middle. That is,</p>
 <div class="math">$$
-P(O) = P(O\And P) + P(O\And K) = 0.09 + 0.09 = 0.18.
+P(O) = P(O\And P) + P(O\And K) = 
+$$</div>
+<div class="math">$$
+0.09 + 0.09 = 0.18.
 $$</div>
 <p>Similarly,</p>
 <div class="math">$$
-P(~O) = P(~O \And P) + P(~O \And K) = 0.81 + 0.01 = 0.82.
+P(~O) = P(~O \And P) + P(~O \And K) 
+$$</div>
+<div class="math">$$
+= 0.81 + 0.01 = 0.82.
 $$</div>
 <p>Notice these two branches, since they both lead off the same rectangle, sum to 1: 0.18 + 0.82 = 1.</p>
 <p>Now what about the number in yellow, <span class="math">\(P(P|O)\)</span>? We get that one be noting that the number on the top of the middle rectangle has to be <span class="math">\(P(O)P(P|O)\)</span>, just like on the left side it was <span class="math">\(P(P)P(O|P)\)</span>. So if we call that yellow number <span class="math">\(x\)</span>, we have <span class="math">\(P(O)x = P(O\And P)\)</span> or <span class="math">\(0.18x = 0.09\)</span>. Solving this equation for x gives <span class="math">\(x = 0.09/0.18 = 0.5\)</span>. The other numbers on those branches are obtained the same way. For example, if we use a <span class="math">\(y\)</span> to represent the value on the bottom, labeled <span class="math">\(P(K|~O)\)</span>, we need to have <span class="math">\(P(~O)y = P(~O\And K)\)</span> or <span class="math">\(0.82y = 0.01\)</span>, so that <span class="math">\(y = 0.01/0.82 = 0.01\)</span>. </p>
