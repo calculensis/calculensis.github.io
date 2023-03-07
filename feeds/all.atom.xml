@@ -57,7 +57,7 @@ $$&lt;/div&gt;
 $$&lt;/div&gt;
 &lt;p&gt;Similarly,&lt;/p&gt;
 &lt;div class="math"&gt;$$
-P(~O) = P(~O \And P) + P(~O \And K) 
+P(~O) = P(\sim O \And P) + P(\sim O \And K) 
 $$&lt;/div&gt;
 &lt;div class="math"&gt;$$
 = 0.81 + 0.01 = 0.82.
