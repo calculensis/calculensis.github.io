@@ -1,5 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>the decision blog - Kayla Lewis</title><link href="https://www.thedecisionblog.com/" rel="alternate"></link><link href="https://www.thedecisionblog.com/feeds/kayla-lewis.atom.xml" rel="self"></link><id>https://www.thedecisionblog.com/</id><updated>2023-03-03T00:00:00-05:00</updated><entry><title>using a convolutional neural net to identify images</title><link href="https://www.thedecisionblog.com/using%20a%20convolutional%20neural%20net%20to%20identify%20images.html" rel="alternate"></link><published>2023-03-03T00:00:00-05:00</published><updated>2023-03-03T00:00:00-05:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2023-03-03:/using a convolutional neural net to identify images.html</id><summary type="html">&lt;p&gt;we show how to use a convolutional net for the identify-handwritten-numbers task&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/twisty-structure.jpg" width="170"/&gt;&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>the decision blog - Kayla Lewis</title><link href="https://www.thedecisionblog.com/" rel="alternate"></link><link href="https://www.thedecisionblog.com/feeds/kayla-lewis.atom.xml" rel="self"></link><id>https://www.thedecisionblog.com/</id><updated>2023-03-06T00:00:00-05:00</updated><entry><title>a graphical approach to bayes' theorem using trees</title><link href="https://www.thedecisionblog.com/a%20graphical%20approach%20to%20bayes'%20theorem%20using%20trees.html" rel="alternate"></link><published>2023-03-06T00:00:00-05:00</published><updated>2023-03-06T00:00:00-05:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2023-03-06:/a graphical approach to bayes' theorem using trees.html</id><summary type="html">&lt;p&gt;we use a historical example to illustrate a graphical tree approach to bayes' equation for updating beliefs in light of new evidence&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="./images/harmonices.jpg" width="180"/&gt;&lt;/p&gt;
+&lt;p&gt;In this article I'd like to illustrate an intuitive graphical approach to using Bayes' equation that uses trees. As a concrete example, let's suppose you are, for some strange reason, being taught science in chronological order. You've learned all about the Ptolemaic model, which places Earth in the center of the universe; you haven't gotten to anything later yet, so this is the correct model as far as you know. &lt;/p&gt;
+&lt;p&gt;To make this imaginative exercise easier, let's take a moment to consider why the Ptolemaic model was at one time as persuasive as it was.&lt;/p&gt;
+&lt;p&gt;&lt;img src="./images/north_star.jpg" width="250"/&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If you look up at the north pole, all the other stars in the sky seem to make one full circle around it every 24 hours, giving the impression that the whole universe is like a great big hollow sphere with little glowing dots painted on the inside of it, which rotates as the Earth sits motionless at its center.&lt;/li&gt;
+&lt;li&gt;We could say that Earth is what's rotating instead, but it would have to rotate such that we would be traveling at 1,000 mph! Wouldn't we notice that? Why don't we fly off into space, like water flies off a spinning umbrella?&lt;/li&gt;
+&lt;li&gt;The idea of the Earth moving around the Sun seems crazy for similar reasons: If it's flying through space, why don't we fall off and get left behind?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Hopefully it's a little clearer now why you might believe that the universe looks like the ancients thought it did (except for Aristarchus, the great ancient astronomer who got it right, putting the sun in the center). &lt;/p&gt;
+&lt;p&gt;&lt;img src="./images/orbes.jpg" width="180"/&gt;&lt;/p&gt;
+&lt;p&gt;There is still a problem for this model when it comes to the planets. If you watch a planet for long enough as it travels through the night sky, its path will double back on itself, as shown below.&lt;/p&gt;
+&lt;p&gt;&lt;img src="./images/wanderer.jpg" width="180"/&gt;&lt;/p&gt;
+&lt;p&gt;It's impossible to obtain a trajectory like that if the planets simple travel in circles around the Earth. In fact, the word "planet" comes from a Greek word meaning "wanderer," because the planets seemed to wander aimlessly compared to the stars. One way of solving this problem is to introduce epicycles: The planet moves on the rim of a circle, the epicycle, and the center of the epicycle moves in a circle around the Earth. The planets-on-epicycles construction can reproduce that periodic, wandering retrograde motion.&lt;/p&gt;
+&lt;p&gt;&lt;img src="./images/epicycle.jpg" width="180"/&gt;&lt;/p&gt;
+&lt;p&gt;Now we fast forward from the ancient Greeks to the 17th century. The astronomer Tycho Brahe has made many measurements of the positions of the known planets as they move through the sky, and they say he's done it with unprecedented accuracy! Furthermore, a mathematician named Johannes Kepler has analyzed the data and determined that the simplest way to represent planets' motion is... to have all of them, including Earth, move along ellipses that have the sun at one focus! &lt;/p&gt;
+&lt;p&gt;Furthermore, Galileo has discovered the law of inertia: That the natural state of motion for an object is not to slow down and remain at rest, but to keep moving in the same direction at a constant speed. Just like, if you drop a ball while you're standing inside a train traveling on a straight track at a constant speed, it will fall straight toward your feet and not backward, so we can travel along with the Earth as it flies through space without being left behind. &lt;/p&gt;
+&lt;p&gt;So we have some belief updating to do! Let's represent the relevant claims with letters:&lt;/p&gt;
+&lt;p&gt;&lt;span class="math"&gt;\(P =\)&lt;/span&gt; The Ptolemaic system is the correct model&lt;/p&gt;
+&lt;p&gt;&lt;span class="math"&gt;\(K =\)&lt;/span&gt; Kepler's system is the correct model&lt;/p&gt;
+&lt;p&gt;To keep things simple, we'll also suppose that one or the other of these has to be true, so if we write &lt;span class="math"&gt;\(\sim P\)&lt;/span&gt; to mean "&lt;span class="math"&gt;\(P\)&lt;/span&gt; is not true," we can also write &lt;span class="math"&gt;\(\sim P = K\)&lt;/span&gt;: If the Ptolemaic system isn't right, then Kepler's is (and vice versa). Also, let's write &lt;span class="math"&gt;\(P(C)\)&lt;/span&gt; to mean "the probability of claim &lt;span class="math"&gt;\(C\)&lt;/span&gt;" and &lt;span class="math"&gt;\(P(C|E)\)&lt;/span&gt; to mean "the probability of claim &lt;span class="math"&gt;\(C\)&lt;/span&gt; given evidence &lt;span class="math"&gt;\(E\)&lt;/span&gt;."&lt;/p&gt;
+&lt;p&gt;So initially we have a degree of confidence that Ptolemy's model is correct, which with our notation we can write as &lt;span class="math"&gt;\(P(P)\)&lt;/span&gt;, and likewise &lt;span class="math"&gt;\(P(K)\)&lt;/span&gt; is our initial probability that Kepler's model is correct. These probabilities are called "priors" because they represent our confidence before any new pieces of evidence (or observations) become available to us. We we can represent the new observations as:&lt;/p&gt;
+&lt;p&gt;&lt;span class="math"&gt;\(O =\)&lt;/span&gt; Tycho Brahe has made very many precise observations that Kepler says can be modeled more simply with his framework; Galileo has discovered the law of inertia&lt;/p&gt;
+&lt;p&gt;We're interested in &lt;span class="math"&gt;\(P(P|O)\)&lt;/span&gt; and &lt;span class="math"&gt;\(P(K|O)\)&lt;/span&gt;, the probabilities for each model given the new observations. Our initial confidence in the Ptolemaic model, before the new evidence is introduced, is probably pretty high, say &lt;span class="math"&gt;\(P(P) = 0.9\)&lt;/span&gt;; since the only other possibility is Kepler's model being correct, we have &lt;span class="math"&gt;\(P(K) = 0.1\)&lt;/span&gt; (the two probabilities have to sum to 1). We can represent this state of affairs in the rectangle on the far left in the tree-like figure below: 90% of that rectangle is shaded green; that part represents our confidence in P. The other 10% is shaded red, corresponding to our initial confidence that K is correct.&lt;/p&gt;
+&lt;p&gt;&lt;img src="./images/bayes_tree.png" width="180"/&gt;&lt;/p&gt;
+&lt;p&gt;Branching off of that rectangle are two others, which each represent different possible epistemic universes: In the upper one, the Ptolemaic model is correct; in the lower universe Kepler's turns out to be right. Notice that the branches going to these rectangles are labeled with their respective probabilities, 0.9 and 0.1.&lt;/p&gt;
+&lt;p&gt;&lt;img src="./images/left_side.jpg" width="180"/&gt;&lt;/p&gt;
+&lt;p&gt;Now let's look at the opposite side of the figure on the right. To shade in this rectangle, we have to ask ourselves about P(O|P) and P(O|K), the probabilities that the observations are correct in the different universes, one in which Ptolemy is right and the other in which Kepler is right. After all, maybe Tycho Brahe took all his observations while drunk and wrote the numbers down wrong, or maybe he made some kind of measurement error, or maybe Kepler's math is wrong!&lt;/p&gt;
+&lt;p&gt;&lt;img src="./images/right_side.jpg" width="180"/&gt;&lt;/p&gt;
+&lt;p&gt;The proportion of red in the bottom part of the rectangle represents &lt;span class="math"&gt;\(P(O|K)\)&lt;/span&gt;, the probability that the observations are correct in the universe where the planets do move, in fact, the way Kepler describes. It would be pretty unlikely that Brahe or Kepler made serious mistakes and yet the planets move on ellipses anyway! So we set &lt;span class="math"&gt;\(P(O|K) = 0.9\)&lt;/span&gt; (we would probably set it even higher, but let's keep the numbers nice and simple). The shaded red region is meant to take up 90% of the area in the bottom part of the rectangle; I drew it a little larger for clarity. &lt;/p&gt;
+&lt;p&gt;The green shaded region of upper portion of the rectangle represents &lt;span class="math"&gt;\(P(O|P)\)&lt;/span&gt;, the probability that the observation are correct, but that Ptolemy's model is the correct one anyway. How might that happen? It turns out that if you add some extra epicycles - that is, make the planets travel on circles that are on circles, which then move around the Earth - you can get them to appear to move in the night sky just as Brahe's measurements indicate. &lt;/p&gt;
+&lt;p&gt;Of course then that model starts to look kluncky, so maybe we think that's not too likely to be correct. Let's set &lt;span class="math"&gt;\(P(O|P) = 0.1\)&lt;/span&gt;, then. If we imagine tiling the top part of the rectangle with 10 vertical strips, the green is just one of those strips, again drawn a bit larger than it would really look, for clarity.&lt;/p&gt;
+&lt;p&gt;The two rectangles branching off toward the left from the one on the far right represent a universe in which the observations are correct (top branch) and one in which they are not (bottom branch). &lt;/p&gt;
+&lt;p&gt;Now let's look more closely at the middle rectangles. They show the overlap between the ones on each side, the area they have in common. For example, the middle top rectangle has the green area that's in common between the rectangle connected to its left and the one connected to its right side; the middle rectangle second from the top contains green that represents the overlap between the two green areas in the rectangles to which it's connected, and so on.&lt;/p&gt;
+&lt;p&gt;&lt;img src="./images/tree_middle.jpg" width="180"/&gt;&lt;/p&gt;
+&lt;p&gt;So far I haven't explained a lot of the numbers in the diagram. We start on the left, and use those numbers to get the ones on the right. The branch leading from the second upper rectangle to the upper middle one is labeled &lt;span class="math"&gt;\(P(O|P)=0.1\)&lt;/span&gt;. We are given that &lt;span class="math"&gt;\(P\)&lt;/span&gt; is true (remember, this branch represents a universe in which &lt;span class="math"&gt;\(P\)&lt;/span&gt; is true!) and are considering the probability that the observations are correct. This is precisely the probability that we represented on the far right rectangle by shading in 10% of its upper part. And here you can see that the thin green strip on the middle rectangle is 10% of the area of the one attached to its left. &lt;/p&gt;
+&lt;p&gt;&lt;img src="./images/left_side_nums.jpg" width="180"/&gt;&lt;/p&gt;
+&lt;p&gt;Similarly, the green in the middle rectangle second from the top is 90% of the area of the green in the rectangle connected to its left side, so that branch is labeled &lt;span class="math"&gt;\(P(~O|P) = 0.9\)&lt;/span&gt;. Notice that &lt;/p&gt;
+&lt;div class="math"&gt;$$
+P(O|P) + P(~O|P) = 0.1 + 0.9 = 1,
+$$&lt;/div&gt;
+&lt;p&gt;and that's generally the case: The sum of two branches coming from the same rectangle must add up to 1. &lt;/p&gt;
+&lt;p&gt;The probabilities on the tops of the middle rectangles are joint probabilities. For example, to get to the top rectangle, two things must happen: Ptolemy's model has to be correct, &lt;span class="math"&gt;\(P(P)=0.9\)&lt;/span&gt;, and then the observations have to be correct, given Ptolemy's model being correct, &lt;span class="math"&gt;\(P(O|P) = 0.1\)&lt;/span&gt;. So the probability of both these things happening is their product: &lt;/p&gt;
+&lt;div class="math"&gt;$$
+P(P)P(O|P) = 0.09. 
+$$&lt;/div&gt;
+&lt;p&gt;The other numbers along the middle are arrived at similarly. Now let's look at the right hand side again.&lt;/p&gt;
+&lt;p&gt;&lt;img src="./images/right_side_nums.jpg" width="180"/&gt;&lt;/p&gt;
+&lt;p&gt;The number on the upper branch coming from the far right rectangle is obtained by adding up the numbers on top of the rectangles that it ultimately connects to in the middle. That is,&lt;/p&gt;
+&lt;div class="math"&gt;$$
+P(O) = P(O\And P) + P(O\And K) = 0.09 + 0.09 = 0.18.
+$$&lt;/div&gt;
+&lt;p&gt;Similarly,&lt;/p&gt;
+&lt;div class="math"&gt;$$
+P(~O) = P(~O \And P) + P(~O \And K) = 0.81 + 0.01 = 0.82.
+$$&lt;/div&gt;
+&lt;p&gt;Notice these two branches, since they both lead off the same rectangle, sum to 1: 0.18 + 0.82 = 1.&lt;/p&gt;
+&lt;p&gt;Now what about the number in yellow, &lt;span class="math"&gt;\(P(P|O)\)&lt;/span&gt;? We get that one be noting that the number on the top of the middle rectangle has to be &lt;span class="math"&gt;\(P(O)P(P|O)\)&lt;/span&gt;, just like on the left side it was &lt;span class="math"&gt;\(P(P)P(O|P)\)&lt;/span&gt;. So if we call that yellow number &lt;span class="math"&gt;\(x\)&lt;/span&gt;, we have &lt;span class="math"&gt;\(P(O)x = P(O\And P)\)&lt;/span&gt; or &lt;span class="math"&gt;\(0.18x = 0.09\)&lt;/span&gt;. Solving this equation for x gives &lt;span class="math"&gt;\(x = 0.09/0.18 = 0.5\)&lt;/span&gt;. The other numbers on those branches are obtained the same way. For example, if we use a &lt;span class="math"&gt;\(y\)&lt;/span&gt; to represent the value on the bottom, labeled &lt;span class="math"&gt;\(P(K|~O)\)&lt;/span&gt;, we need to have &lt;span class="math"&gt;\(P(~O)y = P(~O\And K)\)&lt;/span&gt; or &lt;span class="math"&gt;\(0.82y = 0.01\)&lt;/span&gt;, so that &lt;span class="math"&gt;\(y = 0.01/0.82 = 0.01\)&lt;/span&gt;. &lt;/p&gt;
+&lt;p&gt;So we started with confidence &lt;span class="math"&gt;\(P(P)=0.9\)&lt;/span&gt;, but after all that new science we find ourselves at &lt;span class="math"&gt;\(P(P)=0.5\)&lt;/span&gt;: We're not so sure anymore!&lt;/p&gt;
+&lt;p&gt;It may seem like a lot, but once you get used to it, it doesn't take long to draw up a Bayes tree and think through your confidence update for a claim, given new evidence.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;amp;t=YFPoxpEQ2Qp14U4FliD7fA"&gt;Discuss on Twitter&lt;/a&gt;&lt;/p&gt;
+&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width &lt; 768) ? "left" : align;
+        indent = (screen.width &lt; 768) ? "0em" : indent;
+        linebreak = (screen.width &lt; 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+&lt;/script&gt;</content><category term="simple tools"></category><category term="bayes' theorem"></category></entry><entry><title>using a convolutional neural net to identify images</title><link href="https://www.thedecisionblog.com/using%20a%20convolutional%20neural%20net%20to%20identify%20images.html" rel="alternate"></link><published>2023-03-03T00:00:00-05:00</published><updated>2023-03-03T00:00:00-05:00</updated><author><name>Kayla Lewis</name></author><id>tag:www.thedecisionblog.com,2023-03-03:/using a convolutional neural net to identify images.html</id><summary type="html">&lt;p&gt;we show how to use a convolutional net for the identify-handwritten-numbers task&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img align=right src="images/twisty-structure.jpg" width="170"/&gt;&lt;/p&gt;
 &lt;p&gt;Previously we used a three layer neural net to identify low resolution images &lt;span class="math"&gt;\((8\times8)\)&lt;/span&gt; of handwritten numbers. Here we'll consider higher resolution images &lt;span class="math"&gt;\((28\times 28)\)&lt;/span&gt; of the same and add convolutional structure to help the neural net learn the correct labels for them. First we load the data and perform the usual transformations to prepare it for the input layer.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;plt&lt;/span&gt;
