@@ -39,7 +39,7 @@
 &lt;p&gt;&lt;img src="./images/left_side_nums.jpg" width="180"/&gt;&lt;/p&gt;
 &lt;p&gt;Similarly, the green in the middle rectangle second from the top is 90% of the area of the green in the rectangle connected to its left side, so that branch is labeled &lt;span class="math"&gt;\(P(~O|P) = 0.9\)&lt;/span&gt;. Notice that &lt;/p&gt;
 &lt;div class="math"&gt;$$
-P(O|P) + P(~O|P) = 0.1 + 0.9 = 1,
+P(O|P) + P(\sim O|P) = 0.1 + 0.9 = 1,
 $$&lt;/div&gt;
 &lt;p&gt;and that's generally the case: The sum of two branches coming from the same rectangle must add up to 1. &lt;/p&gt;
 &lt;p&gt;The probabilities on the tops of the middle rectangles are joint probabilities. For example, to get to the top rectangle, two things must happen: Ptolemy's model has to be correct, &lt;span class="math"&gt;\(P(P)=0.9\)&lt;/span&gt;, and then the observations have to be correct, given Ptolemy's model being correct, &lt;span class="math"&gt;\(P(O|P) = 0.1\)&lt;/span&gt;. So the probability of both these things happening is their product: &lt;/p&gt;
