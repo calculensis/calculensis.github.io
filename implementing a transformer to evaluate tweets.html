@@ -339,7 +339,7 @@
 <span class="k">with</span><span class="w"> </span><span class="n">error</span><span class="o">:</span><span class="w">  </span><span class="mf">0.09630416203290224</span><span class="w"></span>
 </code></pre></div>
 
-<p>Now we'll see how well the model performs out of sample. </p>
+<p>Let's see how well the model performs out of sample. </p>
 <div class="highlight"><pre><span></span><code><span class="n">tweets</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tweets_as_vecs.csv&quot;</span><span class="p">)</span>
 <span class="n">X_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;X_test.pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
 <span class="n">y_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;y_test.pt&quot;</span><span class="p">)</span>
