@@ -163,7 +163,7 @@
 &lt;span class="n"&gt;tweets_df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;to_csv&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;my_tweets_cleaned.csv&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;Now that the tweets are cleaned up and labeled, it's time to tokenize them. We'll create a dictionary that maps each word to an integer; then we'll convert each tweet into a vector of integers.&lt;/p&gt;
+&lt;p&gt;Now that the tweets are cleaned up and labeled, it's time to tokenize them. We'll create a dictionary that maps each word to an integer; then we'll convert each tweet into a vector of integers. Our architecture already includes an embedding layer that will map each word into a vector, so each tweet with be represented by a series of vectors. We're also using positional embedding so that the network can keep track of how the words in each tweet are ordered.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;pickle&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
 
