@@ -115,7 +115,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">feed_forward</span><span class="o">+</span><span class="n">x</span><span class="p">)</span>
 </code></pre></div>
 
-<p>For the full network we'll stack a number of these transformer on top of each other.</p>
+<p>For the full network we'll stack a number of transformers on top of one another; we'll also add a layer that predicts class log probabilities.</p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">tweet_classifier</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="c1"># vec_dim = dimension of the vector that a word maps to in</span>
     <span class="c1">#           the word embedding and also that a position</span>
