@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    implementing a transformer to evaluate tweets
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://www.thedecisionblog.com/theme/css/cid.css">
+        <link href="https://www.thedecisionblog.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://www.thedecisionblog.com">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://www.thedecisionblog.com/">INDEX</a>
+        <a href="https://www.thedecisionblog.com/archives">ARCHIVES</a>
+        <a href="https://www.thedecisionblog.com/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>implementing a transformer to evaluate tweets</h1>
+            <p class="date">Written on <time datetime="2023-05-13T00:00:00-04:00">May 13, 2023</time></p>
+        </header>
+
+        <article>
+            <p><img align=right src="images/judge_hammer.jpg" width="200"/></p>
+<p>In this post implement a transformer architecture and use it to predict whether a tweet is good (i.e. with number of likes <span class="math">\(&gt;3\)</span>) or bad (number of likes <span class="math">\(\le 3\)</span>). At the heart of the transformer is the self-attention operation, which allows the network to attend to all of the words in sentence at once. We implement it as follows.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+
+<span class="k">class</span> <span class="nc">self_attention</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">num_heads</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">=</span> <span class="n">num_heads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vec_dim</span>   <span class="o">=</span> <span class="n">vec_dim</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_keys</span>     <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_queries</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_values</span>   <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unify_heads</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">num_batches</span><span class="p">,</span> <span class="n">num_vecs</span><span class="p">,</span> <span class="n">vec_dim</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="n">num_heads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span>
+
+        <span class="n">trunc_dim</span> <span class="o">=</span> <span class="n">vec_dim</span> <span class="o">//</span> <span class="n">num_heads</span>
+
+        <span class="n">queries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_queries</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">keys</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_keys</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">values</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_values</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">queries</span> <span class="o">=</span> \
+            <span class="n">queries</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span><span class="n">num_vecs</span><span class="p">,</span><span class="n">num_heads</span><span class="p">,</span><span class="n">trunc_dim</span><span class="p">)</span>
+        <span class="n">keys</span> <span class="o">=</span>    \
+            <span class="n">keys</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span><span class="n">num_vecs</span><span class="p">,</span><span class="n">num_heads</span><span class="p">,</span><span class="n">trunc_dim</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span>  \
+            <span class="n">values</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span><span class="n">num_vecs</span><span class="p">,</span><span class="n">num_heads</span><span class="p">,</span><span class="n">trunc_dim</span><span class="p">)</span>
+
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span> \
+            <span class="n">view</span><span class="p">(</span><span class="n">num_batches</span><span class="o">*</span><span class="n">num_heads</span><span class="p">,</span><span class="n">num_vecs</span><span class="p">,</span><span class="n">trunc_dim</span><span class="p">)</span>
+        <span class="n">queries</span> <span class="o">=</span> <span class="n">queries</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span> \
+            <span class="n">view</span><span class="p">(</span><span class="n">num_batches</span><span class="o">*</span><span class="n">num_heads</span><span class="p">,</span><span class="n">num_vecs</span><span class="p">,</span><span class="n">trunc_dim</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span> \
+            <span class="n">view</span><span class="p">(</span><span class="n">num_batches</span><span class="o">*</span><span class="n">num_heads</span><span class="p">,</span><span class="n">num_vecs</span><span class="p">,</span><span class="n">trunc_dim</span><span class="p">)</span>
+
+        <span class="n">dot_prod</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="n">keys</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">dot_prod</span> <span class="o">=</span> <span class="n">dot_prod</span> <span class="o">/</span> <span class="p">(</span><span class="n">vec_dim</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">))</span>
+        <span class="n">dot_prod</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">dot_prod</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">dot_prod</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span><span class="o">.</span> \
+            <span class="n">view</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span><span class="n">num_heads</span><span class="p">,</span><span class="n">num_vecs</span><span class="p">,</span><span class="n">trunc_dim</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span> \
+            <span class="n">view</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span><span class="n">num_vecs</span><span class="p">,</span><span class="n">trunc_dim</span><span class="o">*</span><span class="n">num_heads</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unify_heads</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">out</span>
+</code></pre></div>
+
+<p>Once we have self-attention defined, we insert it into a transformer.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">transformer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">num_heads</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">attention</span> <span class="o">=</span> <span class="n">self_attention</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">num_heads</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">)</span>
+
+        <span class="n">dim_multiplier</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feed_forward</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span> \
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">dim_multiplier</span><span class="o">*</span><span class="n">vec_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dim_multiplier</span><span class="o">*</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">attended</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attention</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">attended</span><span class="o">+</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">feed_forward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feed_forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">feed_forward</span><span class="o">+</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+
+<p>For the full network we'll stack a number of these transformer on top of each other.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">tweet_classifier</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="c1"># vec_dim = dimension of the vector that a word maps to in</span>
+    <span class="c1">#           the word embedding and also that a position</span>
+    <span class="c1">#           maps to in the position embedding</span>
+    <span class="c1"># seq_length = length of the sentence for the positional</span>
+    <span class="c1">#              embedding</span>
+    <span class="c1"># num_words = size of the dictionary for the word embedding</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">num_heads</span><span class="p">,</span><span class="n">depth</span><span class="p">,</span><span class="n">seq_length</span><span class="p">,</span> \
+                 <span class="n">num_words</span><span class="p">,</span><span class="n">num_classes</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_words</span> <span class="o">=</span> <span class="n">num_words</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">word_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">num_words</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_emb</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">seq_length</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">)</span>
+
+        <span class="n">tblocks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>
+            <span class="n">tblocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transformer</span><span class="p">(</span><span class="n">vec_dim</span><span class="o">=</span><span class="n">vec_dim</span><span class="p">,</span> \
+                                       <span class="n">num_heads</span><span class="o">=</span><span class="n">num_heads</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tblocks</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">tblocks</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">toprobs</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">num_classes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+        <span class="c1"># x: A (batch_size, sent_len) tensor of integer values </span>
+        <span class="c1">#    representing words (in some predetermined vocabulary).</span>
+        <span class="c1"># output: A (batch_size, num_classes) tensor of </span>
+        <span class="c1">#         log probabilities over the classes</span>
+
+        <span class="c1"># generate word embeddings</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_emb</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">batch_size</span><span class="p">,</span> <span class="n">sent_len</span><span class="p">,</span> <span class="n">vec_dim</span> <span class="o">=</span> <span class="n">words</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+        <span class="c1"># generate position embeddings</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">sent_len</span><span class="p">)</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_emb</span><span class="p">(</span><span class="n">positions</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span> \
+                    <span class="n">expand</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span><span class="n">sent_len</span><span class="p">,</span><span class="n">vec_dim</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">words</span> <span class="o">+</span> <span class="n">positions</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tblocks</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># Average-pool over the sent_len dimension and project </span>
+        <span class="c1"># to class probabilities</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toprobs</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<p>And that takes care of the network architecture! Now we'll turn to the data, which consists of 4,000 tweets together with the number of likes won by each tweet. We need to clean the data up a bit before we can tokenize it; we also need to label each tweet based on its number of likes.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">tweets_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;my_tweets.csv&quot;</span><span class="p">)</span>
+
+<span class="c1">#remove all columns except those containing tweets</span>
+<span class="n">tweets_df</span> <span class="o">=</span> <span class="n">tweets_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Date Created&#39;</span><span class="p">,</span> \
+            <span class="s1">&#39;Source of Tweet&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">4000</span><span class="p">)</span>
+<span class="n">tweets_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Unnamed: 0&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># remove punctuation</span>
+<span class="n">tweets_df</span><span class="p">[</span><span class="s1">&#39;Tweets&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">tweets_df</span><span class="p">[</span><span class="s1">&#39;Tweets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> \
+    <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[,\.!?]&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+
+<span class="c1"># remove all the mentions (@)</span>
+<span class="n">tweets_df</span><span class="p">[</span><span class="s1">&#39;Tweets&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">tweets_df</span><span class="p">[</span><span class="s1">&#39;Tweets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> \
+    <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;@([a-zA-Z0-9_]{1,50})&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+
+<span class="c1"># convert the titles to lowercase</span>
+<span class="n">tweets_df</span><span class="p">[</span><span class="s1">&#39;Tweets&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">tweets_df</span><span class="p">[</span><span class="s1">&#39;Tweets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+<span class="n">tweets_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;my_tweets_cleaned.csv&quot;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">tweets</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;my_tweets_cleaned.csv&quot;</span><span class="p">)</span>
+<span class="n">threshold</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">good_tweets</span> <span class="o">=</span> <span class="p">(</span><span class="n">tweets</span><span class="p">[</span><span class="s1">&#39;Number of Likes&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">bad_tweets</span>  <span class="o">=</span> <span class="p">(</span><span class="n">tweets</span><span class="p">[</span><span class="s1">&#39;Number of Likes&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="n">tweets</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Number of Likes&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tweets</span><span class="p">[</span><span class="s1">&#39;good&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">good_tweets</span>
+<span class="n">tweets</span><span class="p">[</span><span class="s1">&#39;bad&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">bad_tweets</span>
+<span class="n">tweets_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;my_tweets_cleaned.csv&quot;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Now that the tweets are cleaned up and labeled, it's time to tokenize them. We'll create a dictionary that maps each word to an integer; then we'll convert each tweet into a vector of integers.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">tweets</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;labeled_tweets.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># convert each word into a number; covert each tweet into a</span>
+<span class="c1"># vector with a predefined length. empty positions will be</span>
+<span class="c1"># set to zero</span>
+
+<span class="c1"># build up a set containing all the tweet words; also find the</span>
+<span class="c1"># maximum tweet length</span>
+<span class="n">vocab</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="n">max_len</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tweets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">word_list</span> <span class="o">=</span> <span class="n">tweets</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">word_list</span><span class="p">)</span><span class="o">&gt;</span><span class="n">max_len</span><span class="p">:</span>
+        <span class="n">max_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word_list</span><span class="p">)</span>
+    <span class="n">vocab</span> <span class="o">=</span> <span class="n">vocab</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">word_list</span><span class="p">))</span>
+<span class="c1"># make a dictionary pairing words to integers</span>
+<span class="n">words_to_nums</span> <span class="o">=</span> <span class="p">{</span><span class="n">word</span><span class="p">:</span><span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">word</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vocab</span><span class="p">)}</span>
+
+<span class="c1"># save the dictionary to a file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;words_to_nums.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">words_to_nums</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dictionary saved to file!&#39;</span><span class="p">)</span>
+
+<span class="n">tweets_as_vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">tweets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">max_len</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tweets</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">word_list</span> <span class="o">=</span> <span class="n">tweets</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">tweet_vec</span> <span class="o">=</span> <span class="p">[</span><span class="n">words_to_nums</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_list</span><span class="p">]</span>
+    <span class="n">tweets_as_vecs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">tweet_vec</span><span class="p">)]</span><span class="o">=</span><span class="n">tweet_vec</span>
+
+<span class="n">tweets_as_vecs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tweets_as_vecs</span><span class="p">)</span>
+<span class="n">tweets_as_vecs</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;tweets_as_vecs.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># convert the tweet_labels such that 0 = bad tweet, </span>
+<span class="c1"># 1 = good tweet, and there is a single integer label for each</span>
+<span class="c1"># tweet</span>
+<span class="n">tweet_labels</span> <span class="o">=</span> <span class="n">tweets</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">true_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">tweet_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">true_class</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">true_class</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tweet_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">true_class</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">tweet_labels</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+<span class="n">true_class</span> <span class="o">=</span> <span class="n">true_class</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">true_class</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;tweet_labels.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>dictionary saved to file!
+</code></pre></div>
+
+<p>Now we can train our predictor. We'll also save the model weights to a file afterward.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">optim</span>
+
+<span class="n">tweets</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tweets_as_vecs.csv&quot;</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tweet_labels.csv&quot;</span><span class="p">)</span>
+
+<span class="c1"># create the training and test sets</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> \
+    <span class="n">train_test_split</span><span class="p">(</span><span class="n">tweets</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.33</span><span class="p">)</span>
+
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_test</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_test</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">vec_dim</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">sent_len</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">num_heads</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">depth</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">seq_length</span> <span class="o">=</span> <span class="n">sent_len</span>
+<span class="n">num_words</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tweets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="o">+</span><span class="mi">1</span>
+<span class="n">num_classes</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">err_tol</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">max_epoch</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">epoch</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">err</span> <span class="o">=</span> <span class="mf">1.e5</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">batch_size</span><span class="p">),</span> \
+                       <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">y_train</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">batch_size</span><span class="p">))</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">tweet_classifier</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">num_heads</span><span class="p">,</span><span class="n">depth</span><span class="p">,</span><span class="n">seq_length</span><span class="p">,</span> \
+                         <span class="n">num_words</span><span class="p">,</span><span class="n">num_classes</span><span class="p">)</span>
+<span class="n">loss_func</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">NLLLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span><span class="n">learning_rate</span><span class="p">)</span>
+<span class="k">while</span> <span class="p">((</span><span class="n">epoch</span><span class="o">&lt;</span><span class="n">max_epoch</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">err</span><span class="o">&gt;</span><span class="n">err_tol</span><span class="p">)):</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_train</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="n">y_train</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_func</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span><span class="n">targets</span><span class="p">)</span>
+
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">err</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+    <span class="n">err</span> <span class="o">/=</span> <span class="n">batch_size</span>
+    <span class="n">epoch</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">epoch</span><span class="o">%</span><span class="mi">10</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch: </span><span class="si">%d</span><span class="s2">, loss: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">epoch</span><span class="o">&lt;=</span><span class="n">max_epoch</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;converged at epoch: &quot;</span><span class="p">,</span><span class="n">epoch</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;with error: &quot;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+
+<span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s1">&#39;model_weights.pth&#39;</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span><span class="s2">&quot;X_test.pt&quot;</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="s2">&quot;y_test.pt&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">10</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.475420</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">20</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.473031</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">30</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.470421</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">40</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.466993</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">50</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.459974</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">60</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.445342</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">70</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.430670</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">80</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.415124</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">90</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.394816</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.366840</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">110</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.333874</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">120</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.316484</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">130</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.275802</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">140</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.250228</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">150</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.237210</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">160</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.230245</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">170</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.148748</span><span class="w"></span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">180</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.127036</span><span class="w"></span>
+<span class="n">converged</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">epoch</span><span class="o">:</span><span class="w">  </span><span class="mi">185</span><span class="w"></span>
+<span class="k">with</span><span class="w"> </span><span class="n">error</span><span class="o">:</span><span class="w">  </span><span class="mf">0.09630416203290224</span><span class="w"></span>
+</code></pre></div>
+
+<p>Now we'll see how well the model performs out of sample. </p>
+<div class="highlight"><pre><span></span><code><span class="n">tweets</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;tweets_as_vecs.csv&quot;</span><span class="p">)</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;X_test.pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;y_test.pt&quot;</span><span class="p">)</span>
+<span class="n">num_sents</span> <span class="o">=</span> <span class="n">y_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">vec_dim</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">sent_len</span> <span class="o">=</span> <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">num_heads</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">depth</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">seq_length</span> <span class="o">=</span> <span class="n">sent_len</span>
+<span class="n">num_words</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tweets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="o">+</span><span class="mi">1</span>
+<span class="n">num_classes</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">tweet_classifier</span><span class="p">(</span><span class="n">vec_dim</span><span class="p">,</span><span class="n">num_heads</span><span class="p">,</span><span class="n">depth</span><span class="p">,</span><span class="n">seq_length</span><span class="p">,</span> \
+                         <span class="n">num_words</span><span class="p">,</span><span class="n">num_classes</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;model_weights.pth&#39;</span><span class="p">))</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">X_test</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">batch_size</span><span class="p">),</span> \
+                     <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">int</span><span class="p">()</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">y_test</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">y_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">batch_size</span><span class="p">))</span>
+<span class="n">num_correct</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_test</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">int</span><span class="p">()</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">y_test</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">num_correct</span> <span class="o">+=</span> <span class="p">(</span><span class="n">outputs</span><span class="o">==</span><span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+<span class="n">frac_correct</span> <span class="o">=</span> <span class="n">num_correct</span><span class="o">/</span><span class="n">num_sents</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;percent correct OOS: &quot;</span><span class="p">,</span><span class="n">frac_correct</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>percent correct OOS:  69.46969696969697
+</code></pre></div>
+
+<p>For a training set of about 3,000 tweets (i.e. 67% of the full 4,000 tweet data set), 70% accuracy out of sample isn't too bad!</p>
+<p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://www.thedecisionblog.com/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+                <li><a href="https://www.thedecisionblog.com/about">about</a></li>
+                <li><a href="https://www.thedecisionblog.com/hire me">hire me</a></li>
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>
