@@ -1,7 +1,7 @@
 Title: simple tools, part 3: the weighted pro-con list
 Date: 2022-07-27
-Category: basics
-Tags: pro-con list
+Category: simple tools
+Tags: simple tools
 Slug: pro-con list
 Authors: Kayla Lewis
 Summary: I describe the weighted pro-con list

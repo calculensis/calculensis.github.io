@@ -1,7 +1,7 @@
 Title: simple tools, part 4: probability and degrees of belief
 Date: 2022-08-05
-Category: basics
-Tags: 
+Category: simple tools
+Tags: simple tools
 Slug: probability and degrees of belief
 Authors: Kayla Lewis
 Summary: I describe how to map beliefs to probabilities

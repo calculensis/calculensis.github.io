@@ -1,6 +1,6 @@
 Title: decisions and the search-inference framework
 Date: 2022-07-11
-Category: basics
+Category: simple tools
 Tags: basics, search-inference
 Slug: decisions and the search-inference framework
 Authors: Kayla Lewis
@@ -31,3 +31,5 @@ Viewing a decision through multiple lenses or models is a way of lowering the pr
 Very often, different models will tell us to take different courses of action. It might seem like this is a problem, but in reality it's a strength. Instead of hoping that all models will give the same answer, what we'll do is try to understand ***why*** the different approaches give the answers that they do; in so doing, it will usually become clearer which choice we ultimately want to make.
 
 You can think of asking models what they "think" just as you would ask your friends what they think. Your friends might give conflicting answers, and that's a good thing! You are definitely expanding the space of possibilities to consider when that happens.
+
+[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

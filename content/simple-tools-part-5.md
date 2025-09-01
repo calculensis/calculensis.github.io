@@ -1,7 +1,7 @@
 Title: simple tools, part 5: decision trees
 Date: 2022-08-06
-Category: basics
-Tags: 
+Category: simple tools
+Tags: simple tools
 Slug: decision trees
 Authors: Kayla Lewis
 Summary: I describe how to use decision trees

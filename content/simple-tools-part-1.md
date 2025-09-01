@@ -1,7 +1,7 @@
 Title: simple tools, part 1
 Date: 2022-07-17
-Category: basics
-Tags: basics, simple tools
+Category: simple tools
+Tags: simple tools
 Slug: simple tools
 Authors: Kayla Lewis
 Summary: Part of a series on simple tools

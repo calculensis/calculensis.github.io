@@ -1,7 +1,7 @@
 Title: decisions and the search-inference framework
 Date: 2022-07-11
-Category: basics
-Tags: basics, search-inference
+Category: simple tools
+Tags: simple tools
 Slug: decisions and the search-inference framework
 Authors: Kayla Lewis
 Summary: Why multi-model decision making is so important
