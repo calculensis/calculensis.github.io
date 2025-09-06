@@ -1,49 +1,62 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <title>    using a convolutional neural net to identify images
-</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="https://www.thedecisionblog.com/theme/css/cid.css">
-        <link href="https://www.thedecisionblog.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
-    </head>
-    <body>
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-        <![endif]-->
+<html lang="en">
+<head>
+          <title>the decision blog - using a convolutional neural net to identify images</title>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Full Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog Full RSS Feed" />
+        <link href="https://calculensis.github.io/feeds/machine-learning.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Categories Atom Feed" />
 
-            <div class="container">
 
-<header class="blog-header">
-    <h1><a href="https://www.thedecisionblog.com">the decision blog</a></h1>
-    <p></p>
-    <nav>
-        <a href="https://www.thedecisionblog.com/">INDEX</a>
-        <a href="https://www.thedecisionblog.com/archives">ARCHIVES</a>
-        <a href="https://www.thedecisionblog.com/categories">CATEGORIES</a>
-    </nav>
-</header>
 
-    <div class="post">
 
-        <header>
-            <h1>using a convolutional neural net to identify images</h1>
-            <p class="date">Written on <time datetime="2023-03-03T00:00:00-05:00">Mar 03, 2023</time></p>
-        </header>
+    <meta name="tags" content="neural net" />
+    <meta name="tags" content="convolutional net" />
 
-        <article>
-            <p><img align=right src="images/twisty-structure.jpg" width="170"/></p>
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="https://calculensis.github.io/">the decision blog</a></h1>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+            <li class="active"><a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a></li>
+            <li><a href="https://calculensis.github.io/category/productivity.html">productivity</a></li>
+            <li><a href="https://calculensis.github.io/category/simple-tools.html">simple tools</a></li>
+            <li><a href="https://calculensis.github.io/category/sql.html">SQL</a></li>
+            <li><a href="https://calculensis.github.io/category/systems-thinking.html">systems thinking</a></li>
+        </ul></nav><!-- /#menu -->
+<section id="content" class="body">
+  <header>
+    <h2 class="entry-title">
+      <a href="https://calculensis.github.io/using a convolutional neural net to identify images.html" rel="bookmark"
+         title="Permalink to using a convolutional neural net to identify images">using a convolutional neural net to identify images</a></h2>
+ 
+  </header>
+  <footer class="post-info">
+    <time class="published" datetime="2023-03-03T00:00:00-05:00">
+      Fri 03 March 2023
+    </time>
+    <address class="vcard author">
+      By           <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
+    </address>
+    <div class="category">
+        Category: <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>
+    </div>
+    <div class="tags">
+        Tags:
+            <a href="https://calculensis.github.io/tag/neural-net.html">neural net</a>
+            <a href="https://calculensis.github.io/tag/convolutional-net.html">convolutional net</a>
+    </div>
+  </footer><!-- /.post-info -->
+  <div class="entry-content">
+    <p><img align=right src="images/twisty-structure.jpg" width="170"/></p>
 <p>Previously we used a three layer neural net to identify low resolution images <span class="math">\((8\times8)\)</span> of handwritten numbers. Here we'll consider higher resolution images <span class="math">\((28\times 28)\)</span> of the same and add convolutional structure to help the neural net learn the correct labels for them. First we load the data and perform the usual transformations to prepare it for the input layer.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-<span class="kn">from</span> <span class="nn">keras.datasets</span> <span class="kn">import</span> <span class="n">mnist</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">keras.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">mnist</span>
 
 <span class="c1"># normalize the data, hot-one encode the target data; create</span>
 <span class="c1"># training and test sets</span>
@@ -67,7 +80,7 @@
 <span class="c1"># every position in the image, such that the frame does not</span>
 <span class="c1"># move outside the image, and captures part of the image</span>
 <span class="c1"># for each of those positions</span>
-<span class="k">def</span> <span class="nf">capture_frames</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">capture_frames</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
     <span class="n">image_rows</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">image_cols</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">frame_pos_horz</span> <span class="o">=</span> <span class="n">image_cols</span><span class="o">-</span><span class="n">frame_cols</span><span class="o">+</span><span class="mi">1</span>
@@ -86,20 +99,20 @@
 <div class="highlight"><pre><span></span><code><span class="c1"># define the activation functions and their derivatives</span>
 <span class="c1"># layer_num = 1 will return the function for layer 1 and</span>
 <span class="c1"># layer_num = 2 will return that for layer 2</span>
-<span class="k">def</span> <span class="nf">activ_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_num</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_num</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">activ_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_num</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_num</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
         <span class="n">soft_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">soft_max</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">soft_max</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">dirac_delta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dirac_delta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int64&#39;</span><span class="p">)</span>
 </code></pre></div>
 
@@ -210,21 +223,21 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;failed to converge&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<div class="highlight"><pre><span></span><code><span class="mf">0</span><span class="w"> </span><span class="mf">0.5708498546098345</span><span class="w"></span>
-<span class="mf">1</span><span class="w"> </span><span class="mf">0.238968805822179</span><span class="w"></span>
-<span class="mf">2</span><span class="w"> </span><span class="mf">0.18376262704300791</span><span class="w"></span>
-<span class="mf">3</span><span class="w"> </span><span class="mf">0.15884420078434203</span><span class="w"></span>
-<span class="mf">4</span><span class="w"> </span><span class="mf">0.14349670143331575</span><span class="w"></span>
-<span class="mf">5</span><span class="w"> </span><span class="mf">0.13303330132005825</span><span class="w"></span>
-<span class="mf">6</span><span class="w"> </span><span class="mf">0.12524633753039854</span><span class="w"></span>
-<span class="mf">7</span><span class="w"> </span><span class="mf">0.1190555095240238</span><span class="w"></span>
-<span class="mf">8</span><span class="w"> </span><span class="mf">0.11391619250773542</span><span class="w"></span>
-<span class="mf">9</span><span class="w"> </span><span class="mf">0.1094220182872265</span><span class="w"></span>
-<span class="mf">10</span><span class="w"> </span><span class="mf">0.10543376418131505</span><span class="w"></span>
-<span class="mf">11</span><span class="w"> </span><span class="mf">0.10185387081060268</span><span class="w"></span>
-<span class="mf">12</span><span class="w"> </span><span class="mf">0.09860016478135072</span><span class="w"></span>
-<span class="n">converged</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">iteration</span><span class="p">:</span><span class="w">  </span><span class="mf">12</span><span class="w"></span>
-<span class="n">average</span><span class="w"> </span><span class="n">error</span><span class="p">:</span><span class="w">  </span><span class="mf">0.09860016478135072</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="mf">0</span><span class="w"> </span><span class="mf">0.5708498546098345</span>
+<span class="mf">1</span><span class="w"> </span><span class="mf">0.238968805822179</span>
+<span class="mf">2</span><span class="w"> </span><span class="mf">0.18376262704300791</span>
+<span class="mf">3</span><span class="w"> </span><span class="mf">0.15884420078434203</span>
+<span class="mf">4</span><span class="w"> </span><span class="mf">0.14349670143331575</span>
+<span class="mf">5</span><span class="w"> </span><span class="mf">0.13303330132005825</span>
+<span class="mf">6</span><span class="w"> </span><span class="mf">0.12524633753039854</span>
+<span class="mf">7</span><span class="w"> </span><span class="mf">0.1190555095240238</span>
+<span class="mf">8</span><span class="w"> </span><span class="mf">0.11391619250773542</span>
+<span class="mf">9</span><span class="w"> </span><span class="mf">0.1094220182872265</span>
+<span class="mf">10</span><span class="w"> </span><span class="mf">0.10543376418131505</span>
+<span class="mf">11</span><span class="w"> </span><span class="mf">0.10185387081060268</span>
+<span class="mf">12</span><span class="w"> </span><span class="mf">0.09860016478135072</span>
+<span class="n">converged</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">iteration</span><span class="p">:</span><span class="w">  </span><span class="mf">12</span>
+<span class="n">average</span><span class="w"> </span><span class="n">error</span><span class="p">:</span><span class="w">  </span><span class="mf">0.09860016478135072</span>
 </code></pre></div>
 
 <p>Now let's check the out-of-sample error.</p>
@@ -268,7 +281,7 @@ percent correct: 92.57
 
 <p>Since we got pretty decent results, let's save the kernels and weights in output files in case we want to use them again later.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># save the kernels and weights in csv format</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="n">kernels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">kernels</span><span class="p">)</span>
 <span class="n">weights_01</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">weights_01</span><span class="p">)</span>
 <span class="n">weights_12</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">weights_12</span><span class="p">)</span>
@@ -278,7 +291,7 @@ percent correct: 92.57
 </code></pre></div>
 
 <p>Let's have a look at the kernels that our convolutional net found.</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">show_kernels</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">show_kernels</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
     <span class="n">kernels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;kernels.csv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
     <span class="n">kernels</span> <span class="o">=</span> <span class="n">kernels</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">)</span>
 
@@ -390,31 +403,13 @@ percent correct: 92.57
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 </script>
-        </article>
-
-        <footer>
-            <p>This entry is posted in <a href="https://www.thedecisionblog.com/category/machine-learning.html">machine learning</a>.</p>
-        </footer>
-
-
-    </div>
-
-
-<footer class="blog-footer">
-
-    <ul class="nav">
-    </ul>
-
-    <p class="disclaimer">
-    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
-    </p>
-</footer>
-            </div>
-<script>
-    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
-    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-    s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-    </body>
+  </div><!-- /.entry-content -->
+</section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+</body>
 </html>

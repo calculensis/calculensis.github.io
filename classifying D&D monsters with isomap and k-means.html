@@ -1,47 +1,58 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <title>    classifying D&D monsters with isomap and k-means
-</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="https://www.thedecisionblog.com/theme/css/cid.css">
-        <link href="https://www.thedecisionblog.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
-    </head>
-    <body>
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-        <![endif]-->
+<html lang="en">
+<head>
+          <title>the decision blog - classifying D&D monsters with isomap and k-means</title>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Full Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog Full RSS Feed" />
+        <link href="https://calculensis.github.io/feeds/machine-learning.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Categories Atom Feed" />
 
-            <div class="container">
 
-<header class="blog-header">
-    <h1><a href="https://www.thedecisionblog.com">the decision blog</a></h1>
-    <p></p>
-    <nav>
-        <a href="https://www.thedecisionblog.com/">INDEX</a>
-        <a href="https://www.thedecisionblog.com/archives">ARCHIVES</a>
-        <a href="https://www.thedecisionblog.com/categories">CATEGORIES</a>
-    </nav>
-</header>
 
-    <div class="post">
 
-        <header>
-            <h1>classifying D&D monsters with isomap and k-means</h1>
-            <p class="date">Written on <time datetime="2022-12-29T00:00:00-05:00">Dec 29, 2022</time></p>
-        </header>
+    <meta name="tags" content="K-means" />
 
-        <article>
-            <p><img align=right src="images/monster_woman.jpg" width="200"/></p>
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="https://calculensis.github.io/">the decision blog</a></h1>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+            <li class="active"><a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a></li>
+            <li><a href="https://calculensis.github.io/category/productivity.html">productivity</a></li>
+            <li><a href="https://calculensis.github.io/category/simple-tools.html">simple tools</a></li>
+            <li><a href="https://calculensis.github.io/category/sql.html">SQL</a></li>
+            <li><a href="https://calculensis.github.io/category/systems-thinking.html">systems thinking</a></li>
+        </ul></nav><!-- /#menu -->
+<section id="content" class="body">
+  <header>
+    <h2 class="entry-title">
+      <a href="https://calculensis.github.io/classifying D&D monsters with isomap and k-means.html" rel="bookmark"
+         title="Permalink to classifying D&D monsters with isomap and k-means">classifying D&D monsters with isomap and k-means</a></h2>
+ 
+  </header>
+  <footer class="post-info">
+    <time class="published" datetime="2022-12-29T00:00:00-05:00">
+      Thu 29 December 2022
+    </time>
+    <address class="vcard author">
+      By           <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
+    </address>
+    <div class="category">
+        Category: <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>
+    </div>
+    <div class="tags">
+        Tags:
+            <a href="https://calculensis.github.io/tag/k-means.html">K-means</a>
+    </div>
+  </footer><!-- /.post-info -->
+  <div class="entry-content">
+    <p><img align=right src="images/monster_woman.jpg" width="200"/></p>
 <p>Machine learning algorithms that are trained on data that has been labeled, in order to predict the labels for unlabeled data, are called "supervised learning" algorithms; on the other hand, those that search for patterns in unlabeled data, in order to simplify it, are called "unsupervised learning" algorithms. How might unsupervised learning algorithms, such as Isomap and K-means, categorize D&amp;D monsters according to their stats alone? Would they, e.g., group dragons together?</p>
 <p>Let's have a look at the data:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="s1">&#39;srd_5e_monsters.json&#39;</span><span class="p">)</span>
 <span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -216,9 +227,9 @@
 
 <p>There's a lot of information here, and it will need to be converted into fully numerical form before Isomap and K-means can act on it. Also, there's a column that includes urls for images of nearly all of the monsters; we'd like to use those in presenting our results. I've already run a script that downloads those images and turns them into thumbnails, so we just need to clean the data. </p>
 <p>We start by eliminating the rows for monsters that don't have corresponding images as well as columns that have NaN values. We also create a separate column to keep track of the row numbers identifying each monster. (The image files have these same numbers as suffixes, and it will be important to keep track of which row goes with which image file.)</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">CountVectorizer</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.feature_extraction.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">CountVectorizer</span>
 
 <span class="n">data</span><span class="p">[</span><span class="s1">&#39;monster num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span>
 <span class="n">rows_to_keep</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;rows_to_keep.csv&#39;</span><span class="p">)</span>
@@ -270,7 +281,7 @@
 </code></pre></div>
 
 <p>Now that the data is cleaned, we store the monster number and name in a separate data frame and drop the "Challenge" column because we don't want the monster challenge rating to enter into the resulting categorization. In addition, we rescale the data so that, e.g., hit points don't dominate simply because they are on a larger numerical scale than the other attributes.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
 
 <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;monster num&#39;</span><span class="p">,</span><span class="s1">&#39;Challenge&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">names</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;monster num&#39;</span><span class="p">]]</span>
@@ -280,8 +291,8 @@
 </code></pre></div>
 
 <p>Now we can apply Isomap to reduce the dimensionality of the space before applying K-means in the form of the spectral clustering algorithm.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="kn">import</span> <span class="n">Isomap</span>
-<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">SpectralClustering</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.manifold</span><span class="w"> </span><span class="kn">import</span> <span class="n">Isomap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpectralClustering</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">Isomap</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
@@ -298,11 +309,11 @@
 </code></pre></div>
 
 <p>We have re-indexed X_iso above by monster number for plotting the results, with which we now proceed.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">offsetbox</span>
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">offsetbox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 
@@ -331,7 +342,7 @@
 <span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">names</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;monster num&#39;</span><span class="p">),</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;monster num&#39;</span><span class="p">)</span>
 <span class="n">names</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
 
-<span class="k">def</span> <span class="nf">plot_components</span><span class="p">(</span><span class="n">X_iso</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_components</span><span class="p">(</span><span class="n">X_iso</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
     <span class="n">props</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s1">&#39;round&#39;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;wheat&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
         <span class="n">num</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="s1">&#39;monster num&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
@@ -354,31 +365,13 @@
 <p><img alt="png" src="./images/dnd_monsters.png"></p>
 <p>The circles underlying the thumbnail images have been color-labeled and sorted into 5 groups via K-means; we see that, e.g., the dragons have indeed been placed together, as have mostly the undead with the other undead and likewise for the celestials (except that demons have been added in!). Isomap and K-means have done a reasonable job of collecting like monsters with like, with knowledge only of the stats and not including the challenge rating.</p>
 <p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
-        </article>
-
-        <footer>
-            <p>This entry is posted in <a href="https://www.thedecisionblog.com/category/machine-learning.html">machine learning</a>.</p>
-        </footer>
-
-
-    </div>
-
-
-<footer class="blog-footer">
-
-    <ul class="nav">
-    </ul>
-
-    <p class="disclaimer">
-    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
-    </p>
-</footer>
-            </div>
-<script>
-    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
-    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-    s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-    </body>
+  </div><!-- /.entry-content -->
+</section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+</body>
 </html>

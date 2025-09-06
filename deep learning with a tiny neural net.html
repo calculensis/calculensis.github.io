@@ -1,46 +1,57 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <title>    deep learning with a tiny neural net
-</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="https://www.thedecisionblog.com/theme/css/cid.css">
-        <link href="https://www.thedecisionblog.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
-    </head>
-    <body>
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-        <![endif]-->
+<html lang="en">
+<head>
+          <title>the decision blog - deep learning with a tiny neural net</title>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Full Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog Full RSS Feed" />
+        <link href="https://calculensis.github.io/feeds/machine-learning.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Categories Atom Feed" />
 
-            <div class="container">
 
-<header class="blog-header">
-    <h1><a href="https://www.thedecisionblog.com">the decision blog</a></h1>
-    <p></p>
-    <nav>
-        <a href="https://www.thedecisionblog.com/">INDEX</a>
-        <a href="https://www.thedecisionblog.com/archives">ARCHIVES</a>
-        <a href="https://www.thedecisionblog.com/categories">CATEGORIES</a>
-    </nav>
-</header>
 
-    <div class="post">
 
-        <header>
-            <h1>deep learning with a tiny neural net</h1>
-            <p class="date">Written on <time datetime="2023-01-28T00:00:00-05:00">Jan 28, 2023</time></p>
-        </header>
+    <meta name="tags" content="neural net" />
 
-        <article>
-            <p><img align=right src="images/deepmind_image.jpg" width="200"/></p>
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="https://calculensis.github.io/">the decision blog</a></h1>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+            <li class="active"><a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a></li>
+            <li><a href="https://calculensis.github.io/category/productivity.html">productivity</a></li>
+            <li><a href="https://calculensis.github.io/category/simple-tools.html">simple tools</a></li>
+            <li><a href="https://calculensis.github.io/category/sql.html">SQL</a></li>
+            <li><a href="https://calculensis.github.io/category/systems-thinking.html">systems thinking</a></li>
+        </ul></nav><!-- /#menu -->
+<section id="content" class="body">
+  <header>
+    <h2 class="entry-title">
+      <a href="https://calculensis.github.io/deep learning with a tiny neural net.html" rel="bookmark"
+         title="Permalink to deep learning with a tiny neural net">deep learning with a tiny neural net</a></h2>
+ 
+  </header>
+  <footer class="post-info">
+    <time class="published" datetime="2023-01-28T00:00:00-05:00">
+      Sat 28 January 2023
+    </time>
+    <address class="vcard author">
+      By           <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
+    </address>
+    <div class="category">
+        Category: <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>
+    </div>
+    <div class="tags">
+        Tags:
+            <a href="https://calculensis.github.io/tag/neural-net.html">neural net</a>
+    </div>
+  </footer><!-- /.post-info -->
+  <div class="entry-content">
+    <p><img align=right src="images/deepmind_image.jpg" width="200"/></p>
 <p>To understand how neural nets work, it's best to start with a very small one. (I'm also going to assume some knowledge of multivariate calculus here, most importantly of partial derivatives and the meaning of the gradient vector.) So let's specify a simple prediction problem and attempt to solve it with a neural net having a small number of nodes and only one hidden layer. Suppose we want our neural net to predict each of the following outputs from the corresponding row of input. (This example comes from the book Grokking Deep Learning, by Andrew W Trask, which I highly recommend!) </p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
@@ -51,7 +62,7 @@
 </code></pre></div>
 
 <p>So, for example, from [1,0,1] we'd like our neural net to predict 1; from [0,0,1] we'd like it to predict 0, etc. The first layer of the neural net (which we'll label with a zero) will have three nodes, each of which will accept one of the three input values, say, in the first row of the inputs. The second layer (which we'll label as 1), will have four nodes, and the final layer (labeled as 2) will have a single neuron, because the net needs to predict a single number. Here's a image of the network that was made using graphviz:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">display</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">IPython</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
 <span class="n">display</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="s2">&quot;neural_net.png&quot;</span><span class="p">)</span>
 </code></pre></div>
 
@@ -89,24 +100,24 @@ where <span class="math">\(y\)</span> is the correct label for the corresponding
 <span class="n">weights_1_2_init</span> <span class="o">=</span> <span class="n">weights_1_2</span>
 
 <span class="c1"># this is our squishification function</span>
-<span class="k">def</span> <span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="n">x</span>
 
 <span class="c1"># activations for the middle layer</span>
-<span class="k">def</span> <span class="nf">activate_mid</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">layer</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activate_mid</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">layer</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">relu</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">layer</span><span class="p">))</span>
 
 <span class="c1"># activations for the 2nd layer</span>
-<span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">layer</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activate</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">layer</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">layer</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">out</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">out</span><span class="p">):</span>
     <span class="n">layer_1</span> <span class="o">=</span> <span class="n">activate_mid</span><span class="p">(</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">inp</span><span class="p">)</span>
     <span class="n">layer_2</span> <span class="o">=</span> <span class="n">activate</span><span class="p">(</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">layer_1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">layer_2</span><span class="o">-</span><span class="n">out</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span>
 
 <span class="c1"># routine for calculating the numerical derivatives</span>
-<span class="k">def</span> <span class="nf">error_derivs</span><span class="p">(</span><span class="n">layer_num</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">error_derivs</span><span class="p">(</span><span class="n">layer_num</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">):</span>
     <span class="n">delta_w</span> <span class="o">=</span> <span class="mf">0.0001</span>
     <span class="n">layer_1</span> <span class="o">=</span> <span class="n">activate_mid</span><span class="p">(</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">inp</span><span class="p">)</span>
     <span class="n">layer_2</span> <span class="o">=</span> <span class="n">activate</span><span class="p">(</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">layer_1</span><span class="p">)</span>
@@ -170,12 +181,12 @@ where <span class="math">\(y\)</span> is the correct label for the corresponding
         <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
 </code></pre></div>
 
-<div class="highlight"><pre><span></span><code><span class="mf">0.014687928092963858</span><span class="w"></span>
-<span class="mf">0.0002586911405566519</span><span class="w"></span>
-<span class="mf">5.201032288065113e-06</span><span class="w"></span>
-<span class="mf">1.1521188868884113e-07</span><span class="w"></span>
-<span class="mf">2.509888068656647e-09</span><span class="w"></span>
-<span class="mf">7.063314626310347e-11</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="mf">0.014687928092963858</span>
+<span class="mf">0.0002586911405566519</span>
+<span class="mf">5.201032288065113e-06</span>
+<span class="mf">1.1521188868884113e-07</span>
+<span class="mf">2.509888068656647e-09</span>
+<span class="mf">7.063314626310347e-11</span>
 </code></pre></div>
 
 <p>The errors are converging nicely toward zero. Now when we feed, say, [1,0,1], into our neural net, we should get out something close to 1: </p>
@@ -205,10 +216,10 @@ $$</div>
 <p>
 We now run the same code but implementing these derivatives in the gradient descent.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># we&#39;ll need the derivative of relu for the analytic derivatives</span>
-<span class="k">def</span> <span class="nf">relu_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">relu_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">0</span>
 
-<span class="k">def</span> <span class="nf">error_derivs</span><span class="p">(</span><span class="n">layer_num</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">error_derivs</span><span class="p">(</span><span class="n">layer_num</span><span class="p">,</span><span class="n">inp</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">weights_1_2</span><span class="p">):</span>
     <span class="n">delta_w</span> <span class="o">=</span> <span class="mf">0.0001</span>
     <span class="n">layer_1</span> <span class="o">=</span> <span class="n">activate_mid</span><span class="p">(</span><span class="n">weights_0_1</span><span class="p">,</span><span class="n">inp</span><span class="p">)</span>
     <span class="n">layer_2</span> <span class="o">=</span> <span class="n">activate</span><span class="p">(</span><span class="n">weights_1_2</span><span class="p">,</span><span class="n">layer_1</span><span class="p">)</span>
@@ -251,12 +262,12 @@ We now run the same code but implementing these derivatives in the gradient desc
         <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
 </code></pre></div>
 
-<div class="highlight"><pre><span></span><code><span class="mf">5.992573980015191e-13</span><span class="w"></span>
-<span class="mf">5.191218969687312e-15</span><span class="w"></span>
-<span class="mf">4.4970151644239996e-17</span><span class="w"></span>
-<span class="mf">3.895643033350437e-19</span><span class="w"></span>
-<span class="mf">3.3746928762906878e-21</span><span class="w"></span>
-<span class="mf">2.923396564864991e-23</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="mf">5.992573980015191e-13</span>
+<span class="mf">5.191218969687312e-15</span>
+<span class="mf">4.4970151644239996e-17</span>
+<span class="mf">3.895643033350437e-19</span>
+<span class="mf">3.3746928762906878e-21</span>
+<span class="mf">2.923396564864991e-23</span>
 </code></pre></div>
 
 <p>As happened in this particular case, it's typical to see better convergence using analytic derivatives.</p>
@@ -323,31 +334,13 @@ We now run the same code but implementing these derivatives in the gradient desc
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 </script>
-        </article>
-
-        <footer>
-            <p>This entry is posted in <a href="https://www.thedecisionblog.com/category/machine-learning.html">machine learning</a>.</p>
-        </footer>
-
-
-    </div>
-
-
-<footer class="blog-footer">
-
-    <ul class="nav">
-    </ul>
-
-    <p class="disclaimer">
-    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
-    </p>
-</footer>
-            </div>
-<script>
-    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
-    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-    s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-    </body>
+  </div><!-- /.entry-content -->
+</section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+</body>
 </html>

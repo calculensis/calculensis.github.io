@@ -1,51 +1,62 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <title>    distinguishing birds from airplanes with a pytorch convnet
-</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="https://www.thedecisionblog.com/theme/css/cid.css">
-        <link href="https://www.thedecisionblog.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
-    </head>
-    <body>
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-        <![endif]-->
+<html lang="en">
+<head>
+          <title>the decision blog - distinguishing birds from airplanes with a pytorch convnet</title>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Full Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog Full RSS Feed" />
+        <link href="https://calculensis.github.io/feeds/machine-learning.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Categories Atom Feed" />
 
-            <div class="container">
 
-<header class="blog-header">
-    <h1><a href="https://www.thedecisionblog.com">the decision blog</a></h1>
-    <p></p>
-    <nav>
-        <a href="https://www.thedecisionblog.com/">INDEX</a>
-        <a href="https://www.thedecisionblog.com/archives">ARCHIVES</a>
-        <a href="https://www.thedecisionblog.com/categories">CATEGORIES</a>
-    </nav>
-</header>
 
-    <div class="post">
 
-        <header>
-            <h1>distinguishing birds from airplanes with a pytorch convnet</h1>
-            <p class="date">Written on <time datetime="2023-04-15T00:00:00-04:00">Apr 15, 2023</time></p>
-        </header>
+    <meta name="tags" content="convolutional networks" />
 
-        <article>
-            <p><img align=right src="images/birds_from_planes.jpg" width="200"/></p>
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="https://calculensis.github.io/">the decision blog</a></h1>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+            <li class="active"><a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a></li>
+            <li><a href="https://calculensis.github.io/category/productivity.html">productivity</a></li>
+            <li><a href="https://calculensis.github.io/category/simple-tools.html">simple tools</a></li>
+            <li><a href="https://calculensis.github.io/category/sql.html">SQL</a></li>
+            <li><a href="https://calculensis.github.io/category/systems-thinking.html">systems thinking</a></li>
+        </ul></nav><!-- /#menu -->
+<section id="content" class="body">
+  <header>
+    <h2 class="entry-title">
+      <a href="https://calculensis.github.io/distinguishing birds from airplanes with a pytorch.html" rel="bookmark"
+         title="Permalink to distinguishing birds from airplanes with a pytorch convnet">distinguishing birds from airplanes with a pytorch convnet</a></h2>
+ 
+  </header>
+  <footer class="post-info">
+    <time class="published" datetime="2023-04-15T00:00:00-04:00">
+      Sat 15 April 2023
+    </time>
+    <address class="vcard author">
+      By           <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
+    </address>
+    <div class="category">
+        Category: <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>
+    </div>
+    <div class="tags">
+        Tags:
+            <a href="https://calculensis.github.io/tag/convolutional-networks.html">convolutional networks</a>
+    </div>
+  </footer><!-- /.post-info -->
+  <div class="entry-content">
+    <p><img align=right src="images/birds_from_planes.jpg" width="200"/></p>
 <p>This post, in which we'll create a convolutional net to discern birds from airplanes, is inspired by a couple of chapters from the book Deep Learning with PyTorch, by Stevens, Antiga, and Viehmann. Here are some of the images that we'll be dealing with:</p>
 <p><img alt="birds and planes" src="./images/birds_planes.png"></p>
 <p>First let's load up the data and normalize it.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">transforms</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">optim</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">torchvision</span><span class="w"> </span><span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">transforms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">optim</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="n">cifar</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">CIFAR10</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> \
                          <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">())</span>
 <span class="n">cifar_val</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">CIFAR10</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> \
@@ -69,14 +80,14 @@
                              <span class="n">std_val</span><span class="p">)]))</span>
 </code></pre></div>
 
-<div class="highlight"><pre><span></span><code><span class="n">Downloading</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">cs</span><span class="o">.</span><span class="n">toronto</span><span class="o">.</span><span class="n">edu</span><span class="o">/~</span><span class="n">kriz</span><span class="o">/</span><span class="n">cifar</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="n">python</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="o">./</span><span class="n">cifar</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="n">python</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Downloading</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">cs</span><span class="o">.</span><span class="n">toronto</span><span class="o">.</span><span class="n">edu</span><span class="o">/~</span><span class="n">kriz</span><span class="o">/</span><span class="n">cifar</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="n">python</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="o">./</span><span class="n">cifar</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="n">python</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
 
 
-<span class="mi">100</span><span class="o">%|</span><span class="err">██████████</span><span class="o">|</span><span class="w"> </span><span class="mi">170498071</span><span class="o">/</span><span class="mi">170498071</span><span class="w"> </span><span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">11</span><span class="o">&lt;</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span><span class="w"> </span><span class="mf">14695382.58</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">]</span><span class="w"></span>
+<span class="mi">100</span><span class="o">%|</span><span class="err">██████████</span><span class="o">|</span><span class="w"> </span><span class="mi">170498071</span><span class="o">/</span><span class="mi">170498071</span><span class="w"> </span><span class="p">[</span><span class="mi">00</span><span class="p">:</span><span class="mi">11</span><span class="o">&lt;</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">,</span><span class="w"> </span><span class="mf">14695382.58</span><span class="n">it</span><span class="o">/</span><span class="n">s</span><span class="p">]</span>
 
 
-<span class="n">Extracting</span><span class="w"> </span><span class="o">./</span><span class="n">cifar</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="n">python</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="o">.</span><span class="w"></span>
-<span class="n">Files</span><span class="w"> </span><span class="n">already</span><span class="w"> </span><span class="n">downloaded</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">verified</span><span class="w"></span>
+<span class="n">Extracting</span><span class="w"> </span><span class="o">./</span><span class="n">cifar</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="n">python</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="o">.</span>
+<span class="n">Files</span><span class="w"> </span><span class="n">already</span><span class="w"> </span><span class="n">downloaded</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">verified</span>
 </code></pre></div>
 
 <p>This dataset contains images of lots of other things besides birds and planes, so we'll need to filter out the images we're interested in.</p>
@@ -92,10 +103,10 @@
 </code></pre></div>
 
 <p>Next we'll define our neural net architecture.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
 
-<span class="k">class</span> <span class="nc">Net</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Net</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="c1"># convert 3 RGB channels into 16 channels</span>
         <span class="c1"># we&#39;re starting with 32x32 pixels</span>
@@ -115,7 +126,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span>   <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">act4</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LogSoftmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool1</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act1</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv2</span><span class="p">(</span><span class="n">out</span><span class="p">)))</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="o">*</span><span class="mi">8</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span>
@@ -156,20 +167,20 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;epoch: </span><span class="si">%d</span><span class="s2">, loss: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
 </code></pre></div>
 
-<div class="highlight"><pre><span></span><code><span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">10</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.348339</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">20</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.301792</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">30</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.271439</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">40</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.247062</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">50</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.227016</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">60</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.210078</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">70</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.192694</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">80</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.175032</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">90</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.160963</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.146820</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">110</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.134589</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">120</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.125042</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">130</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.113120</span><span class="w"></span>
-<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">140</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.102200</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">10</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.348339</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">20</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.301792</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">30</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.271439</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">40</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.247062</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">50</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.227016</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">60</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.210078</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">70</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.192694</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">80</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.175032</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">90</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.160963</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.146820</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">110</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.134589</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">120</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.125042</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">130</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.113120</span>
+<span class="n">epoch</span><span class="o">:</span><span class="w"> </span><span class="mi">140</span><span class="o">,</span><span class="w"> </span><span class="n">loss</span><span class="o">:</span><span class="w"> </span><span class="mf">0.102200</span>
 </code></pre></div>
 
 <p>As usual, we'd like to know how well our model performs out of sample.</p>
@@ -192,31 +203,13 @@
 
 <p>Given the low image quality and the size of the neural net, 90% doesn't seem too bad!</p>
 <p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
-        </article>
-
-        <footer>
-            <p>This entry is posted in <a href="https://www.thedecisionblog.com/category/machine-learning.html">machine learning</a>.</p>
-        </footer>
-
-
-    </div>
-
-
-<footer class="blog-footer">
-
-    <ul class="nav">
-    </ul>
-
-    <p class="disclaimer">
-    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
-    </p>
-</footer>
-            </div>
-<script>
-    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
-    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-    s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-    </body>
+  </div><!-- /.entry-content -->
+</section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+</body>
 </html>

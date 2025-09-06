@@ -1,50 +1,61 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-    <head>
-        <meta charset="utf-8">
-        <title>    using a convolutional network for mechanistic interpretability
-</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="https://www.thedecisionblog.com/theme/css/cid.css">
-        <link href="https://www.thedecisionblog.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
-    </head>
-    <body>
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-        <![endif]-->
+<html lang="en">
+<head>
+          <title>the decision blog - using a convolutional network for mechanistic interpretability</title>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Full Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog Full RSS Feed" />
+        <link href="https://calculensis.github.io/feeds/machine-learning.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Categories Atom Feed" />
 
-            <div class="container">
 
-<header class="blog-header">
-    <h1><a href="https://www.thedecisionblog.com">the decision blog</a></h1>
-    <p></p>
-    <nav>
-        <a href="https://www.thedecisionblog.com/">INDEX</a>
-        <a href="https://www.thedecisionblog.com/archives">ARCHIVES</a>
-        <a href="https://www.thedecisionblog.com/categories">CATEGORIES</a>
-    </nav>
-</header>
 
-    <div class="post">
 
-        <header>
-            <h1>using a convolutional network for mechanistic interpretability</h1>
-            <p class="date">Written on <time datetime="2023-03-16T00:00:00-04:00">Mar 16, 2023</time></p>
-        </header>
+    <meta name="tags" content="mechanistic interpretability" />
 
-        <article>
-            <p><img align=right src="images/through_a_sphere.jpg" width="200"/></p>
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="https://calculensis.github.io/">the decision blog</a></h1>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+            <li class="active"><a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a></li>
+            <li><a href="https://calculensis.github.io/category/productivity.html">productivity</a></li>
+            <li><a href="https://calculensis.github.io/category/simple-tools.html">simple tools</a></li>
+            <li><a href="https://calculensis.github.io/category/sql.html">SQL</a></li>
+            <li><a href="https://calculensis.github.io/category/systems-thinking.html">systems thinking</a></li>
+        </ul></nav><!-- /#menu -->
+<section id="content" class="body">
+  <header>
+    <h2 class="entry-title">
+      <a href="https://calculensis.github.io/using a convolutional network for mechanistic interpretability.html" rel="bookmark"
+         title="Permalink to using a convolutional network for mechanistic interpretability">using a convolutional network for mechanistic interpretability</a></h2>
+ 
+  </header>
+  <footer class="post-info">
+    <time class="published" datetime="2023-03-16T00:00:00-04:00">
+      Thu 16 March 2023
+    </time>
+    <address class="vcard author">
+      By           <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
+    </address>
+    <div class="category">
+        Category: <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>
+    </div>
+    <div class="tags">
+        Tags:
+            <a href="https://calculensis.github.io/tag/mechanistic-interpretability.html">mechanistic interpretability</a>
+    </div>
+  </footer><!-- /.post-info -->
+  <div class="entry-content">
+    <p><img align=right src="images/through_a_sphere.jpg" width="200"/></p>
 <p>I've been thinking a lot lately about mechanistic interpretability, that is, how to make the internal workings of neural nets transparent to humans. For this post, let's explore one idea in this direction: using a convolutional net to predict the inputs and outputs of a different, target network, based on its internal activations. To keep things simple, for our target network we'll use a binary operation learner and train it on modulo two addition. First we'll import some libraries and set up the network architecture.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
 
 <span class="c1"># the number of layers must be at least three</span>
 <span class="n">num_layers</span>    <span class="o">=</span> <span class="mi">7</span>
@@ -81,13 +92,13 @@
 <p>Now let's define the usual activation functions as well as set up the training and test sets. We will one-hot encode the inputs and outputs.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># layer_type = 1 will return tanh (or its derivative)</span>
 <span class="c1"># layer_type = 2 will return softmax (or its derivative)</span>
-<span class="k">def</span> <span class="nf">activ_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_type</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">layer_type</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">layer_type</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">activ_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_type</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">layer_type</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">layer_type</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
@@ -239,7 +250,7 @@ training set error:  0.07214775530824573
 <span class="n">layer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">num_output</span><span class="p">))</span>
 <span class="n">layers_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">activ_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_type</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">layer_type</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">layer_type</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
@@ -316,7 +327,7 @@ training set error:  0.07214775530824573
 <span class="c1"># every position in the image, such that the frame does not</span>
 <span class="c1"># move outside the image, and captures part of the image</span>
 <span class="c1"># for each of those positions</span>
-<span class="k">def</span> <span class="nf">capture_frames</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">capture_frames</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
     <span class="n">image_rows</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">image_cols</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">frame_pos_horz</span> <span class="o">=</span> <span class="n">image_cols</span><span class="o">-</span><span class="n">frame_cols</span><span class="o">+</span><span class="mi">1</span>
@@ -333,7 +344,7 @@ training set error:  0.07214775530824573
 <span class="c1"># define the activation functions and their derivatives</span>
 <span class="c1"># layer_num = 1 will return the function for layer 1 and</span>
 <span class="c1"># layer_num = 2 will return that for layer 2</span>
-<span class="k">def</span> <span class="nf">activ_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_num</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_num</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
@@ -350,7 +361,7 @@ training set error:  0.07214775530824573
         <span class="n">out_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">soft_max1</span><span class="p">,</span><span class="n">soft_max2</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">out_vec</span><span class="p">,</span><span class="n">soft_max3</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">activ_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_num</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_num</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
@@ -359,7 +370,7 @@ training set error:  0.07214775530824573
         <span class="n">soft_deriv</span> <span class="o">=</span> <span class="n">soft_max</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">soft_max</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="o">*</span><span class="n">num_soft_max</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">soft_deriv</span>
 
-<span class="k">def</span> <span class="nf">dirac_delta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dirac_delta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int64&#39;</span><span class="p">)</span>
 
 <span class="n">init_factor</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -579,7 +590,7 @@ average error:  0.07639752245626674
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;percent correct out of sample: &quot;</span><span class="p">,</span><span class="n">percent_correct</span><span class="p">)</span>
 
 <span class="c1"># save the kernels in csv format</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="n">kernels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">kernels</span><span class="p">)</span>
 <span class="n">kernels</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;kernels.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
@@ -589,8 +600,8 @@ percent correct out of sample:  100.0
 </code></pre></div>
 
 <p>Okay good, our model can predict both the inputs and the outputs of the modular addition net from its hidden neuron activations. This model uses three kernels; let's see how the activations look when filtered by these kernels, for all four possible inputs and outputs to the modular addition net.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
 
 <span class="c1"># load X_conv and y_conv</span>
 <span class="n">Xconv_load</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;X_conv.npz&#39;</span><span class="p">,</span><span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -605,7 +616,7 @@ percent correct out of sample:  100.0
 <span class="n">num_test</span>  <span class="o">=</span> <span class="n">Xconv</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">num_train</span>
 <span class="n">Xtrain</span>    <span class="o">=</span> <span class="n">Xconv</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_train</span><span class="p">]</span>
 <span class="n">ytrain</span>    <span class="o">=</span> <span class="n">yconv</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_train</span><span class="p">]</span>
-<span class="k">def</span> <span class="nf">show_kernels</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_kernels</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
     <span class="n">kernels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;kernels.csv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
     <span class="n">kernels</span> <span class="o">=</span> <span class="n">kernels</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">)</span>
 
@@ -623,7 +634,7 @@ percent correct out of sample:  100.0
 
 <span class="n">frame_rows</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">frame_cols</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="k">def</span> <span class="nf">capture_frames</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">capture_frames</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
     <span class="n">image_rows</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">image_cols</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">frame_pos_horz</span> <span class="o">=</span> <span class="n">image_cols</span><span class="o">-</span><span class="n">frame_cols</span><span class="o">+</span><span class="mi">1</span>
@@ -683,31 +694,13 @@ percent correct out of sample:  100.0
 <p><img alt="png" src="./images/filtered_activations.png"></p>
 <p>The differences in the filtered activations across the operations are subtle. For example, the lower left corner of the leftmost kernel is darker for "1 + 0 = 1" and "0 + 1 = 1" than for "0 + 0 = 0" or "1 + 1 = 0". Given "heat maps" like these, perhaps it would be possible to label the internal states similarly to how we might hope to determine what a human is perceiving and thinking on the basis of functional MRI images.</p>
 <p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
-        </article>
-
-        <footer>
-            <p>This entry is posted in <a href="https://www.thedecisionblog.com/category/machine-learning.html">machine learning</a>.</p>
-        </footer>
-
-
-    </div>
-
-
-<footer class="blog-footer">
-
-    <ul class="nav">
-    </ul>
-
-    <p class="disclaimer">
-    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
-    </p>
-</footer>
-            </div>
-<script>
-    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
-    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-    s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-    </body>
+  </div><!-- /.entry-content -->
+</section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+</body>
 </html>
