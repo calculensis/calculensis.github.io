@@ -1,55 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-          <title>the decision blog - topic analysis and decision making</title>
-        <meta charset="utf-8" />
-        <meta name="generator" content="Pelican" />
-        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Full Atom Feed" />
-        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog Full RSS Feed" />
-        <link href="https://calculensis.github.io/feeds/machine-learning.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Categories Atom Feed" />
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    topic analysis and decision making
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
 
+            <div class="container">
 
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
 
+    <div class="post">
 
-    <meta name="tags" content="topic analysis" />
+        <header>
+            <h1>topic analysis and decision making</h1>
+            <p class="date">Written on <time datetime="2022-12-04T00:00:00-05:00">Dec 04, 2022</time></p>
+        </header>
 
-</head>
-
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="https://calculensis.github.io/">the decision blog</a></h1>
-        </header><!-- /#banner -->
-        <nav id="menu"><ul>
-            <li class="active"><a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a></li>
-            <li><a href="https://calculensis.github.io/category/productivity.html">productivity</a></li>
-            <li><a href="https://calculensis.github.io/category/simple-tools.html">simple tools</a></li>
-            <li><a href="https://calculensis.github.io/category/sql.html">SQL</a></li>
-            <li><a href="https://calculensis.github.io/category/systems-thinking.html">systems thinking</a></li>
-        </ul></nav><!-- /#menu -->
-<section id="content" class="body">
-  <header>
-    <h2 class="entry-title">
-      <a href="https://calculensis.github.io/topic analysis and decision making.html" rel="bookmark"
-         title="Permalink to topic analysis and decision making">topic analysis and decision making</a></h2>
- 
-  </header>
-  <footer class="post-info">
-    <time class="published" datetime="2022-12-04T00:00:00-05:00">
-      Sun 04 December 2022
-    </time>
-    <address class="vcard author">
-      By           <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
-    </address>
-    <div class="category">
-        Category: <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>
-    </div>
-    <div class="tags">
-        Tags:
-            <a href="https://calculensis.github.io/tag/topic-analysis.html">topic analysis</a>
-    </div>
-  </footer><!-- /.post-info -->
-  <div class="entry-content">
-    <p><img align=right src="images/topic-areas-as-bags.jpg" width="180"/></p>
+        <article>
+            <p><img align=right src="images/topic-areas-as-bags.jpg" width="180"/></p>
 <p>Topic analysis or Latent Dirichlet Allocation (LDA) breaks a collection of documents (such as tweets) up into topic areas and calculates probabilities for words to appear both overall and within specific areas. It can thus give a picture of what sorts of things are being written about as well as which words tend to be used together to talk about each thing; this knowledge can be useful for decision making.</p>
 <p>For example, suppose I would like to maintain a certain balance between areas that I tweet about. LDA might reveal that I hardly ever talk about something I thought I tweeted about often, and as a result I might decide to tweet about that topic more often. It could also reveal patterns in the ways I'm using words to discuss those topics. For example, maybe I use language that's too informal to talk about things on which I'd like to confer a bit more gravitas.</p>
 <p>The analysis shown below is based off 3,000 of my tweets; they have been broken up into 10 topic areas. I've selected the one that most closely cooresponds to "things having to do with Effective Altruism (EA)". We see words like "causes" and "huel" (a meal-replacement drink) showing up, but not words from another of my topic areas, "systems thinking." And realizing this, I might decide to try mixing these areas more when I talk about them if, e.g., I think that systems thinking might benefit EA causes.</p>
@@ -57,13 +47,31 @@
 <p><img src="images/tweet-topics-2.jpg" width="300"/></p>
 <p>The analysis provides two different frequency measures for word occurrences, one being the probability of a word appearing in a given topic area, and another (called "lift") that divides the probability by that word's overall frequency in the document. The reason for having these two measures is that we might not want a word to appear high on the list just because it gets used a lot everywhere; we can adjust how much each measure contributes to the ordering of words within topic areas. I've chosen to weight them equally for the above example; it's useful to play around with that parameter and see how it affects the results.</p>
 <p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
-  </div><!-- /.entry-content -->
-</section>
-        <footer id="contentinfo" class="body">
-                <address id="about" class="vcard body">
-                Proudly powered by <a href="https://getpelican.com/">Pelican</a>,
-                which takes great advantage of <a href="https://www.python.org/">Python</a>.
-                </address><!-- /#about -->
-        </footer><!-- /#contentinfo -->
-</body>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
 </html>

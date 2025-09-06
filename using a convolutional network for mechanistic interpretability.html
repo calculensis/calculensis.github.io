@@ -1,55 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-          <title>the decision blog - using a convolutional network for mechanistic interpretability</title>
-        <meta charset="utf-8" />
-        <meta name="generator" content="Pelican" />
-        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Full Atom Feed" />
-        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog Full RSS Feed" />
-        <link href="https://calculensis.github.io/feeds/machine-learning.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Categories Atom Feed" />
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    using a convolutional network for mechanistic interpretability
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
 
+            <div class="container">
 
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
 
+    <div class="post">
 
-    <meta name="tags" content="mechanistic interpretability" />
+        <header>
+            <h1>using a convolutional network for mechanistic interpretability</h1>
+            <p class="date">Written on <time datetime="2023-03-16T00:00:00-04:00">Mar 16, 2023</time></p>
+        </header>
 
-</head>
-
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="https://calculensis.github.io/">the decision blog</a></h1>
-        </header><!-- /#banner -->
-        <nav id="menu"><ul>
-            <li class="active"><a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a></li>
-            <li><a href="https://calculensis.github.io/category/productivity.html">productivity</a></li>
-            <li><a href="https://calculensis.github.io/category/simple-tools.html">simple tools</a></li>
-            <li><a href="https://calculensis.github.io/category/sql.html">SQL</a></li>
-            <li><a href="https://calculensis.github.io/category/systems-thinking.html">systems thinking</a></li>
-        </ul></nav><!-- /#menu -->
-<section id="content" class="body">
-  <header>
-    <h2 class="entry-title">
-      <a href="https://calculensis.github.io/using a convolutional network for mechanistic interpretability.html" rel="bookmark"
-         title="Permalink to using a convolutional network for mechanistic interpretability">using a convolutional network for mechanistic interpretability</a></h2>
- 
-  </header>
-  <footer class="post-info">
-    <time class="published" datetime="2023-03-16T00:00:00-04:00">
-      Thu 16 March 2023
-    </time>
-    <address class="vcard author">
-      By           <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
-    </address>
-    <div class="category">
-        Category: <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>
-    </div>
-    <div class="tags">
-        Tags:
-            <a href="https://calculensis.github.io/tag/mechanistic-interpretability.html">mechanistic interpretability</a>
-    </div>
-  </footer><!-- /.post-info -->
-  <div class="entry-content">
-    <p><img align=right src="images/through_a_sphere.jpg" width="200"/></p>
+        <article>
+            <p><img align=right src="images/through_a_sphere.jpg" width="200"/></p>
 <p>I've been thinking a lot lately about mechanistic interpretability, that is, how to make the internal workings of neural nets transparent to humans. For this post, let's explore one idea in this direction: using a convolutional net to predict the inputs and outputs of a different, target network, based on its internal activations. To keep things simple, for our target network we'll use a binary operation learner and train it on modulo two addition. First we'll import some libraries and set up the network architecture.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -694,13 +684,31 @@ percent correct out of sample:  100.0
 <p><img alt="png" src="./images/filtered_activations.png"></p>
 <p>The differences in the filtered activations across the operations are subtle. For example, the lower left corner of the leftmost kernel is darker for "1 + 0 = 1" and "0 + 1 = 1" than for "0 + 0 = 0" or "1 + 1 = 0". Given "heat maps" like these, perhaps it would be possible to label the internal states similarly to how we might hope to determine what a human is perceiving and thinking on the basis of functional MRI images.</p>
 <p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
-  </div><!-- /.entry-content -->
-</section>
-        <footer id="contentinfo" class="body">
-                <address id="about" class="vcard body">
-                Proudly powered by <a href="https://getpelican.com/">Pelican</a>,
-                which takes great advantage of <a href="https://www.python.org/">Python</a>.
-                </address><!-- /#about -->
-        </footer><!-- /#contentinfo -->
-</body>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
 </html>

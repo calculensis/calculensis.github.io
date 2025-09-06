@@ -1,55 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-          <title>the decision blog - the backpropagation equations for a 3 layer neural net</title>
-        <meta charset="utf-8" />
-        <meta name="generator" content="Pelican" />
-        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Full Atom Feed" />
-        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog Full RSS Feed" />
-        <link href="https://calculensis.github.io/feeds/machine-learning.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Categories Atom Feed" />
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    the backpropagation equations for a 3 layer neural net
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
 
+            <div class="container">
 
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
 
+    <div class="post">
 
-    <meta name="tags" content="backpropagation" />
+        <header>
+            <h1>the backpropagation equations for a 3 layer neural net</h1>
+            <p class="date">Written on <time datetime="2023-02-10T00:00:00-05:00">Feb 10, 2023</time></p>
+        </header>
 
-</head>
-
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="https://calculensis.github.io/">the decision blog</a></h1>
-        </header><!-- /#banner -->
-        <nav id="menu"><ul>
-            <li class="active"><a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a></li>
-            <li><a href="https://calculensis.github.io/category/productivity.html">productivity</a></li>
-            <li><a href="https://calculensis.github.io/category/simple-tools.html">simple tools</a></li>
-            <li><a href="https://calculensis.github.io/category/sql.html">SQL</a></li>
-            <li><a href="https://calculensis.github.io/category/systems-thinking.html">systems thinking</a></li>
-        </ul></nav><!-- /#menu -->
-<section id="content" class="body">
-  <header>
-    <h2 class="entry-title">
-      <a href="https://calculensis.github.io/the backpropagation equations for a 3 layer neural net.html" rel="bookmark"
-         title="Permalink to the backpropagation equations for a 3 layer neural net">the backpropagation equations for a 3 layer neural net</a></h2>
- 
-  </header>
-  <footer class="post-info">
-    <time class="published" datetime="2023-02-10T00:00:00-05:00">
-      Fri 10 February 2023
-    </time>
-    <address class="vcard author">
-      By           <a class="url fn" href="https://calculensis.github.io/author/kayla-lewis.html">Kayla Lewis</a>
-    </address>
-    <div class="category">
-        Category: <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>
-    </div>
-    <div class="tags">
-        Tags:
-            <a href="https://calculensis.github.io/tag/backpropagation.html">backpropagation</a>
-    </div>
-  </footer><!-- /.post-info -->
-  <div class="entry-content">
-    <p><img align=right src="images/equations.jpg" width="200"/></p>
+        <article>
+            <p><img align=right src="images/equations.jpg" width="200"/></p>
 <p>In this post we'll derive the backpropagation equations for a three layer neural net that has an arbitrary number of nodes in each layer; the results will be applicable, e.g., to the neural net we used earlier to classify handwritten numbers. For simplicity we'll set all the biases to zero. We'll also be applying tanh as the activation function for the hidden layer and softmax for the output layer.</p>
 <p>We'll represent the numerical values held in each layer by row vectors <span class="math">\(l^{0}\)</span>, <span class="math">\(l^{1}\)</span>, and <span class="math">\(l^{2}\)</span>, where superscript <span class="math">\(0\)</span> represents the input layer, <span class="math">\(1\)</span> represents the hidden layer, and <span class="math">\(2\)</span> represents the output layer.</p>
 <p>Then the error, <span class="math">\(\epsilon\)</span>, is proportional to
@@ -207,13 +197,31 @@ $$</div>
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 </script>
-  </div><!-- /.entry-content -->
-</section>
-        <footer id="contentinfo" class="body">
-                <address id="about" class="vcard body">
-                Proudly powered by <a href="https://getpelican.com/">Pelican</a>,
-                which takes great advantage of <a href="https://www.python.org/">Python</a>.
-                </address><!-- /#about -->
-        </footer><!-- /#contentinfo -->
-</body>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
 </html>
