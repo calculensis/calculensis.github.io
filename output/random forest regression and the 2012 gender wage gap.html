@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    random forest regression and the 2012 gender wage gap
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>random forest regression and the 2012 gender wage gap</h1>
+            <p class="date">Written on <time datetime="2022-12-20T00:00:00-05:00">Dec 20, 2022</time></p>
+        </header>
+
+        <article>
+            <p><img align=right src="images/plant_from_change.jpg" width="200"/></p>
+<p>This mini-project, illustrating the use of random forests regressors, was inspired by a chapter in Modern Business Analytics by Taddy, Hendrix, and Harding, where the authors use this technique in R (instead of in Python, which we'll be using here) with 2012 wage data from the current population study (CPS). This dataset contains information about gender and education level, so it provides us with an opportunity to see how these features interact to determine wage.</p>
+<p>The dataset is accessible from R, so we start with a small R script to convert the data into a csv file:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">#! /usr/bin/Rscript</span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">hdm</span><span class="p">)</span>
+<span class="nf">data</span><span class="p">(</span><span class="n">cps2012</span><span class="p">)</span>
+<span class="n">cps</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cps2012</span>
+<span class="nf">write.csv</span><span class="p">(</span><span class="n">cps</span><span class="p">,</span><span class="s">&#39;pay_gap.csv&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Next we load some libraries, call the script from python, and clean the data up a bit:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s2">&quot;./retrieve_data.R&quot;</span><span class="p">,</span><span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pay_gap</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;pay_gap.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># all data is from 2012 so we drop the &#39;year&#39; column</span>
+<span class="n">to_drop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span><span class="mi">23</span><span class="p">])</span>
+<span class="n">pay_gap</span> <span class="o">=</span> <span class="n">pay_gap</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">pay_gap</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">to_drop</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># rename exp1 to pexp = potential experience, which is</span>
+<span class="c1"># the total number of years a person would have worked </span>
+<span class="c1"># if they had not spent time in school/college</span>
+<span class="n">pay_gap</span> <span class="o">=</span> <span class="n">pay_gap</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;exp1&#39;</span><span class="p">:</span><span class="s1">&#39;pexp&#39;</span><span class="p">},</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># convert ln(hourly wage) to hourly wage</span>
+<span class="n">pay_gap</span><span class="p">[</span><span class="s1">&#39;lnw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pay_gap</span><span class="p">[</span><span class="s1">&#39;lnw&#39;</span><span class="p">])</span>
+<span class="n">pay_gap</span> <span class="o">=</span> <span class="n">pay_gap</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;lnw&#39;</span><span class="p">:</span><span class="s1">&#39;hrwage&#39;</span><span class="p">},</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># meanings of the other fields:</span>
+<span class="c1"># hsd8   = whether max education was less than 8th grade</span>
+<span class="c1"># hsd911 = same but between grades 9 and 11</span>
+<span class="c1"># hsg    = high school graduation</span>
+<span class="c1"># cg     = college graduate</span>
+<span class="c1"># ad     = advanced degree</span>
+<span class="c1"># mw     = person lives in the US midwest</span>
+<span class="c1"># so     = lives in southwest</span>
+<span class="c1"># we     = lives in west</span>
+
+<span class="n">pay_gap</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;pay_gap_cleaned.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Now we separate the data into train and test bins, as usual, fit a random forest regressor to the training data, and see how well it performs on the test data.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">graphviz</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.image</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpimg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn</span><span class="w"> </span><span class="kn">import</span> <span class="n">tree</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
+
+<span class="n">pay_gap</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;pay_gap_cleaned.csv&#39;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">pay_gap</span><span class="p">[</span><span class="s1">&#39;hrwage&#39;</span><span class="p">]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pay_gap</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;hrwage&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">Xtrain</span><span class="p">,</span><span class="n">Xtest</span><span class="p">,</span><span class="n">ytrain</span><span class="p">,</span><span class="n">ytest</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">train_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">,</span><span class="n">ytrain</span><span class="p">)</span>
+<span class="n">ypred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xtest</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;r2_score: &#39;</span><span class="p">,</span><span class="n">r2_score</span><span class="p">(</span><span class="n">ytest</span><span class="p">,</span><span class="n">ypred</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">r2_score</span><span class="o">:</span><span class="w">  </span><span class="mf">0.13717441782851203</span>
+</code></pre></div>
+
+<p>The model explains 14% of the variation in the test data. We've allowed only trees with a depth of three (on which more in a bit), but increasing this depth to doesn't substantially increase the <span class="math">\(r^2\)</span> score.</p>
+<p>The random forest estimator aggregates the predictions from many individual decision trees, but we can extract one of these trees from the model and graph it to better understand what's going on.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">graphviz</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.image</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpimg</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+<span class="n">estimator</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">estimators_</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+
+<span class="n">dot_data</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">export_graphviz</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="n">out_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">feature_names</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+                                <span class="n">filled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">rounded</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">graph</span> <span class="o">=</span> <span class="n">graphviz</span><span class="o">.</span><span class="n">Source</span><span class="p">(</span><span class="n">dot_data</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s2">&quot;decision_tree_graphviz&quot;</span><span class="p">)</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;decision_tree_graphviz.png&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">8.00</span><span class="p">,</span> <span class="mf">4.50</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.autolayout&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&lt;matplotlib.image.AxesImage at 0x7f6d44e40df0&gt;
+</code></pre></div>
+
+<p><img alt="png" src="./images/wage_gap_tree_total.png"></p>
+<p>Let's zoom into the parts of this tree, first the uppermost part or root node:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;decision_tree_graphviz.png&quot;</span><span class="p">)</span>
+
+<span class="n">crop_rectangle</span> <span class="o">=</span> <span class="p">(</span><span class="mi">650</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1560</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span>
+<span class="n">cropped_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">crop_rectangle</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cropped_im</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&lt;matplotlib.image.AxesImage at 0x7f6d43da3d90&gt;
+</code></pre></div>
+
+<p><img alt="png" src="./images/wage_gap_tree_node.png"></p>
+<p>The first question being asked in this tree is whether a person has an advanced degree (ad=1) or not (ad=0). The left branch corresponds to a person with no advanced degree, while the right corresponds to an advanced degree holder. The expected hourly wage is shown as "value"; we can see that having a degree leads to an expected wage increase of about 32 dollars/hr-18 dollars/hr = 14 dollars/hr.</p>
+<p>The node on the left then splits according to whether a person has a college degree, while the node on the right splits according to gender. Let's first look at the node on the left.</p>
+<div class="highlight"><pre><span></span><code><span class="n">crop_rectangle</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">130</span><span class="p">,</span><span class="mi">1110</span><span class="p">,</span><span class="mi">495</span><span class="p">)</span>
+<span class="n">cropped_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">crop_rectangle</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cropped_im</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&lt;matplotlib.image.AxesImage at 0x7f6d4172de80&gt;
+</code></pre></div>
+
+<p><img alt="png" src="./images/wage_gap_tree_left.png"></p>
+<p>Someone with a college degree will on average make about 8 dollars/hr more than someone who doesn't, according to this tree. We also see that, among those without college degrees, men make about 5 dollars/hr more than women. Among those with college degrees, on the right-hand branch, those with more than 12.5 years of potential work experience tend to earn about 7 dollars/hr more. Now let's look at the branches to the right of the root node.</p>
+<div class="highlight"><pre><span></span><code><span class="n">crop_rectangle</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1110</span><span class="p">,</span><span class="mi">130</span><span class="p">,</span><span class="mi">2235</span><span class="p">,</span><span class="mi">495</span><span class="p">)</span>
+<span class="n">cropped_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">crop_rectangle</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cropped_im</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&lt;matplotlib.image.AxesImage at 0x7f6d4158ef40&gt;
+</code></pre></div>
+
+<p><img alt="png" src="./images/wage_gap_tree_right.png"></p>
+<p>Among those with advanced degrees, men on average make about 11 dollars/hr more than women, and the rest of the data is broken up according to years of potential work experience. With more experience men increase their salaries by about 11 dollars/hr, while women can expect an increase of about 5 dollars/hr. We note that this is just one tree in a random forest of 100 estimators, but the overall model shows a similar trend. For example, we can create a data set with 1000 random women and another with 1000 random men and see what the expected wage discrepancy is according to our model:</p>
+<div class="highlight"><pre><span></span><code><span class="n">zeros_ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">X_men</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">zeros_ones</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="n">X_men</span><span class="p">[</span><span class="s1">&#39;female&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">X_men</span><span class="p">[</span><span class="s1">&#39;pexp&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="s1">&#39;pexp&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">X_wom</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">zeros_ones</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="n">X_wom</span><span class="p">[</span><span class="s1">&#39;female&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">X_wom</span><span class="p">[</span><span class="s1">&#39;pexp&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="s1">&#39;pexp&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">y_men</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_men</span><span class="p">)</span>
+<span class="n">y_wom</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_wom</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_men</span><span class="o">-</span><span class="n">y_wom</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">10.000184078328257</span>
+</code></pre></div>
+
+<p>Regardless of other attributes, the model predicts that men can be expected to earn about 10 dollars/hr more than women. As a percentange, women would earn about 70% of what men did in 2012:</p>
+<div class="highlight"><pre><span></span><code><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_wom</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_men</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">69.5963960073078</span>
+</code></pre></div>
+
+<p>These numbers are predicted for a randomly generated population of 1000 men and women. We can also see what the data says directly, for example, about the percentage that women earn compared to men:</p>
+<div class="highlight"><pre><span></span><code><span class="n">wage_men</span> <span class="o">=</span> <span class="n">pay_gap</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="s1">&#39;hrwage&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">wage_wom</span> <span class="o">=</span> <span class="n">pay_gap</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="s1">&#39;hrwage&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wage_wom</span><span class="o">/</span><span class="n">wage_men</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">0.7440769453615077</span>
+</code></pre></div>
+
+<p>For the actual US population, according to the <a href="https://www.bls.gov/opub/reports/womens-earnings/archive/womensearnings_2012.pdf">US Bureau of Labor Statistics</a>, women were earning closer to 81% of what men were in 2012.</p>
+<p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>

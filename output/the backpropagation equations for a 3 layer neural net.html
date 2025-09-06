@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    the backpropagation equations for a 3 layer neural net
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>the backpropagation equations for a 3 layer neural net</h1>
+            <p class="date">Written on <time datetime="2023-02-10T00:00:00-05:00">Feb 10, 2023</time></p>
+        </header>
+
+        <article>
+            <p><img align=right src="images/equations.jpg" width="200"/></p>
+<p>In this post we'll derive the backpropagation equations for a three layer neural net that has an arbitrary number of nodes in each layer; the results will be applicable, e.g., to the neural net we used earlier to classify handwritten numbers. For simplicity we'll set all the biases to zero. We'll also be applying tanh as the activation function for the hidden layer and softmax for the output layer.</p>
+<p>We'll represent the numerical values held in each layer by row vectors <span class="math">\(l^{0}\)</span>, <span class="math">\(l^{1}\)</span>, and <span class="math">\(l^{2}\)</span>, where superscript <span class="math">\(0\)</span> represents the input layer, <span class="math">\(1\)</span> represents the hidden layer, and <span class="math">\(2\)</span> represents the output layer.</p>
+<p>Then the error, <span class="math">\(\epsilon\)</span>, is proportional to
+</p>
+<div class="math">$$
+\frac{1}{2}\sum_k \left( l^2_k - y_k \right)^2,
+$$</div>
+<p>
+where <span class="math">\(y_k\)</span> is the true label corresponding to the <span class="math">\(k^{th}\)</span> neuron in the output layer; we have included the factor of <span class="math">\(1/2\)</span> so that the equations that follow will be a bit cleaner. (Besides, we are eventually going to re-scale by a hyper-parameter <span class="math">\(\alpha\)</span> between <span class="math">\(0\)</span> and <span class="math">\(1\)</span> anyway.) The value of the <span class="math">\(l^{th}\)</span> neuron in the first layer is given by
+</p>
+<div class="math">$$
+l^1_l = t_l\left[ \sum_m l_m^0 w_{ml}^{01}  \right], 
+$$</div>
+<p>
+where <span class="math">\(t_l\)</span> is the tanh function evaluated at the <span class="math">\(l^{th}\)</span> neuron, and <span class="math">\(w^{01}_{ml}\)</span> is the weight from the <span class="math">\(m^{th}\)</span> neuron of layer <span class="math">\(0\)</span> to the <span class="math">\(l^{th}\)</span> neuron of layer <span class="math">\(1\)</span>. The above equation corresponds to the matrix equation
+</p>
+<div class="math">$$
+\textbf{l}^1=\tanh(\textbf{l}^0\textbf{w}^{01}).
+$$</div>
+<p>
+Similarly, the value of the <span class="math">\(n^{th}\)</span> neuron in the second layer is given by
+</p>
+<div class="math">$$
+l_n^2 = s_n\left[\sum_p l_p^1 w_{pn}^{12}\right],
+$$</div>
+<p>
+where <span class="math">\(s_n\)</span> is the softmax function evaluated at the <span class="math">\(n^{th}\)</span> neuron. For the components of the gradient corresponding to <span class="math">\(\textbf{w}^{12}\)</span> we therefore have
+</p>
+<div class="math">$$
+\frac{ \partial \epsilon }{ \partial w^{12}_{qr} } = \frac{1}{2} \sum_k \frac{ \partial }{ \partial w^{12}_{qr} }\left(l_k^2-y_k \right)^2 = \sum_k \left(l_k^2-y_k\right)\frac{\partial l_k^2}{\partial w_{qr}^{12}}=
+$$</div>
+<div class="math">$$
+\sum_k \left(l_k^2-y_k\right)\frac{\partial}{\partial w_{qr}^{12}}\left[s_k\left(\sum_p l_p^1 w_{pk}^{12}\right)\right]=\sum_{k,p}\left(l_k^2-y_k\right)s_k' l_p^1\frac{\partial w_{pk}^{12}}{\partial w_{qr}^{12}}=
+$$</div>
+<div class="math">$$
+\sum_{k,p}\left(l_k^2-y_k\right) s_k' l_p^1\delta_{pq}\delta_{kr}=\left(l_r^2-y_r\right) s_r' l_q^1.
+$$</div>
+<p>
+Hence, we have
+</p>
+<div class="math">$$
+\frac{ \partial \epsilon }{ \partial w^{12}_{qr} }=\left(l_r^2-y_r\right) s_r' l_q^1.
+$$</div>
+<p>
+For the components of the gradient corresponding to the weights in the hidden layer we have
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial w_{qr}^{01}}=\sum_k \left(l_k^2-y_k \right)\frac{\partial l_k^2}{\partial w_{qr}^{01}}=\sum_{k,p}\left(l_k^2-y_k\right)\frac{\partial l_k^2}{\partial l_p^1}\frac{\partial l_p^1}{\partial w_{qr}^{01}}=
+$$</div>
+<div class="math">$$
+\sum_{k,p}\left(l_k^2-y_k\right)\frac{\partial l_k^2}{\partial l_p^1}t_p'\sum_m l_m^0 \frac{\partial w_{mp}^{01}}{\partial w_{qr}^{01}}=
+$$</div>
+<div class="math">$$
+\sum_{k,p,m}\left(l_k^2-y_k\right)\frac{\partial}{\partial l_p^1}\left[s_k\left(\sum_s l_s^1 w_{sk}^{12}\right)\right]t_p' l_m^0 \delta_{mq}\delta_{pr}=
+$$</div>
+<div class="math">$$
+\sum_{k,p,m,s}\left(l_k^2-y_k\right) s_k' w_{sk}^{12}\delta_{ps}t_p'l_m^0 \delta_{mq}\delta_{pr}=\sum_k \left(l_k^2-y_k\right) s_k' w_{rk}^{12}t_r' l_q^0.
+$$</div>
+<p>
+In summary, for the components of the gradient we have
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial w_{qr}^{01}}=\sum_k \left(l_k^2-y_k\right) s_k' w_{rk}^{12}t_r' l_q^0.
+$$</div>
+<p>
+and
+</p>
+<div class="math">$$
+\frac{ \partial \epsilon }{ \partial w^{12}_{qr} }=\left(l_r^2-y_r\right) s_r' l_q^1.
+$$</div>
+<p>
+We can put these equations into a more transparent form by defining <span class="math">\(\textbf{D}_{t'}\)</span> as a diagonal matrix with the <span class="math">\(t_j'\)</span> values along the diagonal and a similar matrix <span class="math">\(\textbf{D}_{s'}\)</span> for the values <span class="math">\(s_j'\)</span>. With these definitions we have
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial w_{qr}^{12}}=\left[\textbf{l}^1\otimes\left(\textbf{l}^2-\textbf{y}\right) \textbf{D}_{s'}  \right]_{qr},
+$$</div>
+<p>
+and
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial w_{qr}^{01}}=\{ \textbf{l}^0 \otimes \left[ \left( \textbf{l}^2-\textbf{y} \right) \textbf{D}_{s'} \textbf{w}^{12,T} \textbf{D}_{t'}  \right] \}_{qr}
+$$</div>
+<p>
+where <span class="math">\(\otimes\)</span> is the outer product. Introducing a re-scaling hyperparameter <span class="math">\(\alpha\)</span>, the corrections to the weights (denoted by asterisks) are then
+</p>
+<div class="math">$$
+w_{qr}^{12*}=w_{qr}^{12}-\alpha \left[\textbf{l}^1\otimes\left(\textbf{l}^2-\textbf{y}\right) \textbf{D}_{s'}  \right]_{qr},
+$$</div>
+<p>
+and
+</p>
+<div class="math">$$
+w_{qr}^{01*}=w_{qr}^{01}-\alpha \{ \textbf{l}^0 \otimes \left[ \left( \textbf{l}^2-\textbf{y} \right) \textbf{D}_{s'} \textbf{w}^{12,T} \textbf{D}_{t'}  \right] \}_{qr}.
+$$</div>
+<p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>

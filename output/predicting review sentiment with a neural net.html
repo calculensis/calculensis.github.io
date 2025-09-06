@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    predicting review sentiment with a neural net
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>predicting review sentiment with a neural net</h1>
+            <p class="date">Written on <time datetime="2023-04-09T00:00:00-04:00">Apr 09, 2023</time></p>
+        </header>
+
+        <article>
+            <p><img align=right src="./images/star-rating.jpg" width="180"/></p>
+<p>In a previous post we used scikit learn to predict customer sentiment from product reviews; in this post we'll do the same but from scratch using Numpy. First we load the reviews and one-hot encode them.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/kayla/pylearn/sentiment_numpy/train.ft.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">reviews</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+<span class="n">sentence_list</span> <span class="o">=</span> <span class="n">reviews</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1000</span><span class="p">]</span>
+<span class="n">sentences</span>     <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sentence_list</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;review&#39;</span><span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">one_hot</span><span class="p">(</span><span class="n">sentences</span><span class="p">):</span>
+    <span class="c1"># get a list of common words to exclude</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">nltk.corpus</span><span class="w"> </span><span class="kn">import</span> <span class="n">stopwords</span>
+    <span class="n">stops</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">))</span>
+
+    <span class="c1"># takes a data frame where each row is a sentence and one-hot</span>
+    <span class="c1"># encodes the words of each sentence</span>
+    <span class="n">encoded</span> <span class="o">=</span> <span class="n">sentences</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;review&#39;</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># first remove all punctuation, make lower case, and collect the</span>
+    <span class="c1"># words</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sentences</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">words_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">current_sentence</span> <span class="o">=</span> \
+                <span class="n">sentences</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span> \
+                                              <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">))</span>
+        <span class="n">current_sentence</span> <span class="o">=</span> <span class="n">current_sentence</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">filtered</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">current_sentence</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> \
+                    <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stops</span><span class="p">]</span>
+        <span class="n">words_list</span> <span class="o">=</span> <span class="n">words_list</span> <span class="o">+</span> <span class="n">filtered</span>
+        <span class="n">words_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">words_list</span><span class="p">))</span>
+        <span class="n">encoded</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">words_list</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">encoded</span> <span class="o">=</span> <span class="n">encoded</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">encoded</span> <span class="o">=</span> <span class="n">encoded</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+    <span class="n">label1_col</span> <span class="o">=</span> <span class="n">encoded</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;label1&#39;</span><span class="p">)</span>
+    <span class="n">label2_col</span> <span class="o">=</span> <span class="n">encoded</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;label2&#39;</span><span class="p">)</span>
+    <span class="n">encoded</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;label2&#39;</span><span class="p">,</span><span class="n">label2_col</span><span class="p">)</span>
+    <span class="n">encoded</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;label1&#39;</span><span class="p">,</span><span class="n">label1_col</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">encoded</span>
+
+<span class="n">reviews</span> <span class="o">=</span> <span class="n">one_hot</span><span class="p">(</span><span class="n">sentences</span><span class="p">)</span>
+<span class="n">reviews</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;amazon_reviews.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Next, let's create training and test sets as well as set up a neural net to feed the data into.</p>
+<div class="highlight"><pre><span></span><code><span class="n">reviews</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;amazon_reviews.csv&#39;</span><span class="p">)</span>
+<span class="n">labels</span>  <span class="o">=</span> <span class="n">reviews</span><span class="p">[[</span><span class="s1">&#39;label1&#39;</span><span class="p">,</span><span class="s1">&#39;label2&#39;</span><span class="p">]]</span>
+<span class="n">reviews</span> <span class="o">=</span> <span class="n">reviews</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="n">reviews</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+<span class="c1"># set up the training and test sets</span>
+<span class="n">train_frac</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">num_train</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">train_frac</span><span class="o">*</span><span class="n">reviews</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">num_test</span>  <span class="o">=</span> <span class="n">reviews</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">num_train</span>
+<span class="n">Xtrain</span> <span class="o">=</span> <span class="n">reviews</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_train</span><span class="p">]</span>
+<span class="n">Xtest</span>  <span class="o">=</span> <span class="n">reviews</span><span class="p">[</span><span class="n">num_train</span><span class="p">:</span><span class="n">num_train</span><span class="o">+</span><span class="n">num_test</span><span class="p">]</span>
+<span class="n">ytrain</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_train</span><span class="p">]</span>
+<span class="n">ytest</span>  <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">num_train</span><span class="p">:</span><span class="n">num_train</span><span class="o">+</span><span class="n">num_test</span><span class="p">]</span>
+
+<span class="c1"># define activation functions and their derivatives</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_func</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span><span class="n">layer</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">type_</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">type_</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_deriv</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span><span class="n">layer</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">type_</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">type_</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">softmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">softmax</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">softmax</span><span class="p">)</span>
+
+<span class="c1"># set up neural net weights and layers</span>
+<span class="n">num_layers</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">num_input</span>  <span class="o">=</span> <span class="n">reviews</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">num_output</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">num_hidden</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">layers</span>  <span class="o">=</span> <span class="p">[]</span>
+<span class="n">weights</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">num_input</span><span class="p">)))</span>
+<span class="n">weight_scale</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">layer_num</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">num_hidden</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight_scale</span><span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">num_input</span><span class="p">,</span><span class="n">num_hidden</span><span class="p">))</span><span class="o">-</span> \
+                <span class="n">weight_scale</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="p">(</span><span class="n">num_layers</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+        <span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight_scale</span><span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">num_hidden</span><span class="p">,</span><span class="n">num_output</span><span class="p">))</span><span class="o">-</span> \
+                <span class="n">weight_scale</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight_scale</span><span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">num_hidden</span><span class="p">,</span><span class="n">num_hidden</span><span class="p">))</span><span class="o">-</span> \
+                <span class="n">weight_scale</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Now let's train the model.</p>
+<div class="highlight"><pre><span></span><code><span class="n">max_iter</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">err_tol</span>  <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">alpha</span>    <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">err</span>      <span class="o">=</span> <span class="mf">1.e5</span>
+<span class="n">iter_num</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">dropout</span>  <span class="o">=</span> <span class="mi">1</span>
+<span class="k">while</span> <span class="p">((</span><span class="n">err</span><span class="o">&gt;</span><span class="n">err_tol</span><span class="p">)</span><span class="o">&amp;</span><span class="p">(</span><span class="n">iter_num</span><span class="o">&lt;</span><span class="n">max_iter</span><span class="p">)):</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Xtrain</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="c1"># forward propagation step</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">dropout</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">dropout_mask</span> <span class="o">=</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,(</span><span class="n">num_layers</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="n">num_hidden</span><span class="p">))</span>
+        <span class="n">layers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Xtrain</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">num_input</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">j</span><span class="o">&lt;</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">dropout</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">dropout_mask</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span> \
+                        <span class="n">activ_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> \
+                        <span class="n">weights</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="n">activ_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> \
+                        <span class="n">weights</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">activ_func</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">weights</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="c1"># backprop step</span>
+        <span class="c1"># form the diagonal matrices for the derivatives of the</span>
+        <span class="c1"># activations for each layer</span>
+        <span class="n">diag_derivs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">j</span><span class="o">&lt;</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+                <span class="n">type_</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">dropout</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">derivs</span> <span class="o">=</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">dropout_mask</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span> \
+                        <span class="n">activ_deriv</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span><span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">derivs</span> <span class="o">=</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">activ_deriv</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span><span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">type_</span> <span class="o">=</span> <span class="mi">2</span>
+                <span class="n">derivs</span> <span class="o">=</span> \
+                    <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">activ_deriv</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span><span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+            <span class="n">diag_derivs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">derivs</span><span class="p">)</span>
+
+        <span class="c1"># update the weights</span>
+        <span class="n">correct_ans</span> <span class="o">=</span> <span class="n">ytrain</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">num_output</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span> \
+                      <span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">num_output</span><span class="p">)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">layers</span><span class="p">[</span><span class="n">num_layers</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">correct_ans</span>
+        <span class="n">mat_prod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span> \
+                             <span class="n">delta</span><span class="p">,</span><span class="n">diag_derivs</span><span class="p">[</span><span class="n">num_layers</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">weights</span><span class="p">[</span><span class="n">num_layers</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span><span class="n">alpha</span><span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">num_layers</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span><span class="n">mat_prod</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># update the weights behind each layer working from</span>
+            <span class="c1"># output toward input</span>
+            <span class="n">weight_index</span> <span class="o">=</span> <span class="n">num_layers</span><span class="o">-</span><span class="n">j</span><span class="o">-</span><span class="mi">2</span>
+            <span class="n">diag_index</span>   <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span><span class="o">-</span><span class="n">j</span><span class="o">-</span><span class="mi">2</span>
+            <span class="c1">#print(weight_index,diag_index)</span>
+            <span class="n">next_pair</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">weight_index</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> \
+                                  <span class="n">diag_derivs</span><span class="p">[</span><span class="n">weight_index</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">mat_prod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">mat_prod</span><span class="p">,</span><span class="n">next_pair</span><span class="p">)</span>
+            <span class="n">weights</span><span class="p">[</span><span class="n">diag_index</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span><span class="n">alpha</span><span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">weight_index</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">mat_prod</span><span class="p">)</span>
+        <span class="n">err</span> <span class="o">+=</span> <span class="p">(</span><span class="n">delta</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="n">err</span> <span class="o">/=</span> <span class="n">Xtrain</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">iter_num</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+    <span class="n">iter_num</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">iter_num</span><span class="o">&lt;</span><span class="n">max_iter</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;converged at iteration: &#39;</span><span class="p">,</span><span class="n">iter_num</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;training set error: &#39;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">1</span><span class="w"> </span><span class="mf">0.49980698697558884</span>
+<span class="mf">2</span><span class="w"> </span><span class="mf">0.49883427876339753</span>
+<span class="mf">3</span><span class="w"> </span><span class="mf">0.501143717639368</span>
+<span class="mf">4</span><span class="w"> </span><span class="mf">0.4961312915885812</span>
+<span class="mf">5</span><span class="w"> </span><span class="mf">0.4974398386496625</span>
+<span class="mf">6</span><span class="w"> </span><span class="mf">0.48694445301040384</span>
+<span class="mf">7</span><span class="w"> </span><span class="mf">0.47873258603941676</span>
+<span class="mf">8</span><span class="w"> </span><span class="mf">0.4627638083564027</span>
+<span class="mf">9</span><span class="w"> </span><span class="mf">0.45554736881128927</span>
+<span class="mf">10</span><span class="w"> </span><span class="mf">0.43554726678092753</span>
+<span class="mf">11</span><span class="w"> </span><span class="mf">0.4160133901300509</span>
+<span class="mf">12</span><span class="w"> </span><span class="mf">0.3905081397950724</span>
+<span class="mf">13</span><span class="w"> </span><span class="mf">0.34602970606645256</span>
+<span class="mf">14</span><span class="w"> </span><span class="mf">0.31516613543381433</span>
+<span class="mf">15</span><span class="w"> </span><span class="mf">0.26634745838598434</span>
+<span class="mf">16</span><span class="w"> </span><span class="mf">0.26187804345625254</span>
+<span class="mf">17</span><span class="w"> </span><span class="mf">0.23263605939285184</span>
+<span class="mf">18</span><span class="w"> </span><span class="mf">0.18831707208296627</span>
+<span class="n">converged</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">iteration</span><span class="p">:</span><span class="w">  </span><span class="mf">18</span>
+<span class="n">training</span><span class="w"> </span><span class="n">set</span><span class="w"> </span><span class="n">error</span><span class="p">:</span><span class="w">  </span><span class="mf">0.18831707208296627</span>
+</code></pre></div>
+
+<p>Finally let's check the model's out-of-sample accuracy.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># check test set accuracy</span>
+<span class="n">num_correct</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Xtest</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="c1"># forward propagation step</span>
+        <span class="n">layers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Xtest</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">num_input</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">j</span><span class="o">&lt;</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+                <span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">activ_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">weights</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="n">activ_func</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">weights</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="n">correct_ans</span> <span class="o">=</span> <span class="n">ytest</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">num_output</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span> \
+                      <span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">num_output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">layers</span><span class="p">[</span><span class="n">num_layers</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">==</span><span class="n">correct_ans</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">num_correct</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="n">percent_correct</span> <span class="o">=</span> <span class="p">(</span><span class="n">num_correct</span><span class="o">/</span><span class="n">Xtest</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mf">100.0</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;percent test set accuracy: &quot;</span><span class="p">,</span><span class="n">percent_correct</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>percent test set accuracy:  79.0
+</code></pre></div>
+
+<p>79% accuracy on the test set isn't bad considering that we only used 1000 reviews to train the model. We kept the number low because our simple one-hot encoding module isn't optimized for handling large datasets.</p>
+<p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>

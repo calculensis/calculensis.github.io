@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    using a convolutional neural net to identify images
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>using a convolutional neural net to identify images</h1>
+            <p class="date">Written on <time datetime="2023-03-03T00:00:00-05:00">Mar 03, 2023</time></p>
+        </header>
+
+        <article>
+            <p><img align=right src="images/twisty-structure.jpg" width="170"/></p>
+<p>Previously we used a three layer neural net to identify low resolution images <span class="math">\((8\times8)\)</span> of handwritten numbers. Here we'll consider higher resolution images <span class="math">\((28\times 28)\)</span> of the same and add convolutional structure to help the neural net learn the correct labels for them. First we load the data and perform the usual transformations to prepare it for the input layer.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">keras.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">mnist</span>
+
+<span class="c1"># normalize the data, hot-one encode the target data; create</span>
+<span class="c1"># training and test sets</span>
+<span class="p">(</span><span class="n">Xtrain</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">),</span> <span class="p">(</span><span class="n">Xtest</span><span class="p">,</span> <span class="n">ytest</span><span class="p">)</span> <span class="o">=</span> <span class="n">mnist</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="n">Xtrain</span> <span class="o">=</span> <span class="n">Xtrain</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">20000</span><span class="p">]</span>
+<span class="n">ytrain</span> <span class="o">=</span> <span class="n">ytrain</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">20000</span><span class="p">]</span>
+<span class="n">y_pre_train</span> <span class="o">=</span> <span class="n">ytrain</span>
+<span class="n">y_pre_test</span>  <span class="o">=</span> <span class="n">ytest</span>
+<span class="n">ytrain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">y_pre_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">ytest</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">y_pre_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">10</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y_pre_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">ytrain</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">y_pre_train</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y_pre_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">ytest</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">y_pre_test</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="n">Xtrain</span> <span class="o">=</span> <span class="p">(</span><span class="n">Xtrain</span><span class="o">-</span><span class="n">Xtrain</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">/</span><span class="n">Xtrain</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+<span class="n">Xtest</span>  <span class="o">=</span> <span class="p">(</span><span class="n">Xtest</span><span class="o">-</span><span class="n">Xtest</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">/</span><span class="n">Xtest</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Next we define a routine that will capture mini-frames of the input image, which will later be transformed into numbers via the convolution kernels.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># moving window of size frame_rows x frame_cols moves over</span>
+<span class="c1"># every position in the image, such that the frame does not</span>
+<span class="c1"># move outside the image, and captures part of the image</span>
+<span class="c1"># for each of those positions</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">capture_frames</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
+    <span class="n">image_rows</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">image_cols</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">frame_pos_horz</span> <span class="o">=</span> <span class="n">image_cols</span><span class="o">-</span><span class="n">frame_cols</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">frame_pos_vert</span> <span class="o">=</span> <span class="n">image_rows</span><span class="o">-</span><span class="n">frame_rows</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">captured_frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">frame_pos_horz</span><span class="o">*</span><span class="n">frame_pos_vert</span><span class="p">,</span> \
+                               <span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">frame_pos_horz</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">frame_pos_vert</span><span class="p">):</span>
+            <span class="n">single_frame</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="n">frame_cols</span><span class="p">]</span>
+            <span class="n">captured_frames</span><span class="p">[</span><span class="n">frame_pos_vert</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">,:,:]</span><span class="o">=</span><span class="n">single_frame</span>
+    <span class="k">return</span> <span class="n">captured_frames</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">frame_pos_horz</span><span class="o">*</span><span class="n">frame_pos_vert</span><span class="p">,</span> \
+                                   <span class="n">frame_rows</span><span class="o">*</span><span class="n">frame_cols</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+</code></pre></div>
+
+<p>As usual, we'll also need to define the activation functions along with there derivatives.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># define the activation functions and their derivatives</span>
+<span class="c1"># layer_num = 1 will return the function for layer 1 and</span>
+<span class="c1"># layer_num = 2 will return that for layer 2</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_num</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">activ_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">layer_num</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">layer_num</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">soft_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">soft_max</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">soft_max</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">dirac_delta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int64&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Now we'll initialize the kernels and the weights for the fully connected parts of the network.</p>
+<div class="highlight"><pre><span></span><code><span class="n">frame_rows</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">frame_cols</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">num_kernels</span><span class="o">=</span> <span class="mi">9</span>
+<span class="n">image_rows</span> <span class="o">=</span> <span class="n">Xtrain</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">image_cols</span> <span class="o">=</span> <span class="n">Xtrain</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">frame_pos_horz</span> <span class="o">=</span> <span class="n">image_cols</span><span class="o">-</span><span class="n">frame_cols</span><span class="o">+</span><span class="mi">1</span>
+<span class="n">frame_pos_vert</span> <span class="o">=</span> <span class="n">image_rows</span><span class="o">-</span><span class="n">frame_rows</span><span class="o">+</span><span class="mi">1</span>
+<span class="c1"># N.B.: if the weights are initialized lying too close together,</span>
+<span class="c1"># gradient descent will not find many distinct kernels!</span>
+<span class="n">kernels</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">num_kernels</span><span class="p">,</span> \
+                               <span class="n">frame_rows</span><span class="o">*</span><span class="n">frame_cols</span><span class="p">))</span><span class="o">-</span><span class="mf">1.0</span>
+<span class="n">grad_kernel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">frame_rows</span><span class="o">*</span><span class="n">frame_cols</span><span class="p">))</span>
+
+<span class="c1"># set the number of neurons in each fully connected layer and </span>
+<span class="c1"># initialize the weights</span>
+<span class="n">num_input</span>  <span class="o">=</span> <span class="n">frame_pos_horz</span><span class="o">*</span><span class="n">frame_pos_vert</span>
+<span class="n">num_hidden</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_input</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="n">num_hidden</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">num_output</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">weights_01</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">num_input</span><span class="p">,</span><span class="n">num_hidden</span><span class="p">))</span><span class="o">-</span><span class="mf">1.0</span>
+<span class="n">weights_12</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">num_hidden</span><span class="p">,</span><span class="n">num_output</span><span class="p">))</span><span class="o">-</span><span class="mf">1.0</span>
+</code></pre></div>
+
+<p>Now for the big part: to iterate over the images and train the neural net!</p>
+<div class="highlight"><pre><span></span><code><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">err_tol</span>  <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">err</span> <span class="o">=</span> <span class="mf">1000.0</span>
+<span class="nb">iter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="c1"># toggle dropout on or off</span>
+<span class="n">dropout</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="p">((</span><span class="nb">iter</span><span class="o">&lt;</span><span class="n">max_iter</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">err</span><span class="o">&gt;</span><span class="n">err_tol</span><span class="p">)):</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Xtrain</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="c1"># forward propagation convolution + pooling steps</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">Xtrain</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">image_frames</span> <span class="o">=</span> <span class="n">capture_frames</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> \
+                                      <span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">)</span>
+
+        <span class="c1"># form layer_0 pre-pooling step</span>
+        <span class="n">layer_0_pre</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">image_frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">):</span>
+            <span class="n">layer_0_pre</span><span class="p">[</span><span class="n">k</span><span class="p">,:]</span><span class="o">=</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">kernels</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">kernels</span><span class="p">[</span><span class="n">k</span><span class="p">])),</span> \
+                          <span class="n">image_frames</span><span class="p">)</span>
+        <span class="n">which_kernel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">layer_0_pre</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># pooling step</span>
+        <span class="n">layer_0</span> <span class="o">=</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">layer_0_pre</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">layer_0_pre</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">layer_0</span> <span class="o">=</span> <span class="n">activ_func</span><span class="p">(</span><span class="n">layer_0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># forward propagation to the other layers</span>
+        <span class="n">layer_1</span> <span class="o">=</span> <span class="n">activ_func</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">layer_0</span><span class="p">,</span><span class="n">weights_01</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">dropout</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">dropout_mask</span> <span class="o">=</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">layer_1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">layer_1</span> <span class="o">*=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">dropout_mask</span>
+        <span class="n">layer_2</span> <span class="o">=</span> <span class="n">activ_func</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">layer_1</span><span class="p">,</span><span class="n">weights_12</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># backprop step for the fully connected neurons</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">layer_2</span><span class="o">-</span><span class="n">ytrain</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="n">deriv_vec2</span>   <span class="o">=</span> <span class="n">activ_deriv</span><span class="p">(</span><span class="n">layer_2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">deriv_diag2</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">deriv_vec2</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+        <span class="n">gradient_12</span>  <span class="o">=</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">layer_1</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span><span class="n">deriv_diag2</span><span class="p">))</span>
+        <span class="n">deriv_vec1</span>   <span class="o">=</span> <span class="n">activ_deriv</span><span class="p">(</span><span class="n">layer_1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">deriv_diag1</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">deriv_vec1</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">dropout</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">dropout_diag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">dropout_mask</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+            <span class="n">deriv_diag1</span> <span class="o">*=</span> <span class="n">dropout_diag</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights_12</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">deriv_diag1</span><span class="p">)</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">deriv_diag2</span><span class="p">,</span><span class="n">omega</span><span class="p">)</span>
+        <span class="n">delta_omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span><span class="n">omega</span><span class="p">)</span>
+        <span class="n">gradient_01</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">layer_0</span><span class="p">,</span><span class="n">delta_omega</span><span class="p">)</span>
+
+        <span class="n">weights_12</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">gradient_12</span>
+        <span class="n">weights_01</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">gradient_01</span>
+
+        <span class="c1"># backprop step for the kernel corrections</span>
+        <span class="n">grad_kernel_indices</span> <span class="o">=</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">indices</span><span class="p">((</span><span class="n">grad_kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">grad_kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">):</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">which_kernel</span><span class="o">==</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int64&#39;</span><span class="p">)</span>
+            <span class="n">image_frames_masked</span> <span class="o">=</span> <span class="n">image_frames</span><span class="o">*</span><span class="n">mask</span>
+            <span class="n">deriv_vec0</span>   <span class="o">=</span> <span class="n">activ_deriv</span><span class="p">(</span><span class="n">layer_0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">deriv_diag0</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">deriv_vec0</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+            <span class="n">intermed_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">deriv_diag0</span><span class="p">,</span><span class="n">image_frames_masked</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">intermed_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights_01</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">intermed_0</span><span class="p">)</span>
+            <span class="n">intermed_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">deriv_diag1</span><span class="p">,</span><span class="n">intermed_1</span><span class="p">)</span>
+            <span class="n">intermed_3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">weights_12</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">intermed_2</span><span class="p">)</span>
+            <span class="n">intermed_4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">deriv_diag2</span><span class="p">,</span><span class="n">intermed_3</span><span class="p">)</span>
+            <span class="n">grad_kernel</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span><span class="n">intermed_4</span><span class="p">)</span>
+        <span class="n">kernels</span> <span class="o">-=</span> <span class="n">alpha</span><span class="o">*</span><span class="n">grad_kernel</span>
+
+        <span class="n">err</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">delta</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">err</span> <span class="o">/=</span> <span class="n">Xtrain</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">iter</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+    <span class="nb">iter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nb">iter</span><span class="o">&lt;</span><span class="n">max_iter</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;converged at iteration: &quot;</span><span class="p">,</span><span class="nb">iter</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;average error: &quot;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;failed to converge&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">0</span><span class="w"> </span><span class="mf">0.5708498546098345</span>
+<span class="mf">1</span><span class="w"> </span><span class="mf">0.238968805822179</span>
+<span class="mf">2</span><span class="w"> </span><span class="mf">0.18376262704300791</span>
+<span class="mf">3</span><span class="w"> </span><span class="mf">0.15884420078434203</span>
+<span class="mf">4</span><span class="w"> </span><span class="mf">0.14349670143331575</span>
+<span class="mf">5</span><span class="w"> </span><span class="mf">0.13303330132005825</span>
+<span class="mf">6</span><span class="w"> </span><span class="mf">0.12524633753039854</span>
+<span class="mf">7</span><span class="w"> </span><span class="mf">0.1190555095240238</span>
+<span class="mf">8</span><span class="w"> </span><span class="mf">0.11391619250773542</span>
+<span class="mf">9</span><span class="w"> </span><span class="mf">0.1094220182872265</span>
+<span class="mf">10</span><span class="w"> </span><span class="mf">0.10543376418131505</span>
+<span class="mf">11</span><span class="w"> </span><span class="mf">0.10185387081060268</span>
+<span class="mf">12</span><span class="w"> </span><span class="mf">0.09860016478135072</span>
+<span class="n">converged</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">iteration</span><span class="p">:</span><span class="w">  </span><span class="mf">12</span>
+<span class="n">average</span><span class="w"> </span><span class="n">error</span><span class="p">:</span><span class="w">  </span><span class="mf">0.09860016478135072</span>
+</code></pre></div>
+
+<p>Now let's check the out-of-sample error.</p>
+<div class="highlight"><pre><span></span><code><span class="n">err</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">num_correct</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Xtest</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="c1"># forward propagation convolution + pooling steps</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">Xtest</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">image_rows</span><span class="p">,</span><span class="n">image_cols</span><span class="p">)</span>
+    <span class="n">image_frames</span> <span class="o">=</span> <span class="n">capture_frames</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> \
+                                  <span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">)</span>
+
+    <span class="c1"># form layer_0 pre-pooling step</span>
+    <span class="n">layer_0_pre</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">image_frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">):</span>
+        <span class="n">layer_0_pre</span><span class="p">[</span><span class="n">k</span><span class="p">,:]</span><span class="o">=</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">kernels</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">kernels</span><span class="p">[</span><span class="n">k</span><span class="p">])),</span> \
+                      <span class="n">image_frames</span><span class="p">)</span>
+    <span class="n">which_kernel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">layer_0_pre</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># pooling step</span>
+    <span class="n">layer_0</span> <span class="o">=</span> \
+        <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">layer_0_pre</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">layer_0_pre</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># forward propagation to the other layers</span>
+    <span class="n">layer_1</span> <span class="o">=</span> <span class="n">activ_func</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">layer_0</span><span class="p">,</span><span class="n">weights_01</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">layer_2</span> <span class="o">=</span> <span class="n">activ_func</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">layer_1</span><span class="p">,</span><span class="n">weights_12</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">layer_2</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">-</span><span class="n">ytest</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+    <span class="n">err</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">delta</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">layer_2</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">==</span><span class="n">ytest</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="n">num_correct</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="n">err</span> <span class="o">/=</span> <span class="n">Xtest</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;average test set error:&quot;</span><span class="p">,</span><span class="n">err</span><span class="p">)</span>
+<span class="n">frac_correct</span> <span class="o">=</span> <span class="n">num_correct</span><span class="o">/</span><span class="n">Xtest</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;percent correct:&quot;</span><span class="p">,</span><span class="n">frac_correct</span><span class="o">*</span><span class="mf">100.0</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>average test set error: 0.10490452221860885
+percent correct: 92.57
+</code></pre></div>
+
+<p>Since we got pretty decent results, let's save the kernels and weights in output files in case we want to use them again later.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># save the kernels and weights in csv format</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">kernels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">kernels</span><span class="p">)</span>
+<span class="n">weights_01</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">weights_01</span><span class="p">)</span>
+<span class="n">weights_12</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">weights_12</span><span class="p">)</span>
+<span class="n">kernels</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;kernels.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">weights_01</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;weights_01.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">weights_12</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;weights_12.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Let's have a look at the kernels that our convolutional net found.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">show_kernels</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">):</span>
+    <span class="n">kernels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;kernels.csv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="n">kernels</span> <span class="o">=</span> <span class="n">kernels</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">)</span>
+
+    <span class="n">num_plot_rows</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">num_kernels</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">num_plot_cols</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">num_plot_rows</span><span class="p">,</span><span class="n">num_plot_cols</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">&lt;</span><span class="n">num_kernels</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">kernels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_tick_params</span><span class="p">(</span><span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_tick_params</span><span class="p">(</span><span class="n">labelleft</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">show_kernels</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="./images/conv_net_kernels.png"></p>
+<p>We can also see what an image filtered by each of these kernels looks like.</p>
+<div class="highlight"><pre><span></span><code><span class="n">image</span> <span class="o">=</span> <span class="n">Xtrain</span><span class="p">[</span><span class="mi">92</span><span class="p">]</span>
+<span class="n">kernels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;kernels.csv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">num_kernels</span> <span class="o">=</span> <span class="n">kernels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">image_frames</span> <span class="o">=</span> <span class="n">capture_frames</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">frame_rows</span><span class="p">,</span><span class="n">frame_cols</span><span class="p">)</span>
+
+<span class="n">layer_0_pre</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">image_frames</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">):</span>
+    <span class="n">layer_0_pre</span><span class="p">[</span><span class="n">k</span><span class="p">,:]</span><span class="o">=</span> \
+        <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">kernels</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">kernels</span><span class="p">[</span><span class="n">k</span><span class="p">])),</span> \
+                  <span class="n">image_frames</span><span class="p">)</span>
+
+<span class="n">filtered_rows</span> <span class="o">=</span> <span class="n">image_rows</span><span class="o">-</span><span class="n">frame_rows</span><span class="o">+</span><span class="mi">1</span>
+<span class="n">filtered_cols</span> <span class="o">=</span> <span class="n">image_cols</span><span class="o">-</span><span class="n">frame_cols</span><span class="o">+</span><span class="mi">1</span>
+<span class="n">filtered_img</span> <span class="o">=</span> <span class="n">layer_0_pre</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_kernels</span><span class="p">,</span><span class="n">filtered_rows</span><span class="p">,</span> \
+                                               <span class="n">filtered_cols</span><span class="p">)</span>
+
+<span class="n">num_plot_rows</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">num_kernels</span><span class="o">/</span><span class="mf">6.0</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="n">num_plot_cols</span> <span class="o">=</span> <span class="n">num_plot_rows</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">num_plot_rows</span><span class="p">,</span><span class="n">num_plot_cols</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">filtered_img</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_tick_params</span><span class="p">(</span><span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_tick_params</span><span class="p">(</span><span class="n">labelleft</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+
+<p><img alt="png" src="./images/filtered_four.png"></p>
+<p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>

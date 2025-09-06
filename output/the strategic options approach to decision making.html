@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    the strategic options approach to decision making
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>the strategic options approach to decision making</h1>
+            <p class="date">Written on <time datetime="2022-12-18T00:00:00-05:00">Dec 18, 2022</time></p>
+        </header>
+
+        <article>
+            <p><img align=right src="images/branching_paths.jpg" width="180"/></p>
+<p>Let's say that you have a bunch of interrelated decisions to make and that, after consideration, you're able to narrow down the choices you need to make into three areas (these areas are pretty me-centric, but the numbers/interrelationships are going to be mostly made up just as an example): whether to work remotely or in-person, whether to move to Europe or stay in the US, and whether to obtain a position as a decision scientist, a more generic data scientist, or as an AI alignment researcher. We can write some graphviz code to picture the situation as shown below, where a line connecting two choices will mean that those choices are incompatible for whatever reason (for example, suppose you're only willing to work in-person if it's in Europe):</p>
+<div class="highlight"><pre><span></span><code>graph G {
+  rankdir = &quot;LR&quot;
+  node [ style = filled, fillcolor = coral, shape = record, margin = 0, penwidth = 2, fontsize=50 ]
+
+  a [label=&quot;area 1 | &lt;a1&gt; remote | &lt;a2&gt; in-person&quot;, fillcolor=cadetblue1 ]
+  b [label=&quot;area 2 | &lt;b1&gt; decision sci | &lt;b2&gt; data sci | &lt;b3&gt; alignment&quot;, fillcolor=darkorange2 ]
+  c [label=&quot;area 3 | &lt;c1&gt; europe | &lt;c2&gt; usa&quot;, fillcolor= limegreen ]
+
+  edge [ penwidth = 5, color = black ]
+  a:&lt;a1&gt; -- b:&lt;b3&gt;
+  edge [ color = crimson ]
+  a:&lt;a1&gt; -- b:&lt;b1&gt;
+  edge [ color = blue  ]
+  a:&lt;a2&gt; -- c:&lt;c2&gt;
+}
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">dot</span> <span class="o">-</span><span class="n">Tpng</span> <span class="n">decisionAreas</span><span class="o">.</span><span class="n">gv</span> <span class="o">&gt;</span> <span class="n">decisionAreas</span><span class="o">.</span><span class="n">png</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.image</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpimg</span>
+
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;decisionAreas.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+
+<p><img alt="png" src="./images/decision_areas.png"></p>
+<p>After storing these decision areas and incompatibilities in a few data files, we can use python to construct a table showing all possible decision paths.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+
+<span class="n">area1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;area1.csv&#39;</span><span class="p">)</span>
+<span class="n">area2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;area2.csv&#39;</span><span class="p">)</span>
+<span class="n">area3</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;area3.csv&#39;</span><span class="p">)</span>
+<span class="n">block</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;block.csv&#39;</span><span class="p">)</span>
+
+<span class="n">combos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">area1</span><span class="p">[</span><span class="s1">&#39;area 1&#39;</span><span class="p">],</span><span class="n">area2</span><span class="p">[</span><span class="s1">&#39;area 2&#39;</span><span class="p">],</span> \
+                      <span class="n">area3</span><span class="p">[</span><span class="s1">&#39;area 3&#39;</span><span class="p">]))</span>
+
+<span class="n">combos</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">combos</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;area 1&#39;</span><span class="p">,</span> \
+                      <span class="s1">&#39;area 2&#39;</span><span class="p">,</span><span class="s1">&#39;area 3&#39;</span><span class="p">])</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">nogo</span> <span class="o">=</span> <span class="n">combos</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">block</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> \
+           <span class="n">combos</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">block</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">combos</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nogo</span>
+
+<span class="n">combos</span><span class="p">[</span><span class="s1">&#39;possible&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="n">combos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">|</span> <span class="n">combos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="n">combos</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">combos</span> <span class="o">=</span> <span class="n">combos</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">combos</span><span class="p">[</span><span class="n">combos</span><span class="p">[</span><span class="s1">&#39;possible&#39;</span><span class="p">]</span><span class="o">==</span><span class="kc">True</span><span class="p">])</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;possible&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>       area 1        area 2  area 3
+2      remote      data sci  europe
+3      remote      data sci     usa
+6   in-person  decision sci  europe
+8   in-person      data sci  europe
+10  in-person     alignment  europe
+</code></pre></div>
+
+<p>We would like to evaluate each of these paths so that we can choose the best one, but which path turns out to be best also depends on an uncertain aspect of the future, say, whether you would be able to make any significant difference in the field of AI alignment. Let's say you put that probability at 0.10 or 10%. Then we end up with a table like the one above but where the value of each decision path (say on a scale from 0 to 10) has to be determined for two different futures, f1 (where you do make a big difference in the field) and f2 (where you don't):</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;options.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># a1: i am able to make a significant difference</span>
+<span class="c1">#     in the field of ai alignment</span>
+<span class="n">prob_a1</span> <span class="o">=</span> <span class="mf">0.10</span>
+
+<span class="c1"># a2: am not able to make difference</span>
+<span class="n">prob_a2</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">prob_a1</span>
+
+<span class="n">options</span><span class="p">[</span><span class="s1">&#39;f1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">options</span><span class="p">[</span><span class="s1">&#39;f2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">]</span>
+
+<span class="n">options</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">=</span> \
+    <span class="n">prob_a1</span><span class="o">*</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;f1&#39;</span><span class="p">]</span> <span class="o">+</span> \
+    <span class="n">prob_a2</span><span class="o">*</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;f2&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>      area 1        area 2  area 3  f1  f2  score
+0     remote      data sci  europe   7   9   8.8
+1     remote      data sci     usa   5   6   5.9
+2  in-person  decision sci  europe   9   9   9.0
+3  in-person      data sci  europe   7   8   7.9
+4  in-person     alignment  europe  10   7   7.3
+</code></pre></div>
+
+<p>The above table encapsulates a <a href="https://www.thedecisionblog.com/decision%20trees.html">decision tree</a> where, because of the values entered for f1 and f2 (which you get by going through the possibilities, having a conversation with your gut, and rating them), the top choice ends up being an in-person decision science position in Europe (value 9.0), but only by a small margin over a remote data science position in Europe (value 8.8).</p>
+<p>As usual, if the model gives numbers that don't seem quite right, that's an opportunity to better understand why as well as to more fully reveal your preferences. Also as usual, it's a good idea to explore more than just one model!</p>
+<p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/systems-thinking.html">systems thinking</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>

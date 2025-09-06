@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    mushroom edibility prediction with a vector support classifier
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>mushroom edibility prediction with a vector support classifier</h1>
+            <p class="date">Written on <time datetime="2022-12-18T00:00:00-05:00">Dec 18, 2022</time></p>
+        </header>
+
+        <article>
+            <p><img align=right src="images/mushrooms.jpg" width=200/></p>
+<p>Suppose we'd like to make a vector support classifier to help us decide whether a mushroom might be edible. Disclaimer: I personally don't eat mushrooms that I find in the forest and, if I did, I definitely wouldn't use a machine learning algorithm alone to decide which ones to eat!! Now that's out of the way, let's see how well we can do.</p>
+<p>After extracting the data, we have a look at it:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">mushrooms</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;mushrooms.csv&#39;</span><span class="p">)</span>
+<span class="n">mushrooms</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>class</th>
+      <th>cap-shape</th>
+      <th>cap-surface</th>
+      <th>cap-color</th>
+      <th>bruises</th>
+      <th>odor</th>
+      <th>gill-attachment</th>
+      <th>gill-spacing</th>
+      <th>gill-size</th>
+      <th>gill-color</th>
+      <th>...</th>
+      <th>stalk-surface-below-ring</th>
+      <th>stalk-color-above-ring</th>
+      <th>stalk-color-below-ring</th>
+      <th>veil-type</th>
+      <th>veil-color</th>
+      <th>ring-number</th>
+      <th>ring-type</th>
+      <th>spore-print-color</th>
+      <th>population</th>
+      <th>habitat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>p</td>
+      <td>x</td>
+      <td>s</td>
+      <td>n</td>
+      <td>t</td>
+      <td>p</td>
+      <td>f</td>
+      <td>c</td>
+      <td>n</td>
+      <td>k</td>
+      <td>...</td>
+      <td>s</td>
+      <td>w</td>
+      <td>w</td>
+      <td>p</td>
+      <td>w</td>
+      <td>o</td>
+      <td>p</td>
+      <td>k</td>
+      <td>s</td>
+      <td>u</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>e</td>
+      <td>x</td>
+      <td>s</td>
+      <td>y</td>
+      <td>t</td>
+      <td>a</td>
+      <td>f</td>
+      <td>c</td>
+      <td>b</td>
+      <td>k</td>
+      <td>...</td>
+      <td>s</td>
+      <td>w</td>
+      <td>w</td>
+      <td>p</td>
+      <td>w</td>
+      <td>o</td>
+      <td>p</td>
+      <td>n</td>
+      <td>n</td>
+      <td>g</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>e</td>
+      <td>b</td>
+      <td>s</td>
+      <td>w</td>
+      <td>t</td>
+      <td>l</td>
+      <td>f</td>
+      <td>c</td>
+      <td>b</td>
+      <td>n</td>
+      <td>...</td>
+      <td>s</td>
+      <td>w</td>
+      <td>w</td>
+      <td>p</td>
+      <td>w</td>
+      <td>o</td>
+      <td>p</td>
+      <td>n</td>
+      <td>n</td>
+      <td>m</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>p</td>
+      <td>x</td>
+      <td>y</td>
+      <td>w</td>
+      <td>t</td>
+      <td>p</td>
+      <td>f</td>
+      <td>c</td>
+      <td>n</td>
+      <td>n</td>
+      <td>...</td>
+      <td>s</td>
+      <td>w</td>
+      <td>w</td>
+      <td>p</td>
+      <td>w</td>
+      <td>o</td>
+      <td>p</td>
+      <td>k</td>
+      <td>s</td>
+      <td>u</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>e</td>
+      <td>x</td>
+      <td>s</td>
+      <td>g</td>
+      <td>f</td>
+      <td>n</td>
+      <td>f</td>
+      <td>w</td>
+      <td>b</td>
+      <td>k</td>
+      <td>...</td>
+      <td>s</td>
+      <td>w</td>
+      <td>w</td>
+      <td>p</td>
+      <td>w</td>
+      <td>o</td>
+      <td>e</td>
+      <td>n</td>
+      <td>a</td>
+      <td>g</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 23 columns</p>
+</div>
+<p>The "class" field represents "poisonous" with a "p" and "edible" with "e"; the other fields encode other mushroom properties similarly. We'll need to convert these letters into numerical data; for that we'll use the python command "ord":</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">mushrooms</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> 
+    <span class="n">mushrooms</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">97</span>
+                           <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">mushrooms</span><span class="p">[</span><span class="n">mushrooms</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">n</span><span class="p">]]]</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">mushrooms</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>class</th>
+      <th>cap-shape</th>
+      <th>cap-surface</th>
+      <th>cap-color</th>
+      <th>bruises</th>
+      <th>odor</th>
+      <th>gill-attachment</th>
+      <th>gill-spacing</th>
+      <th>gill-size</th>
+      <th>gill-color</th>
+      <th>...</th>
+      <th>stalk-surface-below-ring</th>
+      <th>stalk-color-above-ring</th>
+      <th>stalk-color-below-ring</th>
+      <th>veil-type</th>
+      <th>veil-color</th>
+      <th>ring-number</th>
+      <th>ring-type</th>
+      <th>spore-print-color</th>
+      <th>population</th>
+      <th>habitat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>15</td>
+      <td>23</td>
+      <td>18</td>
+      <td>13</td>
+      <td>19</td>
+      <td>15</td>
+      <td>5</td>
+      <td>2</td>
+      <td>13</td>
+      <td>10</td>
+      <td>...</td>
+      <td>18</td>
+      <td>22</td>
+      <td>22</td>
+      <td>15</td>
+      <td>22</td>
+      <td>14</td>
+      <td>15</td>
+      <td>10</td>
+      <td>18</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4</td>
+      <td>23</td>
+      <td>18</td>
+      <td>24</td>
+      <td>19</td>
+      <td>0</td>
+      <td>5</td>
+      <td>2</td>
+      <td>1</td>
+      <td>10</td>
+      <td>...</td>
+      <td>18</td>
+      <td>22</td>
+      <td>22</td>
+      <td>15</td>
+      <td>22</td>
+      <td>14</td>
+      <td>15</td>
+      <td>13</td>
+      <td>13</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>1</td>
+      <td>18</td>
+      <td>22</td>
+      <td>19</td>
+      <td>11</td>
+      <td>5</td>
+      <td>2</td>
+      <td>1</td>
+      <td>13</td>
+      <td>...</td>
+      <td>18</td>
+      <td>22</td>
+      <td>22</td>
+      <td>15</td>
+      <td>22</td>
+      <td>14</td>
+      <td>15</td>
+      <td>13</td>
+      <td>13</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>15</td>
+      <td>23</td>
+      <td>24</td>
+      <td>22</td>
+      <td>19</td>
+      <td>15</td>
+      <td>5</td>
+      <td>2</td>
+      <td>13</td>
+      <td>13</td>
+      <td>...</td>
+      <td>18</td>
+      <td>22</td>
+      <td>22</td>
+      <td>15</td>
+      <td>22</td>
+      <td>14</td>
+      <td>15</td>
+      <td>10</td>
+      <td>18</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>23</td>
+      <td>18</td>
+      <td>6</td>
+      <td>5</td>
+      <td>13</td>
+      <td>5</td>
+      <td>22</td>
+      <td>1</td>
+      <td>10</td>
+      <td>...</td>
+      <td>18</td>
+      <td>22</td>
+      <td>22</td>
+      <td>15</td>
+      <td>22</td>
+      <td>14</td>
+      <td>4</td>
+      <td>13</td>
+      <td>0</td>
+      <td>6</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 23 columns</p>
+</div>
+<p>Ideally we wouldn't want to have to input all of these fields to classify a mushroom, so let's see what happens if we try to classify based only on, say, cap-shape and cap-surface. </p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.svm</span><span class="w"> </span><span class="kn">import</span> <span class="n">SVC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">confusion_matrix</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span><span class="p">;</span> <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span><span class="n">C</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">mushrooms</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">mushrooms</span><span class="p">[[</span><span class="s1">&#39;cap-shape&#39;</span><span class="p">,</span><span class="s1">&#39;cap-surface&#39;</span><span class="p">]]</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> \
+        <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">train_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;accuracy score: &#39;</span><span class="p">,</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">))</span>
+
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">mat</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">square</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> \
+            <span class="n">xticklabels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;edible&#39;</span><span class="p">,</span><span class="s1">&#39;poisonous&#39;</span><span class="p">],</span> \
+            <span class="n">yticklabels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;edible&#39;</span><span class="p">,</span><span class="s1">&#39;poisonous&#39;</span><span class="p">],</span> <span class="n">cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;true label&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;predicted label&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>accuracy score:  0.6302314130969966
+Text(109.44999999999997, 0.5, &#39;predicted label&#39;)
+</code></pre></div>
+
+<p><img alt="png" src="./images/mushroom_less_accurate.png"></p>
+<p>We are only able to achieve about 63% accuracy this way, with 730 poisonous mushrooms classified as edible. We can do better by including more mushroom attributes, for example cap-color and gill-color:</p>
+<div class="highlight"><pre><span></span><code><span class="n">X</span> <span class="o">=</span> <span class="n">mushrooms</span><span class="p">[[</span><span class="s1">&#39;cap-shape&#39;</span><span class="p">,</span><span class="s1">&#39;cap-surface&#39;</span><span class="p">,</span><span class="s1">&#39;cap-color&#39;</span><span class="p">,</span><span class="s1">&#39;gill-color&#39;</span><span class="p">]]</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> \
+        <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">train_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;accuracy score: &#39;</span><span class="p">,</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">))</span>
+
+<span class="n">mat</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">square</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> \
+            <span class="n">xticklabels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;edible&#39;</span><span class="p">,</span><span class="s1">&#39;poisonous&#39;</span><span class="p">],</span> \
+            <span class="n">yticklabels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;edible&#39;</span><span class="p">,</span><span class="s1">&#39;poisonous&#39;</span><span class="p">],</span><span class="n">cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;true label&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;predicted label&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>accuracy score:  0.8648449039881831
+Text(109.44999999999997, 0.5, &#39;predicted label&#39;)
+</code></pre></div>
+
+<p><img alt="png" src="./images/mushroom_more_accurate.png"></p>
+<p>We've gone up to 86% accuracy and now misclassify 400 poisonous mushrooms as edible. If we keep adding attributes then the accuracy increases, but of course that also means we have more work to do in describing the mushroom we've found.</p>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    sentiment analysis using naive Bayes
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>sentiment analysis using naive Bayes</h1>
+            <p class="date">Written on <time datetime="2022-12-09T00:00:00-05:00">Dec 09, 2022</time></p>
+        </header>
+
+        <article>
+            <p><img align=right src="images/review.jpg" width=200/></p>
+<p>Suppose we want to predict whether the sentiment of an unlabeled customer review is positive or negative, based on some reviews that have already been labeled as positive or negative. One computationally fast way of doing this is to use naive Bayes classification. From Bayes' theorem the probability that a review is positive (+) based on a review (R) is
+</p>
+<div class="math">$$
+   P(+|R) = \frac{P(R|+)P(+)}{P(R)}
+$$</div>
+<p>
+and the probability that the review is negative (-) is given by
+</p>
+<div class="math">$$
+   P(-|P) = \frac{P(R|-)P(-)}{P(R)}.
+$$</div>
+<p>
+One way of avoiding having to calculate <span class="math">\(P(R)\)</span> is to consider the ratio 
+</p>
+<div class="math">$$
+   \frac{P(+|R)}{P(-|R)}=\frac{P(R|+)P(+)}{P(R|-)P(-)}.
+$$</div>
+<p>
+If we make the reasonable assumption that <span class="math">\(P(-)=P(+)\)</span> prior to having any evidence one way or the other, we have
+</p>
+<div class="math">$$
+   \frac{P(+|R)}{P(-|R)}=\frac{P(R|+)}{P(R|-)},
+$$</div>
+<p>
+and the problem has been reduced to deciding which label, positive or negative, makes the data (i.e., the reviews) more likely. </p>
+<p>One simple yet useful way to encode a review in a way that we can probabilistically model it is to think of it as a "bag of words" where each word either appears in a given review or doesn't; generating a review then amounts to drawing words at random from the bag of words; such a process is captured well by a multinomial distribution: We assume that there are two multinomial distributions, one that gives rise to positive reviews and another that gives rise to negative ones; these reviews will have different parameters. The naive part of naive Bayes comes in making simplistic assumptions about these parameters. The strength of the approach is that it's fast and that it often works well if the data for each label are well-separated in feature space, which they tend to be if the dimensionality of the space is large. (And it is for the bag of words review representation.)</p>
+<p>Below, we analyze a large number of labeled amazon reviews and then see if we can predict correctly the labels for a testing set. We clean the data, fit a naive multinomial Bayes model to it, and then have a look at the accuracy score and confusion matrix for the test data. (We've run the analysis before, so some of the necessary files already exist; hence the messages.) The code below can be accessed over at my <a href="https://github.com/estimatrixPipiatrix/decision-scientist.git">github</a> repository.</p>
+<div class="highlight"><pre><span></span><code><span class="n">run</span> <span class="n">clean_data</span><span class="o">.</span><span class="n">py</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>train.ft.txt.bz2 already exists
+
+
+bunzip2: Output file train.ft.txt already exists.
+bunzip2: Output file test.ft.txt already exists.
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">run</span> <span class="n">nb_amazon</span><span class="o">.</span><span class="n">py</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="o">/</span><span class="nx">home</span><span class="o">/</span><span class="nx">kayla</span><span class="o">/</span><span class="nx">anaconda3</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span><span class="nx">python3</span><span class="m m-Double">.9</span><span class="o">/</span><span class="nx">site</span><span class="o">-</span><span class="nx">packages</span><span class="o">/</span><span class="nx">sklearn</span><span class="o">/</span><span class="nx">utils</span><span class="o">/</span><span class="nx">validation</span><span class="p">.</span><span class="nx">py</span><span class="p">:</span><span class="mi">993</span><span class="p">:</span><span class="w"> </span><span class="nx">DataConversionWarning</span><span class="p">:</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="nx">column</span><span class="o">-</span><span class="nx">vector</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="nx">was</span><span class="w"> </span><span class="nx">passed</span><span class="w"> </span><span class="nx">when</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="mi">1</span><span class="nx">d</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="nx">was</span><span class="w"> </span><span class="nx">expected</span><span class="p">.</span><span class="w"> </span><span class="nx">Please</span><span class="w"> </span><span class="nx">change</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">shape</span><span class="w"> </span><span class="nx">of</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="p">(</span><span class="nx">n_samples</span><span class="p">,</span><span class="w"> </span><span class="p">),</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">example</span><span class="w"> </span><span class="nx">using</span><span class="w"> </span><span class="nx">ravel</span><span class="p">().</span>
+<span class="w">  </span><span class="nx">y</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">column_or_1d</span><span class="p">(</span><span class="nx">y</span><span class="p">,</span><span class="w"> </span><span class="nx">warn</span><span class="p">=</span><span class="nx">True</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">run</span> <span class="n">check_results</span><span class="o">.</span><span class="n">py</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>accuracy score:  0.8417149791020628
+</code></pre></div>
+
+<p><img alt="png" src="./images/review_sentiment.png"></p>
+<p>We see that with a simple model we are able to predict the out-of-sample data with 84% accuracy; the confusion matrix tells us that the model confuses good (positive) and bad (negative) reviews with one another with about equal frequency. We can use the performance of naive Bayes classifiers as a baseline against which to compare more sophisticated models if we desire higher accuracy.</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>

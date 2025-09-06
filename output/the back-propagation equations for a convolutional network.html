@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    the back-propagation equations for a convolutional network
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>the back-propagation equations for a convolutional network</h1>
+            <p class="date">Written on <time datetime="2023-03-01T00:00:00-05:00">Mar 01, 2023</time></p>
+        </header>
+
+        <article>
+            <p><img align=right src="images/blurred_mirror.jpg" width="150"/></p>
+<p>In this post, we'll derive the back-propagation equations for our convolutional net, which has the structure shown below. The square blocks refer to 2D matrices, while the rectangles represent matrices with a single row. They are drawn vertically, however, to make the diagram cleaner.</p>
+<p><img src="images/conv_nn_struct.jpg" width="300"/></p>
+<table>
+<thead>
+<tr>
+<th>matrix</th>
+<th>size</th>
+<th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math">\(\textbf{k}^i\)</span></td>
+<td><span class="math">\(1\times n^k\)</span></td>
+<td>i<span class="math">\(^{th}\)</span> kernel</td>
+</tr>
+<tr>
+<td><span class="math">\(\textbf{F}\)</span></td>
+<td><span class="math">\(n^k \times n^0\)</span></td>
+<td>image frame captures</td>
+</tr>
+<tr>
+<td><span class="math">\(\textbf{l}^{ci}\)</span></td>
+<td><span class="math">\(1\times n^0\)</span></td>
+<td>i<span class="math">\(^{th}\)</span> pre-pooled layer</td>
+</tr>
+<tr>
+<td><span class="math">\(\textbf{l}^0\)</span></td>
+<td><span class="math">\(1\times n^0\)</span></td>
+<td>pooled convolution layer</td>
+</tr>
+<tr>
+<td><span class="math">\(\textbf{w}^{01}\)</span></td>
+<td><span class="math">\(n^0 \times n^1\)</span></td>
+<td>weights from layer 0 to 1</td>
+</tr>
+<tr>
+<td><span class="math">\(\textbf{l}^1\)</span></td>
+<td><span class="math">\(1\times n^1\)</span></td>
+<td>hidden layer</td>
+</tr>
+<tr>
+<td><span class="math">\(\textbf{w}^{12}\)</span></td>
+<td><span class="math">\(n^1 \times n^2\)</span></td>
+<td>weights from layer 1 to 2</td>
+</tr>
+<tr>
+<td><span class="math">\(\textbf{l}^2\)</span></td>
+<td><span class="math">\(1\times n^2\)</span></td>
+<td>output layer</td>
+</tr>
+</tbody>
+</table>
+<p>In terms of components, the convolutional layer is given by
+</p>
+<div class="math">$$
+l_i^{cj}=\sum_m k_m^j F_{mi},
+$$</div>
+<p>
+and
+</p>
+<div class="math">$$
+l_k^0 = \tanh \left[ \max \left(l_k^{c0},l_k^{c1},...,l_k^{cN}\right) \right].
+$$</div>
+<p>
+For layers 1 and 2 we have
+</p>
+<div class="math">$$
+l_q^1=\tanh \left[\sum_r l_r^0 w_{rq}^{01}\right].
+$$</div>
+<p>
+and
+</p>
+<div class="math">$$
+l_n^2 = \sigma \left[\sum_l l_l^1 w_{ln}^{12} \right],
+$$</div>
+<p>
+where <span class="math">\(\sigma\)</span> is the softmax function. The loss function is
+</p>
+<div class="math">$$
+\epsilon = \frac{1}{2}\sum_p \left(l_p^2-y_p \right)^2,
+$$</div>
+<p>
+and by applying the chain rule to these equations we will derive the back-propagation equations.</p>
+<p><img src="images/variable_depend.jpg" width="150"/></p>
+<p>Similarly to the 3 layer non-convolutional net, we have
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial w_{qs}^{12}}=\left[\textbf{l}^1\otimes\left(\textbf{l}^2-\textbf{y}\right)\textbf{D}_{s'}\right]_{qs}
+$$</div>
+<p>
+and
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial w_{qs}^{01}}=\left[\textbf{l}^0 \otimes \left(\textbf{l}^2-\textbf{y}\right)\textbf{D}_{\sigma'}\textbf{w}^{12,T}\textbf{D}_{t'}^1\right]_{qs}.
+$$</div>
+<p>
+but now in addition to these we have
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial k_q^i}=\sum_{n,m,p}\frac{\partial \epsilon}{\partial l_m^2}\frac{\partial l_m^2}{\partial l_n^1}\frac{\partial l_n^1}{\partial l_p^0}\frac{\partial l_p^0}{\partial k_q^i}.
+$$</div>
+<p>
+These derivatives are
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial l_m^2}=\sum_p \left(l_p^2-y_p\right)\delta_{pm}=\left(l_m^2-y_m\right),
+$$</div>
+<div class="math">$$
+\frac{\partial \l_m^2}{\partial l_n^1}=\sigma_m'\sum_l w_{lm}^{12}\delta_{ln}=\sigma_m' w_{nm}^{12},
+$$</div>
+<div class="math">$$
+\frac{\partial l_n^1}{\partial l_p^0}=t_n'\sum_r \delta_{pr}w_{rn}^{01}=t_n'w_{pn}^{01},
+$$</div>
+<p>
+and
+</p>
+<div class="math">$$
+\frac{\partial l_p^0}{\partial k_q^i}=\frac{\partial}{\partial k_q^i}\{t\left[\max(l_p^{c0},l_p^{c1},...,l_p^{cN})\right]\}=t_p^{0'}\frac{\partial l_p^{c,w(p)}}{\partial k_q^i},
+$$</div>
+<p>
+where <span class="math">\(w(p)\)</span> is the index of the largest <span class="math">\(l_p^{ci}\)</span> ("w" is for "winner"). This last derivative is given by
+</p>
+<div class="math">$$
+\frac{\partial l_p^{c,w(p)}}{\partial k_q^i}=\frac{\partial}{\partial k_q^i}\left[\sum_m k_m^{w(p)}F_{mp}\right]=\sum_m F_{mp}\delta^{i,w(p)}\delta_{mq}=F_{qp}\delta^{i,w(p)}.
+$$</div>
+<p>
+Defining
+</p>
+<div class="math">$$
+\mathcal{F}_{qp}^i\equiv F_{qp}\delta^{i,w(p)},
+$$</div>
+<p>
+this result can be written more compactly as
+</p>
+<div class="math">$$
+\frac{\partial l_p^{c,w(p)}}{\partial k_q^i}=\mathcal{F}_{qp}^i,
+$$</div>
+<p>
+so that
+</p>
+<div class="math">$$
+\frac{\partial l_p^0}{\partial k_q^i}=t_p^{0'}\mathcal{F}_{qp}^i.
+$$</div>
+<p>
+Hence, for the components of the gradient corresponding to the kernels, we obtain
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial k_{q}^i}=\sum_{n,m,p}\left(l_m^2-y_m\right)\sigma_m' w_{mn}^{12,T}t_n^{1'} w_{np}^{01,T}t_p^{0'}\mathcal{F}_{pq}^{i,T},
+$$</div>
+<p>
+which can be written as
+</p>
+<div class="math">$$
+\frac{\partial \epsilon}{\partial k_{q}^i}=\left[\left(\textbf{l}^2-\textbf{y}\right)\textbf{D}_{\sigma'}\textbf{w}^{12,T}\textbf{D}_{t'}^1\textbf{w}^{01,T}\textbf{D}_{t'}^0 \mathcal{F}^{i,T} \right]_q.
+$$</div>
+<p><a href="https://twitter.com/Estimatrix/status/1555693184977600512?s=20&amp;t=YFPoxpEQ2Qp14U4FliD7fA">Discuss on Twitter</a></p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/machine-learning.html">machine learning</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>
