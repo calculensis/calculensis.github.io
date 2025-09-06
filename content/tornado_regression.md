@@ -138,4 +138,3 @@ plt.show()
 
 If we repeat the above procedure but using Lasso regression with cross-validation to select the best model, we obtain very similar results (for example there's no reduction in the number of coefficients), and again with $r^2\approx 0.34$. So, as happens sometimes, we aren't seeing any improvement using the more sophisticated method.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

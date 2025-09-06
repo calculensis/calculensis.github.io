@@ -35,4 +35,3 @@ What if you find yourself not liking that result? Then you can try to figure out
 
 The next model I present will complement this one.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

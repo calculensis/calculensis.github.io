@@ -24,4 +24,3 @@ If so, then pursuing that specialty is a way to unify your pursuit of those area
 
 This second part requires not just creativity but luck: Maybe there’s a little patchwork island made up of the things you love, and it’s only a matter of discovering it.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

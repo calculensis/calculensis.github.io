@@ -20,6 +20,5 @@ The analysis shown below is based off 3,000 of my tweets; they have been broken 
 
 The analysis provides two different frequency measures for word occurrences, one being the probability of a word appearing in a given topic area, and another (called "lift") that divides the probability by that word's overall frequency in the document. The reason for having these two measures is that we might not want a word to appear high on the list just because it gets used a lot everywhere; we can adjust how much each measure contributes to the ordering of words within topic areas. I've chosen to weight them equally for the above example; it's useful to play around with that parameter and see how it affects the results.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)
 
 

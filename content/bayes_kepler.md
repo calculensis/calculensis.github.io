@@ -120,4 +120,3 @@ So we started with confidence $P(P)=0.9$, but after all that new science we find
 
 It may seem like a lot, but once you get used to it, it doesn't take long to draw up a Bayes tree and think through your confidence update for a claim, given new evidence.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

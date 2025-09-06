@@ -250,4 +250,3 @@ print("percent test set accuracy: ",percent_correct)
 
 79% accuracy on the test set isn't bad considering that we only used 1000 reviews to train the model. We kept the number low because our simple one-hot encoding module isn't optimized for handling large datasets.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

@@ -252,4 +252,3 @@ print(wage_wom/wage_men)
 
 For the actual US population, according to the [US Bureau of Labor Statistics](https://www.bls.gov/opub/reports/womens-earnings/archive/womensearnings_2012.pdf), women were earning closer to 81% of what men were in 2012.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

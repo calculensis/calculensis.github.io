@@ -34,6 +34,5 @@ Not reading it and missing out on what the book has to teach you is bad, but not
 
 After the tree is constructed, we calculate "expected utilities" for each choice as shown on the right hand side: For each branch leading from the choice point, multiply the probability times the personal value and add it all up. The choice that has the highest expected utility wins, in this case the "read it" branch.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)
 
 

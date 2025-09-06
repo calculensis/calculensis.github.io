@@ -32,6 +32,5 @@ By looking at systems as if they were organisms and asking how modules 1-5 are i
 
 [^1]: A jellyfish doesn't seem purposeful in the full sense intended here (e.g., it doesn't attach meaning to its experience), but it embodies the other ideas well and it's pretty :)
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)
 
 

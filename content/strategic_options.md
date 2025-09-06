@@ -124,4 +124,3 @@ The above table encapsulates a [decision tree](https://www.thedecisionblog.com/d
 
 As usual, if the model gives numbers that don't seem quite right, that's an opportunity to better understand why as well as to more fully reveal your preferences. Also as usual, it's a good idea to explore more than just one model!
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

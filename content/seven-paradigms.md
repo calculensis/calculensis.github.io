@@ -36,6 +36,5 @@ There are other paradigms that are important to know: Postermodernist and femini
 
 
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)
 
 

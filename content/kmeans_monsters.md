@@ -353,4 +353,3 @@ plot_components(X_iso,images,ax)
 
 The circles underlying the thumbnail images have been color-labeled and sorted into 5 groups via K-means; we see that, e.g., the dragons have indeed been placed together, as have mostly the undead with the other undead and likewise for the celestials (except that demons have been added in!). Isomap and K-means have done a reasonable job of collecting like monsters with like, with knowledge only of the stats and not including the challenge rating.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

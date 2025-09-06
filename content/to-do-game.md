@@ -53,4 +53,3 @@ And that's the basic system – happy adventuring :)
 
 This game definitely works best when you use your imagination both to play and to add variety to it; now that you have the basic idea, modify it in whatever ways that make it the most fun for you! 
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

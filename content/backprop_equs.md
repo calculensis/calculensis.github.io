@@ -80,4 +80,3 @@ $$
 w_{qr}^{01*}=w_{qr}^{01}-\alpha \{ \textbf{l}^0 \otimes \left[ \left( \textbf{l}^2-\textbf{y} \right) \textbf{D}_{s'} \textbf{w}^{12,T} \textbf{D}_{t'}  \right] \}_{qr}.
 $$
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

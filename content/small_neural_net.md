@@ -269,4 +269,3 @@ for iter in range(60):
 
 As happened in this particular case, it's typical to see better convergence using analytic derivatives.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

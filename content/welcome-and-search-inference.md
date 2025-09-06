@@ -32,4 +32,3 @@ Very often, different models will tell us to take different courses of action. I
 
 You can think of asking models what they "think" just as you would ask your friends what they think. Your friends might give conflicting answers, and that's a good thing! You are definitely expanding the space of possibilities to consider when that happens.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

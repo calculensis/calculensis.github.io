@@ -24,4 +24,3 @@ For example, suppose you are unhappy with the verdict that you should change job
 
 So far we've been treating the consequences of our decisions as certain. For example, the pro-con list for the example pictured above assumes that "I would love what I do" would definitely happen if you took the new job. But what if we want to incorporate uncertainty into our thinking? Stay tuned!
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

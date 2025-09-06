@@ -202,4 +202,3 @@ plt.ylabel('predicted label')
 We can see, e.g., that one time the correct answer was 4, while the model was unable to select any number. On the other hand, it correctly identified 3 as such 31 times. The derivations for the backpropagation equations are instructive but a bit involved, so I'll provide those in the next post.
 
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

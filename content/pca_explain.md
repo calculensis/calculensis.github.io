@@ -201,4 +201,3 @@ print(eigenval0,eigenval1)
     123.09176020402727 1.8914749268987887
 
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)

@@ -20,6 +20,5 @@ Even though the above is typically done with groups of people, I've found it use
 
 This approach works well because it leads us to consider unusual ideas more seriously than we otherwise would have and hence to learn from those perspectives.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)
 
 

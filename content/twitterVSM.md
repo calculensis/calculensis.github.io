@@ -30,6 +30,5 @@ Finally we have an upper management person in brand/identity. It's tempting to s
 
 The upper manager needs to factor in the information from trend monitoring as well as tweet quality control and decide what direction would represent all stakeholders the best, giving the enterprise the best chances of continuing to flourish. Who are we? Why are we tweeting? What are we trying to do? These questions are continually revisited and their answers revised in upper management.
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)
 
 

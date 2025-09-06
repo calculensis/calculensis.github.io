@@ -178,4 +178,3 @@ print("percent correct OOS: ",percent)
 
 Given the low image quality and the size of the neural net, 90% doesn't seem too bad!
 
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)
