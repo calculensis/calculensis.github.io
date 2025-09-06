@@ -39,3 +39,4 @@ EXTRA_PATH_METADATA = {
     }
 PLUGIN_PATHS=['./plugins']
 PLUGINS = ['render_math']
+THEME = 'Pelican-Cid'
