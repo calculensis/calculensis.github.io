@@ -367,5 +367,3 @@ print("percent correct OOS: ",frac_correct*100)
 
 
 For a training set of about 3,000 tweets (i.e. 67% of the full 4,000 tweet data set), near 70% accuracy out of sample isn't too bad!
-
-[Discuss on Twitter](https://twitter.com/Estimatrix/status/1555693184977600512?s=20&t=YFPoxpEQ2Qp14U4FliD7fA)
