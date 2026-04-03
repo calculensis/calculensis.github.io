@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    Phoenix and Pepper trading company open for business!
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>Phoenix and Pepper trading company open for business!</h1>
+            <p class="date">Written on <time datetime="2026-04-03T00:00:00-04:00">Apr 03, 2026</time></p>
+        </header>
+
+        <article>
+            <p><img src="./images/phoenix_et_piper_initium.png" width="400"></p>
+<p>Hey y'all, or as the Romans would say, salvete omnes!</p>
+<p>For learning and for fun, I started a fake Roman trading company. It's called Phoenix and Pepper (Latin: Phoenix et Piper) and it operates in a world where the classical sources are literally true. Pliny's Natural History is a field manual. Ovid's Metamorphoses is recent history. The gods intervene. The monsters are real :O</p>
+<p>The idea is to simulate a complete business from scratch, using stuff that's fun enough to keep me going when the debugging gets tedious and the coffee gets low. Instead of yet another e-commerce tutorial with bland sample data, I've got two business partners in Ostia trying to ship basilisk venom past Scylla and Charybdis while keeping the garum fresh. (Garum is a sauce made of icky fish guts, but the Romans loved it! Well most of them did. Pliny the Elder disapproved.)</p>
+<p>The company has two cargo classes. Phoenix-class is the rare, dangerous, mythological stuff — phoenix ash, basilisk venom, siren feathers. High margin, high risk, needs a priest of Apollo to bless the containers. Pepper-class is the everyday bulk trade — black pepper, garum, olive oil, Tyrian purple. Predictable demand, tight margins, lots of it. The entire business is about managing the tradeoffs between these two sides in a world where an octopus might be stealing the olives at midnight.</p>
+<p>This post is about the first stretch: building the foundation. By the end I had a Postgres database, synthetic data, a test suite, a CI/CD pipeline, and the first dashboard. It took me about two days.</p>
+<p>The company starts small: a warehouse in Ostia, three ships, a handful of routes along the Italian coast. Eight ports from Ostia down to Sicily. Three types of ships — the Corbita (slow, big, cheap, hauls pepper), the Actuaria (fast, small, expensive, the only one rated for Phoenix-class cargo), and the Ponto (somewhere in between, pleases nobody fully, like most compromises).</p>
+<p>For the tech stack, I wanted tools I could grow into. PostgreSQL for the database, running in a Podman container. SQLAlchemy for defining the schema in Python. pytest for testing everything. GitHub Actions for CI/CD. uv for managing the Python project. And Metabase for dashboards — also in a container, one podman-compose up and the whole thing is running.</p>
+<p>Here's how the whole world fits together — ten tables, lots of foreign keys, and one suspicious customer we'll get to shortly:</p>
+<p><img src="./images/erd.png" width="400"></p>
+<p>The schema is nice, but empty tables don't tell you much. I needed to populate the world with ports, ships, cargo, customers, and orders — synthetic data that feels plausible enough to ask interesting questions about.</p>
+<p><img src="./images/puzzled_scribe.png" width="400"></p>
+<p>I put the data in JSONL files — one per table, one record per line — and wrote a Python script that loads them into Postgres in foreign key order. Ports first (nothing depends on nothing), then routes (which need ports to exist), then ships (which need ports and ship types), and so on down the chain until the last table: the voyage manifest, which connects everything.</p>
+<p>I included eight ports along the Italian coast, from Ostia down to Sicily. Three ships with proper Latin names — the Ignis Maris, the Fortuna Lenta, the Ventus Secundus. Nine types of cargo, from olive oil to siren feathers. And eight customers: merchants, temples, provincial officials, and one magus named Decimus Obscurus who operates out of Panormus — the smallest, quietest port. Decimus only ever orders Phoenix-class goods in small quantities to different destinations. He doesn't ask many questions. Nobody asks him many questions either.</p>
+<p>Forty-nine tests confirm that all of this stuff hangs together! Every loader, every foreign key, every business rule.</p>
+<p>With the data loaded, I pointed Metabase at the database and started asking questions. Metabase runs in its own container alongside Postgres — same podman-compose up, and I've got a BI tool at localhost:3000.</p>
+<p>The first thing I learned: Pepper-class dominates by volume. Almost 900 units of black pepper alone. But when you multiply quantity by unit price, the picture shifts. Basilisk venom — just a few units — generates almost as much revenue as all that garum. That's the whole premise of the business in one chart.</p>
+<p><img src="./images/phoenix_and_pepper_status.png" width="800"></p>
+<p>I wondered who was buying all that black pepper so...</p>
+<p><img src="./images/who_buying_pepper.png" width="800"></p>
+<p>Aulus Vitellius is a provincial official based in Tarentum, so he's provisioning hard to feed his peoples!</p>
+<p>The whole project lives in a <a href="https://github.com/estimatrixPipiatrix/phoenix-and-pepper.git">public GitHub repo</a>. If you want to poke around, it's all there — the schema, the data, the tests, the Latin documentation (yes, Latin).</p>
+<p>As for what's next: The trade network is begging for graph analysis, Neptune is reportedly unhappy about something, and Decimus Obscurus is still out there placing his strange little orders. We'll see!</p>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/business-intelligence.html">business intelligence</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>
