@@ -1,3 +1,11 @@
+Title: Phoenix and Pepper trading company open for business!
+Date: 2026-04-03
+Category: business intelligence
+Tags: metabase, SQL
+Slug: a fictional Roman trading company for learning how business decisions stack end-to-end
+Authors: Kayla Lewis
+Summary: we create a fictional Roman trading company for fun and profit in the world of Pliny the Elder
+
 <img src="./images/phoenix_et_piper_initium.png" width="400">
 
 Hey y'all, or as the Romans would say, salvete omnes!
