@@ -1,5 +1,5 @@
 Title: revenue isn't profit
-Date: 2026-04-05
+Date: 2026-04-04
 Category: business intelligence
 Tags: metabase, SQL, cost modeling
 Slug: revenue-isnt-profit
