@@ -59,7 +59,7 @@ The Ignis Maris was dead last.
 
 ## The problem wasn't Phoenix — it was capacity
 
-It would have been easy to look at these numbers and conclude: stop carrying Phoenix-class goods. Stick to pepper.
+It would have been easy to look at these numbers and conclude: Stop carrying Phoenix-class goods. Stick to pepper.
 
 But that would miss the real lesson. The Ignis Maris has 40 tons of cargo capacity. That phoenix ash shipment weighed 2.5 kilograms. The ship was 0.006% full. We were paying 200 denarii a day to move a package that would fit in a satchel.
 
