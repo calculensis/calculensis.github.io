@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>the decision blog</title><link>https://calculensis.github.io/</link><description></description><lastBuildDate>Sun, 05 Apr 2026 00:00:00 -0400</lastBuildDate><item><title>Revenue isn't profit (the Ignis Maris learns a lesson)</title><link>https://calculensis.github.io/revenue-isnt-profit.html</link><description>&lt;p&gt;&lt;img src="./images/going_over_the_books.png" width="400"&gt;&lt;/p&gt;
+<rss version="2.0"><channel><title>the decision blog</title><link>https://calculensis.github.io/</link><description></description><lastBuildDate>Sun, 05 Apr 2026 00:00:00 -0400</lastBuildDate><item><title>revenue isn't profit (the Ignis Maris learns a lesson)</title><link>https://calculensis.github.io/revenue-isnt-profit.html</link><description>&lt;p&gt;&lt;img src="./images/going_over_the_books.png" width="400"&gt;&lt;/p&gt;
 &lt;p&gt;Hey y'all! Last time we built Phoenix and Pepper from scratch — a Postgres database, synthetic data, a test suite, a CI/CD pipeline, and a Metabase dashboard. We ended on a high note: basilisk venom generates huge revenue per unit, black pepper moves in bulk, and the business looks healthy.&lt;/p&gt;
 &lt;p&gt;But there was a problem hiding in the numbers. We were looking at revenue. We weren't looking at costs.&lt;/p&gt;
 &lt;h2&gt;The moment of doubt&lt;/h2&gt;
