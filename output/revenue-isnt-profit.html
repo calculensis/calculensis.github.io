@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <title>    Revenue isn't profit (the Ignis Maris learns a lesson)
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='https://fonts.googleapis.com/css?family=Gentium+Book+Basic|Merriweather:400,300' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://calculensis.github.io/theme/css/cid.css">
+        <link href="https://calculensis.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="the decision blog Atom Feed" />
+        <link href="https://calculensis.github.io/feeds/all.rss.xml" type="application/rss+xml" rel="alternate" title="the decision blog RSS Feed" />
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+            <div class="container">
+
+<header class="blog-header">
+    <h1><a href="https://calculensis.github.io">the decision blog</a></h1>
+    <p></p>
+    <nav>
+        <a href="https://calculensis.github.io/">INDEX</a>
+        <a href="https://calculensis.github.io/archives">ARCHIVES</a>
+        <a href="https://calculensis.github.io/categories">CATEGORIES</a>
+    </nav>
+</header>
+
+    <div class="post">
+
+        <header>
+            <h1>Revenue isn't profit (the Ignis Maris learns a lesson)</h1>
+            <p class="date">Written on <time datetime="2026-04-05T00:00:00-04:00">Apr 05, 2026</time></p>
+        </header>
+
+        <article>
+            <p><img src="./images/going_over_the_books.png" width="400"></p>
+<p>Hey y'all! Last time we built Phoenix and Pepper from scratch — a Postgres database, synthetic data, a test suite, a CI/CD pipeline, and a Metabase dashboard. We ended on a high note: basilisk venom generates huge revenue per unit, black pepper moves in bulk, and the business looks healthy.</p>
+<p>But there was a problem hiding in the numbers. We were looking at revenue. We weren't looking at costs.</p>
+<h2>The moment of doubt</h2>
+<p>Here's what we knew from the first dashboard: Phoenix-class goods have eye-popping unit prices. A single vial of basilisk venom is worth 800 denarii. Five units of phoenix ash: 2,500 denarii. But as we saw last time, total revenue tells a different story — black pepper and olive oil dominate because the volumes are so much larger. Basilisk venom, at just a few units, lands somewhere around garum. Impressive per vial, modest in aggregate.</p>
+<p>So Phoenix goods weren't even the revenue leaders. And we were about to discover they were also the most expensive to move.</p>
+<p>A ship doesn't sail for free. The Ignis Maris — our Actuaria, the only ship rated for Phoenix-class cargo — costs 120 denarii a day to operate and 80 denarii a day in crew wages. That's 200 denarii a day, every day it's at sea. The Fortuna Lenta, our big slow Corbita, costs only 120 a day total. And every voyage has two legs: out with cargo, back with nothing.</p>
+<p>We needed a cost model.</p>
+<h2>Building the cost model</h2>
+<p>I added two new columns to existing tables and one entirely new table.</p>
+<p>On <code>ship_types</code>, a new <code>crew_cost_daily</code> field. The Actuaria's rowers are expensive — 80 denarii a day compared to 40 for the Corbita's sailors. On <code>cargo_types</code>, a <code>handling_cost_per_unit</code> for Phoenix-class goods. The priest of Apollo who blesses the phoenix ash containers doesn't work for free (100 denarii per unit). Lead-sealing amphorae of basilisk venom so nobody makes eye contact with the cargo? 150 per unit. Wax-sealing chests of siren feathers while the crew wears earplugs? 120.</p>
+<p>Pepper-class goods have zero handling cost. You just load them on.</p>
+<p>Then a new <code>voyage_costs</code> table with six columns breaking out every voyage's costs:</p>
+<ul>
+<li><strong>Ship operations</strong> — the ship type's daily operating cost times the number of sailing days</li>
+<li><strong>Port fees</strong> — base fee at origin plus base fee at destination</li>
+<li><strong>Crew wages</strong> — daily crew cost times sailing days</li>
+<li><strong>Phoenix handling</strong> — handling cost per unit times quantity, for every Phoenix-class item on the manifest</li>
+<li><strong>Hazard surcharge</strong> — 3% of the total cargo value times the route's danger level, representing offerings to Neptune, crew hazard pay, and what the Romans probably would have called insurance</li>
+<li><strong>Total cost</strong> — the sum of everything above</li>
+</ul>
+<p>One new model class in SQLAlchemy, one new JSONL file, one new loader, and a handful of updated tests. The same pattern as everything else in the project.</p>
+<h2>What the numbers said</h2>
+<p>The numbers told a story we didn't expect.</p>
+<p><img src="./images/margins_before.png" width="800"></p>
+<p>The Fortuna Lenta hauling pepper and olive oil to Tarentum? 21,000 denarii in revenue, and even after the return leg, the round-trip margin was 87.5%. The big, slow, boring ship carrying the most boring cargo on a safe route was our best voyage by a mile.</p>
+<p>The Ignis Maris delivering 5 units of phoenix ash to Neapolis? 2,500 denarii in revenue, but 1,260 in outbound costs (operating, crew, port fees, the priest, the hazard premium), plus 685 more to sail home empty. Round-trip margin: only 22.2%.</p>
+<p>The return legs were the hidden killer. Every outbound voyage has a shadow cost: the ship sailing back with nothing on board, still burning crew wages and operating costs every day. The Fortuna Lenta's return from Messana cost 685 denarii. The Ignis Maris's return from Neapolis: also 685. Same cost, but the Fortuna Lenta had 4,500 in revenue to absorb it. The Ignis Maris had 2,500.</p>
+<p><img src="./images/profits_by_ship_before.png" width="800"></p>
+<p>The Ignis Maris was dead last.</p>
+<h2>The problem wasn't Phoenix — it was capacity</h2>
+<p>It would have been easy to look at these numbers and conclude: stop carrying Phoenix-class goods. Stick to pepper.</p>
+<p>But that would miss the real lesson. The Ignis Maris has 40 tons of cargo capacity. That phoenix ash shipment weighed 2.5 kilograms. The ship was 0.006% full. We were paying 200 denarii a day to move a package that would fit in a satchel.</p>
+<p>The problem wasn't that Phoenix cargo is unprofitable. The problem was that we were sailing an expensive ship nearly empty. The operating costs and crew wages are fixed — they're the same whether the hold is full or not. Once the Ignis Maris is committed to a voyage for Phoenix cargo, every kilogram of pepper we add to the hold is almost pure profit.</p>
+<p>Phoenix-class goods are also what make Phoenix and Pepper different from every other trading company. Anyone can haul pepper. Very few people have an Actuaria with a priest of Apollo on retainer. The Phoenix side of the business is a competitive moat — it just requires the operational discipline to fill the hold every time the ship sails.</p>
+<h2>Three new customers, three new voyages</h2>
+<p>We went looking for bigger Phoenix orders and found three new customers:</p>
+<p><strong>Castra Legionis III</strong> — a legionary camp near Brundisium. The legion needs lodestones for navigation instruments, basilisk venom for weapon coating, and phoenix ash for field rituals. They order in bulk and pay on time.</p>
+<p><strong>Gaius Aurelius Magnificus</strong> — an absurdly wealthy senator in Puteoli building a "Museum of Wonders" at his villa. Phoenix ash for an eternal flame, siren feathers for display cases, basilisk venom for... honestly, nobody asked him why.</p>
+<p><strong>Collegium Magorum Neapolitanum</strong> — a guild of practicing magi in Neapolis. Regular orders for all four Phoenix-class goods: siren feathers for enchantments, basilisk venom for alchemy, lodestones for divination, phoenix ash for purification rites.</p>
+<p>And we loaded pepper alongside every Phoenix shipment. The senator's museum order sailed with 200 units of black pepper and 30 units of Tyrian purple for Marcus Crassus Minor. The collegium's order sailed with 150 units of pepper and 100 units of garum for Templum Apollinis. The legion's order sailed with 300 units of pepper and 200 units of olive oil for Gaius Sempronius.</p>
+<p><img src="./images/ignis_maris_loaded.png" width="400"></p>
+<h2>What the numbers said now</h2>
+<p>The senator's museum run: 25,300 denarii in revenue, 77.8% round-trip margin. </p>
+<p>The collegium run: 21,100 denarii, 77.0%. </p>
+<p>The legion run to Brundisium: 32,000 denarii at 73% — a bit lower because of that positioning leg, but still a world apart from 22%.</p>
+<p><img src="./images/profits_by_ship_all_times.png" width="800"></p>
+<p>The Ignis Maris went from the least profitable ship in the fleet to the most profitable — by about twice the Fortuna Lenta's total. Not because we abandoned Phoenix cargo, but because we learned how to use it. Phoenix pays for the voyage. Pepper pays for the profit.</p>
+<h2>What we learned</h2>
+<p>Revenue isn't profit. A ship that generates impressive revenue per unit can still be a money pit if it sails with empty hold space. Fixed costs — operating expenses, crew wages — are the same whether the ship is full or empty. The marginal cost of adding pepper to an already-sailing Actuaria is almost nothing.</p>
+<p>The cost model also gave us vocabulary for questions we couldn't ask before. "Which voyages are profitable?" is a different question from "which voyages generate the most revenue?" and sometimes the answers are opposites.</p>
+<p>Looking ahead: that positioning leg to Puteoli (705 denarii to move an empty ship) is the kind of inefficiency that graph-based route optimization could eliminate. The trade network is growing, the questions are getting harder, and Neptune is reportedly still unhappy about something. We'll see.</p>
+<p>The project lives in a <a href="https://github.com/estimatrixPipiatrix/phoenix-and-pepper.git">public GitHub repo</a> — the schema, the data, the cost model, the tests, the whole enchilada. Or as the Romans might say, ab ovo usque ad malum, from the egg to the apple!</p>
+        </article>
+
+        <footer>
+            <p>This entry is posted in <a href="https://calculensis.github.io/category/business-intelligence.html">business intelligence</a>.</p>
+        </footer>
+
+
+    </div>
+
+
+<footer class="blog-footer">
+
+    <ul class="nav">
+    </ul>
+
+    <p class="disclaimer">
+    Built with <a href="http://getpelican.com">Pelican</a>, and <a href="https://github.com/hdra/Pelican-Cid">Cid</a> theme.
+    </p>
+</footer>
+            </div>
+<script>
+    var _gaq=[['_setAccount','UA-234119846-1'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+    </body>
+</html>
