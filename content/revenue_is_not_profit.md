@@ -1,4 +1,4 @@
-Title: revenue isn't profit (the Ignis Maris learns a lesson)
+Title: revenue isn't profit
 Date: 2026-04-05
 Category: business intelligence
 Tags: metabase, SQL, cost modeling
